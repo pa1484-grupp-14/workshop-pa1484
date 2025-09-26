@@ -1,0 +1,5 @@
+# Local device files for the direnv tool
+.direnv/
+
+# The build directories
+build/
