@@ -7,6 +7,7 @@
 #include <LilyGo_AMOLED.h>
 #include <LV_Helper.h>
 #include <lvgl.h>
+#include <initGUI.h>
 
 // Wi-Fi credentials (Delete these before commiting to GitHub)
 static const char* WIFI_SSID     = "SSID";
@@ -42,6 +43,8 @@ static void on_tile2_clicked(lv_event_t* e)
 // Function: Creates UI
 static void create_ui()
 {
+  constructUi();
+  return;
   // Fullscreen Tileview
   tileview = lv_tileview_create(lv_scr_act());
   lv_obj_set_size(tileview, lv_disp_get_hor_res(NULL), lv_disp_get_ver_res(NULL));
@@ -107,7 +110,7 @@ void setup()
   beginLvglHelper(amoled);   // init LVGL for this board
 
   create_ui();
-  connect_wifi();
+  //connect_wifi();
 }
 
 // Must have function: Loop runs continously on device after setup
