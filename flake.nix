@@ -14,9 +14,10 @@
       devShells.default = with pkgs;
         mkShell {
           packages = [
-            cmake
             clang
             clang-tools
+            platformio
+            arduino-cli
           ];
           shellHook = ''
           '';
