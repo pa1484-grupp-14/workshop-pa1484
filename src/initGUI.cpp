@@ -16,13 +16,17 @@ void constructUi() {
     //project text
     Widget& project_label = main_screen
         .addLabel()
-        .setText("PA1484 Software development project")
+        .setText("PA1484 Software Engineering Project")
+        .setFont(&lv_font_montserrat_28)
         .center();
     
     //group number label
     main_screen
         .addLabel()
         .setText("Group 14")
-        .alignTo(project_label, LV_ALIGN_CENTER, 0, -20);
+        .setFont(&lv_font_montserrat_44)
+        .alignTo(project_label, LV_ALIGN_CENTER, 0, -40);
+
+    Tile& test_screen = gui.addTile();
 }
 
