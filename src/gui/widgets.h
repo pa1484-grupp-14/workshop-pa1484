@@ -1,4 +1,5 @@
-#pragma once
+#ifndef GUI_WIDGET_H
+#define GUI_WIDGET_H
 
 #include "lvgl/lvgl.h"
 
@@ -137,4 +138,14 @@ class Widget: public WidgetContainer {
 
         // # Set content height of the widget
         Widget& setContentHeight(int32_t h);
+
+        // Other Styling
+
+        ///# Widget::setFont
+        /// @brief Set the font styling of the label
+        /// @param font the LVGL font for this label to use 
+        /// @param selector the part of the label the font applies to (by default the main text)
+        /// @return A new reference to the calling label
+        Widget& setFont(const lv_font_t* font, lv_style_selector_t selector = LV_PART_MAIN);
 };
+#endif

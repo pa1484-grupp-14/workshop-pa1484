@@ -189,3 +189,8 @@ Widget& Widget::setContentHeight(int32_t h) {
     lv_obj_set_content_height(this->getWidgetPtr(), h);
     return *this;
 }
+
+Widget& Widget::setFont(const lv_font_t* font, lv_style_selector_t selector) {
+    lv_obj_set_style_text_font(this->getWidgetPtr(), font, selector);
+    return *this;
+}
