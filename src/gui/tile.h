@@ -1,4 +1,5 @@
-#pragma once
+#ifndef GUI_TILE_H
+#define GUI_TILE_H
 
 #include <unordered_map>
 #include <utility>
@@ -31,3 +32,4 @@ class Tile: public WidgetContainer {
     ~Tile();
     friend class GUI;
 };
+#endif

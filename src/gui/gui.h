@@ -10,7 +10,9 @@
 class GUI;
 #include "lvgl/lvgl.h"
 #include "widgets.h"
+#include "chart.h"
 #include "label.h"
+#include "dropdown.h"
 #include "tile.h"
 
 class GUI {
