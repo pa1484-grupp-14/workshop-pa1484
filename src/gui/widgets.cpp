@@ -107,6 +107,10 @@ Widget::Widget(WidgetContainer& parent, lv_obj_t* widget, uint32_t id): WidgetCo
     this->id = id;
 }
 
+Widget& Widget::addEventCallback(lv_event_cb_t event_cb, lv_event_code_t filter, void *user_data) {
+    lv_obj_add_event_cb(this->getWidgetPtr(), event_cb, filter, user_data);
+    return *this;
+}
 Tile& Widget::getTile(){
     return *tile;
 }

@@ -85,6 +85,9 @@ class Widget: public WidgetContainer {
         // # Get parent of this widget
         WidgetContainer& getParent() override;
 
+        // # Add an event callback to the widget
+        Widget& addEventCallback(lv_event_cb_t event_cb, lv_event_code_t filter, void *user_data = nullptr);
+
 
         //FLAGS
 
