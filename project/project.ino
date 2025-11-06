@@ -7,10 +7,11 @@
 #include <LilyGo_AMOLED.h>
 #include <LV_Helper.h>
 #include <lvgl.h>
+#include "apiLogic/apiHandling.h" 
 
 // Wi-Fi credentials (Delete these before commiting to GitHub)
-static const char* WIFI_SSID     = "SSID";
-static const char* WIFI_PASSWORD = "PWD";
+static const char* WIFI_SSID = "";
+static const char* WIFI_PASSWORD = "";
 
 LilyGo_Class amoled;
 
@@ -63,7 +64,7 @@ static void create_ui()
   // Tile #2
   {
     t2_label = lv_label_create(t2);
-    lv_label_set_text(t2_label, "Welcome to the workshop");
+    lv_label_set_text(t2_label, "Welcome to the workshop duddettes!");
     lv_obj_set_style_text_font(t2_label, &lv_font_montserrat_28, 0);
     lv_obj_center(t2_label);
 
@@ -105,9 +106,10 @@ void setup()
   }
 
   beginLvglHelper(amoled);   // init LVGL for this board
-
   create_ui();
   connect_wifi();
+  APIhandler handler;
+  handler.getSationInfo("Abisko Aut", 1);
 }
 
 // Must have function: Loop runs continously on device after setup
