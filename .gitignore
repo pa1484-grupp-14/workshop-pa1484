@@ -3,19 +3,9 @@
 
 # The build directories
 build/
+.pio/
+.cache/
+libdeps/
 
-
-.pio
-.vscode
-*.pyc
-build
-
-.cache
-libdeps/*
-
-script
-platformio.ini.self
-Test
-Wrist*
-Butt*
-*loacl
+# Local files should be ignored
+*local
