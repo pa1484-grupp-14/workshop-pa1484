@@ -1,4 +1,4 @@
-#ifndef GUI_H
+﻿#ifndef GUI_H
 #define GUI_H
 
 #include <unordered_map>
@@ -13,6 +13,7 @@ class GUI;
 #include "chart.h"
 #include "label.h"
 #include "dropdown.h"
+#include "image.h"
 #include "tile.h"
 
 class GUI {

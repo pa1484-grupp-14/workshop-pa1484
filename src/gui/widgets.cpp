@@ -1,15 +1,22 @@
-
+﻿
 #include "gui.h"
 #include "lvgl/lvgl.h"
 
 
+size_t WidgetContainer::getRefCount() {
+    return (size_t)lv_obj_get_user_data(widget_ptr);
+}
+void WidgetContainer::setRefCount(size_t count) {
+    lv_obj_set_user_data(widget_ptr, (void*)count);
+}
+
 WidgetContainer::~WidgetContainer() {
     if(widget_ptr != nullptr) {
-        size_t ref_count = (size_t)lv_obj_get_user_data(widget_ptr);
+        size_t ref_count = getRefCount();
         if (ref_count > 1) {
             //were not the last object referencing this widget
             ref_count--;
-            lv_obj_set_user_data(widget_ptr, (void*)ref_count);
+            setRefCount(ref_count);
         } else {
             //we ARE the last object referencing this widget
             lv_obj_clean(widget_ptr);
@@ -21,18 +28,18 @@ WidgetContainer::WidgetContainer(WidgetContainer&& other) {
     widget_ptr = other.widget_ptr;
     if(widget_ptr != nullptr) {
         //increase reference counter by 1
-        size_t ref_count = (size_t)lv_obj_get_user_data(widget_ptr);
+        size_t ref_count = getRefCount();
         ref_count++;
-        lv_obj_set_user_data(widget_ptr, (void*)ref_count);
+        setRefCount(ref_count);
     }
 };
 WidgetContainer::WidgetContainer(const WidgetContainer& other) {
     widget_ptr = other.widget_ptr;
     if(widget_ptr != nullptr) {
         //increase reference counter by 1
-        size_t ref_count = (size_t)lv_obj_get_user_data(widget_ptr);
+        size_t ref_count = getRefCount();
         ref_count++;
-        lv_obj_set_user_data(widget_ptr, (void*)ref_count);
+        setRefCount(ref_count);
     }
 
 };
@@ -43,10 +50,10 @@ WidgetContainer& WidgetContainer::operator=(const WidgetContainer& other) {
     if(widget_ptr != other.widget_ptr) {
         //destroy old reference
         if(widget_ptr != nullptr) {
-            size_t ref_count = (size_t)lv_obj_get_user_data(widget_ptr);
+            size_t ref_count = getRefCount();
             if (ref_count > 1) {
                 ref_count--;
-                lv_obj_set_user_data(widget_ptr, (void*)ref_count);
+                setRefCount(ref_count);
             } else {
                 lv_obj_clean(widget_ptr);
                 lv_obj_delete(widget_ptr);
@@ -56,9 +63,9 @@ WidgetContainer& WidgetContainer::operator=(const WidgetContainer& other) {
         widget_ptr = other.widget_ptr;
         //create new reference
         if(widget_ptr != nullptr) {
-            size_t ref_count = (size_t)lv_obj_get_user_data(widget_ptr);
+            size_t ref_count = getRefCount();
             ref_count++;
-            lv_obj_set_user_data(widget_ptr, (void*)ref_count);
+            setRefCount(ref_count);
         }
     }
     return *this;
@@ -69,10 +76,10 @@ WidgetContainer& WidgetContainer::operator=(WidgetContainer&& other) {
     if(widget_ptr != other.widget_ptr) {
         //destroy old reference
         if(widget_ptr != nullptr) {
-            size_t ref_count = (size_t)lv_obj_get_user_data(widget_ptr);
+            size_t ref_count = getRefCount();
             if (ref_count > 1) {
                 ref_count--;
-                lv_obj_set_user_data(widget_ptr, (void*)ref_count);
+                setRefCount(ref_count);
             } else {
                 lv_obj_clean(widget_ptr);
                 lv_obj_delete(widget_ptr);
@@ -82,9 +89,9 @@ WidgetContainer& WidgetContainer::operator=(WidgetContainer&& other) {
         widget_ptr = other.widget_ptr;
         //create new reference
         if(widget_ptr != nullptr) {
-            size_t ref_count = (size_t)lv_obj_get_user_data(widget_ptr);
+            size_t ref_count = getRefCount();
             ref_count++;
-            lv_obj_set_user_data(widget_ptr, (void*)ref_count);
+            setRefCount(ref_count);
         }
     }
     return *this;
@@ -94,7 +101,7 @@ WidgetContainer::WidgetContainer(lv_obj_t* widget) {
     this->widget_ptr = widget;
     //we *should* be the sole owner of this widget at this point.
     //otherwise the constructor is being used incorrectly.
-    lv_obj_set_user_data(this->widget_ptr, (void*)1);
+    setRefCount(1);
 }
 
 WidgetContainer& Widget::getParent() {
@@ -117,6 +124,15 @@ Tile& Widget::getTile(){
 
 Label& Widget::addLabel(std::string name){
     return this->getTile().createLabel(*this, name);
+}
+Image& Widget::addImage(std::string name) {
+    return this->getTile().createImage(*this, name);
+}
+Dropdown& Widget::addDropdown(std::string name) {
+    return this->getTile().createDropdown(*this, name);
+}
+Chart& Widget::addChart(std::string name) {
+    return this->getTile().createChart(*this, name);
 }
 
 Widget& Widget::addFlag(lv_obj_flag_t flag) {
@@ -144,8 +160,16 @@ Widget& Widget::setY(int32_t y) {
     return *this;
 }
 
-Widget& Widget::setLayout(lv_layout_t layout) {
-    lv_obj_set_layout(this->getWidgetPtr(),layout);
+WidgetContainer& WidgetContainer::setFlexLayout(lv_flex_flow_t layout, lv_flex_align_t a, lv_flex_align_t b, lv_flex_align_t c) {
+    lv_obj_set_layout(this->getWidgetPtr(), LV_LAYOUT_FLEX);
+    lv_obj_set_flex_flow(this->getWidgetPtr(), layout);
+    lv_obj_set_flex_align(this->getWidgetPtr(), a,b,c);
+    return *this;
+}
+
+WidgetContainer& WidgetContainer::setGridLayout(const int32_t col_dsc[], const int32_t row_dsc[]) {
+    lv_obj_set_layout(this->getWidgetPtr(),LV_LAYOUT_GRID);
+    lv_obj_set_grid_dsc_array(this->getWidgetPtr(), col_dsc, row_dsc);
     return *this;
 }
 

@@ -1,4 +1,4 @@
-#ifndef GUI_DROPDOWN_H
+﻿#ifndef GUI_DROPDOWN_H
 #define GUI_DROPDOWN_H
 #include "gui.h"
 
@@ -13,7 +13,7 @@ class Dropdown: public Widget {
     ///# Dropdown::setOptions
     ///Sets the available options inside the dropdown based 
     ///on a newline-seperated string. 
-    Dropdown& setOptions(std::string& text);
+    Dropdown& setOptions(const std::string& text);
 
     ///# Dropdown::addOption
     ///inserts a new option at index ``pos``
