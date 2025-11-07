@@ -1,15 +1,15 @@
-#ifndef GUI_IMAGE_H
+﻿#ifndef GUI_IMAGE_H
 #define GUI_IMAGE_H
 
 #include "gui.h"
 
-class Image: public Widget {
-    
-    public:
-    Image(WidgetContainer& parent, uint32_t id); 
+class Image : public Widget {
+
+public:
+    Image(WidgetContainer& parent, uint32_t id);
     Image& setSource(lv_image_dsc_t* src);
-    Image& setScale();
-    
-}
+    Image& setScale(float scale);
+
+};
 
 #endif

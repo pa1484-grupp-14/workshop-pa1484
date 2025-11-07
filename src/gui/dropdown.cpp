@@ -1,14 +1,14 @@
-#include "gui.h"
+﻿#include "gui.h"
 
 
-Dropdown::Dropdown(WidgetContainer& parent, u_int32_t id): Widget(parent.getTile(), lv_dropdown_create(parent.getWidgetPtr()), id) {}
+Dropdown::Dropdown(WidgetContainer& parent, uint32_t id): Widget(parent.getTile(), lv_dropdown_create(parent.getWidgetPtr()), id) {}
 
 Dropdown& Dropdown::setText(std::string text) {
     lv_dropdown_set_text(this->getWidgetPtr(), text.c_str());
     return *this;
 }
 
-Dropdown& Dropdown::setOptions(std::string& text) {
+Dropdown& Dropdown::setOptions(const std::string& text) {
     lv_dropdown_set_options(this->getWidgetPtr(), text.c_str());
     return *this;
 }
