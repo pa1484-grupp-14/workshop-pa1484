@@ -150,6 +150,8 @@ class Widget: public WidgetContainer {
         // # Center widget
         Widget& center();
 
+        // # Set position of the widget
+        Widget& setGridCell(int32_t row_pos, int32_t col_pos, int32_t row_span = 1, int32_t col_span = 1, lv_grid_align_t row_align = LV_GRID_ALIGN_CENTER, lv_grid_align_t column_align = LV_GRID_ALIGN_CENTER);
 
         // Sizing
 
