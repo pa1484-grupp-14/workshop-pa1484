@@ -21,3 +21,10 @@ Dropdown& Dropdown::addOption(std::string& text, uint32_t pos) {
 uint32_t Dropdown::getSelectedItem() {
     return lv_dropdown_get_selected(this->getWidgetPtr());
 }
+
+
+Dropdown& Dropdown::setListFont(const lv_font_t* font, lv_style_selector_t selector) {
+    auto list_widget = lv_dropdown_get_list(this->getWidgetPtr());
+    lv_obj_set_style_text_font(list_widget, font, selector);
+    return *this;
+}
