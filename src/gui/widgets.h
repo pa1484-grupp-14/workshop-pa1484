@@ -52,23 +52,23 @@ class WidgetContainer {
         lv_obj_t* getWidgetPtr() const { return widget_ptr; }
 
         //Add a new label widget as the child of this widget container
-        virtual Label& addLabel(std::string name) = 0;
+        virtual Label& addLabel(std::string name = nextIdString()) = 0;
 
 
         //Add a new label widget as the child of this widget container
-        virtual Image& addImage(std::string name) = 0;
+        virtual Image& addImage(std::string name = nextIdString()) = 0;
 
 
         //Add a new label widget as the child of this widget container
-        virtual Dropdown& addDropdown(std::string name) = 0;
+        virtual Dropdown& addDropdown(std::string name = nextIdString()) = 0;
 
 
         //Add a new label widget as the child of this widget container
-        virtual Chart& addChart(std::string name) = 0;
-        
+        virtual Chart& addChart(std::string name = nextIdString()) = 0;
+
         //Get a reference to the parent tile container
         virtual Tile& getTile() = 0;
-        
+
         //Get a reference to the parent widget/container
         virtual WidgetContainer& getParent() = 0;
 
@@ -174,7 +174,7 @@ class Widget: public WidgetContainer {
 
         ///# Widget::setFont
         /// @brief Set the font styling of the label
-        /// @param font the LVGL font for this label to use 
+        /// @param font the LVGL font for this label to use
         /// @param selector the part of the label the font applies to (by default the main text)
         /// @return A new reference to the calling label
         Widget& setFont(const lv_font_t* font, lv_style_selector_t selector = LV_PART_MAIN);
