@@ -101,7 +101,7 @@ WidgetContainer::WidgetContainer(lv_obj_t* widget) {
     this->widget_ptr = widget;
     //we *should* be the sole owner of this widget at this point.
     //otherwise the constructor is being used incorrectly.
-    setRefCount(1);
+    setRefCount(getRefCount()+1);
 }
 
 WidgetContainer& Widget::getParent() {
@@ -220,5 +220,9 @@ Widget& Widget::setContentHeight(int32_t h) {
 
 Widget& Widget::setFont(const lv_font_t* font, lv_style_selector_t selector) {
     lv_obj_set_style_text_font(this->getWidgetPtr(), font, selector);
+    return *this;
+}
+Widget& Widget::setGridCell(int32_t row_pos, int32_t col_pos, int32_t row_span, int32_t col_span, lv_grid_align_t row_align, lv_grid_align_t column_align) {
+    lv_obj_set_grid_cell(this->getWidgetPtr(), column_align, col_pos, col_span, row_align, row_pos, row_span);
     return *this;
 }

@@ -10,6 +10,9 @@ class Dropdown: public Widget {
     /// Sets the text attribute of the label to the provided string
     Dropdown& setText(std::string text);
 
+
+    Dropdown& setListFont(const lv_font_t* font, lv_style_selector_t selector = LV_PART_MAIN);
+
     ///# Dropdown::setOptions
     ///Sets the available options inside the dropdown based 
     ///on a newline-seperated string. 
