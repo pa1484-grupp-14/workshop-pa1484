@@ -1,5 +1,6 @@
 # Local device files for the direnv tool
 .direnv/
+.envrc
 
 # The build directories
 build/

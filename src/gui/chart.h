@@ -7,11 +7,11 @@ class Chart: public Widget {
     std::unordered_map<std::string, lv_chart_series_t*> series;
     public:
     ~Chart();
-    Chart(WidgetContainer& parent, uint32_t id);   
+    Chart(WidgetContainer& parent, uint32_t id);
     /// # Set the type of this chart
     /// DEFAULT: the default chart type is a line graph
     Chart& setType(lv_chart_type_t type);
-    
+
     /// # Set the number of division lines in the chart
     Chart& setDivisionLines(uint32_t horizontal_lines, uint32_t vertical_lines);
 
@@ -44,7 +44,7 @@ class Chart: public Widget {
         return this->refresh();
     }
 
-    /// # Updates the chart to display the current state of all the included series. 
+    /// # Updates the chart to display the current state of all the included series.
     Chart& refresh();
 
     /// Set the cursor position in the chart
