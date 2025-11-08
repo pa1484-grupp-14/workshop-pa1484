@@ -8,8 +8,8 @@ void constructUi() {
     
     //init
     gui.init();
-
-
+    gui.init();
+  {
     //Main Screen
     Tile& main_screen = gui.addTile();
     
@@ -27,6 +27,23 @@ void constructUi() {
         .setFont(&lv_font_montserrat_44)
         .alignTo(project_label, LV_ALIGN_CENTER, 0, -40);
 
-    Tile& test_screen = gui.addTile();
+
+    //Second screen
+    gui.addTile()
+        .addChart()
+        .addSeries("main series")
+        .addPoints("main series", {20, 40, 30, 50, 60, 5, 10, 99, 80, 0})
+        .setSize(300, 300)
+        .center();
+
+    //Third Screen
+    gui.addTile()
+        .setFlexLayout(LV_FLEX_FLOW_ROW, LV_FLEX_ALIGN_SPACE_EVENLY)
+        .addLabel()
+        .setText("Select one of the options:")
+        .getTile()
+        .addDropdown()
+        .setOptions("First\nSecond\nThird");
+  }
 }
 
