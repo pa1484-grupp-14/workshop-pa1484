@@ -38,10 +38,11 @@ void getData()
     http.end();
 }
 */
-String APIhandler::getSationInfo(String stationName, int typeOfData)
-{
 
-    this->http.begin("http://opendata-download-metobs.smhi.se/api/version/latest/parameter/"+String(typeOfData)+".json");
+
+/*
+
+  this->http.begin("http://opendata-download-metobs.smhi.se/api/version/latest/parameter/"+String(typeOfData)+".json");
     int httpResponseCode = this->http.GET();
     if(httpResponseCode  > 0) 
     {
@@ -57,30 +58,4 @@ String APIhandler::getSationInfo(String stationName, int typeOfData)
         Serial.println(httpResponseCode );
         http.end();
     }
-}
-
-String APIhandler::getData(String stationName, int typeOfData, String duration, int intervall)
-{
-    return String();
-}
-
-String APIhandler::getDataLatestMonths(String stationName, int typeOfData)
-{
-    return String();
-}
-
-void APIhandler::setQuerry(String query)
-{
-    this->query = query;
-}
-
-void APIhandler::setHttp(String url)
-{
-    http.begin(query.c_str());
-      
-}
-
-String APIhandler::getQuerry()
-{
-    return this->query;
-}
+*/
