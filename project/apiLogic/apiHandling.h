@@ -3,6 +3,7 @@
 #include <String> 
 #include <memory>
 #include <unordered_map>
+#include <ArduinoJson.h>  
 #include "Arduino.h"
 
 using namespace std;
@@ -10,13 +11,11 @@ class APIhandler
 {
 private:
     HTTPClient http; 
-    String baseUrl = "https://opendata-download-metobs.smhi.se/api";
-    String query;  
+    String baseURLHistorical = "https://opendata-download-metobs.smhi.se/api";
+    String baseURLForecast = "https://opendata-download-metfcst.smhi.se/api/category/snow1g/version/1/geotype/point/lon";
 public:
-    String getSationInfo(String stationName, int typeOfData);  
-    String getData(String stationName, int typeOfData, String duration, int intervall);
-    String getDataLatestMonths(String stationName, int typeOfData);
-    void setQuerry(String query);
-    void setHttp(String url);
-    String getQuerry();
+    String getSationsArray(int parameter);    
+    String getStationFromArray(String array, String stationName);
+    String getHistoricalData(String key, int parameter);
+    String getForecastNext7Days(String StationObject);
 };
