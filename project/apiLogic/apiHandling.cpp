@@ -8,7 +8,7 @@
 #include "apiHandling.h"
 // This example downloads the URL "http://arduino.cc/"
 
-/*
+
 void getData()
 {
     HTTPClient http;
@@ -37,7 +37,7 @@ void getData()
     // Free resources
     http.end();
 }
-*/
+
 
 
 /*
