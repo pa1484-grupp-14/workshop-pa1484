@@ -39,5 +39,5 @@ void StationObject::setLon(int lon)
 
 void StationObject::setLat(int lat)
 {
-    this->latitude = latitude;
+    this->latitude = lat;
 }
