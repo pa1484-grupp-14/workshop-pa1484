@@ -86,8 +86,9 @@ vector<HistoricalObject> APIhandler::getHistoricalData(const string& key, int pa
 
 std::vector<ForecastObject> APIhandler::getForecastNext7Days(const StationObject&)
 {
-    std::string jsonStr = loadFileToString("forecastJson.json");
-
+    std::string fileToRead = "forecastJson.json";
+    std::string jsonStr = loadFileToString(fileToRead);
+    
     DynamicJsonDocument doc(256 * 1024);
     if (deserializeJson(doc, jsonStr)) return {};
 
