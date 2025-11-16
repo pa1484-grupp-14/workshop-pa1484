@@ -19,6 +19,16 @@ Chart& Tile::createChart(WidgetContainer& parent, std::string name) {
 Chart& Tile::addChart(std::string name) {
     return this->createChart(*this, name);
 }
+
+Container& Tile::createContainer(WidgetContainer& parent, std::string name) {
+    Container label = Container(parent, counter++);
+    containers.emplace(name, std::move(label));
+    return containers.at(name);
+}
+Container& Tile::addContainer(std::string name) {
+    return this->createContainer(*this, name);
+}
+
 Image& Tile::createImage(WidgetContainer& parent, std::string name) {
     Image label = Image(parent, counter++);
     images.emplace(name, std::move(label));
