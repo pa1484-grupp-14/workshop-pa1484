@@ -9,7 +9,7 @@
 class APIhandler
 {
 public:
-    std::vector<StationObject> getSationsArray(int parameter);
+    std::vector<StationObject> getStationsArray(int parameter);
     StationObject getStationFromArray(const std::vector<StationObject>& array,const std::string& stationName);
     std::vector<HistoricalObject> getHistoricalData(const std::string& key,int parameter);
     std::vector<ForecastObject> getForecastNext7Days(const StationObject& stationObject);

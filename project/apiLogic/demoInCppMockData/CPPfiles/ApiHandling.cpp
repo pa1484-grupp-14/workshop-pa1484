@@ -19,7 +19,7 @@ static std::string loadFileToString(const std::string& path)
     return ss.str();
 }
 
-vector<StationObject> APIhandler::getSationsArray(int parameter)
+vector<StationObject> APIhandler::getStationsArray(int parameter)
 {
     vector<StationObject> array;
     DynamicJsonDocument doc(100000000);
