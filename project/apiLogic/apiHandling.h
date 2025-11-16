@@ -1,6 +1,6 @@
 #include <SPI.h>
 #include <HTTPClient.h>
-#include <String> 
+#include <string> 
 #include <memory>
 #include <unordered_map>
 #include <ArduinoJson.h>  

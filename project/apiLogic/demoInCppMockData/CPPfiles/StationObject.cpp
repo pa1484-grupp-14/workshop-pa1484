@@ -2,12 +2,12 @@
 
 StationObject::StationObject(string key, string name, int longitude, int latitude) : key(key), name(name), longitude(longitude), latitude(latitude) {} 
 
-string StationObject::getKey() 
+string StationObject::getKey() const
 {
     return this->key;
 }
 
-string StationObject::getName() 
+string StationObject::getName() const
 {
     return this->name;
 }

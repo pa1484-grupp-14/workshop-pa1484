@@ -12,8 +12,8 @@ private:
     int latitude;
 public:
     StationObject(string key, string name, int longitude, int latitude);
-    string getKey();
-    string getName();
+    string getKey() const;
+    string getName() const;
     int getLon();
     int getLat();
 
