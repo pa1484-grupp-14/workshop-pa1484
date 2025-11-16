@@ -9,7 +9,6 @@
 #include <iostream>
 #include <stdexcept>
 #include <cstring>
-#include <vector>
 
 static std::string loadFileToString(const std::string& path)
 {
@@ -105,7 +104,7 @@ std::vector<ForecastObject> APIhandler::getForecastNext7Days(const StationObject
 
         JsonObject data = entry["data"];
         ForecastObject fo{};
-        
+
         fo.air_pressure_at_mean_sea_level = data["air_pressure_at_mean_sea_level"] | 0;
         fo.air_temperature               = data["air_temperature"] | 0.0f;
         fo.cloud_area_fraction           = data["cloud_area_fraction"] | 0;
