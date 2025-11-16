@@ -2,60 +2,57 @@
 #include "ApiHandling.h"
 #include "StationObject.h"
 #include "ForecastObject.h"
+#include "HistoricalObject.h"
 
 #include <ArduinoJson.h>
 #include <fstream>
 #include <sstream>
 #include <iostream>
 #include <stdexcept>
-#include <cstring>
 
-static std::string loadFileToString(const std::string& path)
+static std::string loadFileToString(const std::string& filePath)
 {
-    std::ifstream in(path, std::ios::in | std::ios::binary);
-    if (!in) throw std::runtime_error("Kunde inte öppna JSON-fil: " + path);
-    std::ostringstream ss;
-    ss << in.rdbuf();
-    return ss.str();
+    std::ifstream inputFile(filePath, std::ios::in | std::ios::binary);
+    if (!inputFile) {throw std::runtime_error("Could not open JSON-file: " + filePath);}
+
+    std::ostringstream stringStream;
+    stringStream << inputFile.rdbuf();
+
+    return stringStream.str();
 }
 
-vector<StationObject> APIhandler::getStationsArray(int parameter)
+std::vector<StationObject> APIhandler::getStationsArray(int parameter)
 {
-    const std::string filePath = "./apiLogic/demoInCppMockData/JsonFiles/parameterJson.json";
-    std::string jsonStr = loadFileToString(filePath);
+    const std::string jsonFile = "./apiLogic/demoInCppMockData/JsonFiles/parameterJson.json";
+    std::string jsonContent = loadFileToString(jsonFile);
 
-    StaticJsonDocument<4096> doc;
-    DeserializationError err = deserializeJson(doc, jsonStr);
+    DynamicJsonDocument<2 * 1024 * 1024> document;
+    DeserializationError error = deserializeJson(document, jsonContent);
+    if (error) {return {};}
 
-    if (err) {
-        std::cerr << "JSON parse error (stations): " << err.c_str() << '\n';
-        return {};
+    std::vector<StationObject> stationsResult;
+
+    JsonArray stationsArray = document["station"];
+
+    for (JsonObject stationObj : stationsArray) {
+        const char* key = stationObj["key"] | "";
+        const char* name = stationObj["name"] | "";
+        int longitude = stationObj["longitude"] | 0;
+        int latitude = stationObj["latitude"] | 0;
+        stationsResult.emplace_back(key, name, longitude, latitude);
     }
 
-    vector<StationObject> result;
-
-    JsonArray stations = doc["station"];
-
-    for (JsonObject obj : stations) {
-        const char* key = obj["key"] | "";
-        const char* name = obj["name"] | "";
-        int lon = obj["longitude"] | 0;
-        int lat = obj["latitude"] | 0;
-        result.emplace_back(key, name, lon, lat);
-
-    }
-    
-    return result;
+    return stationsResult;
 }
 
 
-StationObject APIhandler::getStationFromArray(const vector<StationObject>& array, const string& stationName) 
+StationObject APIhandler::getStationFromArray(const std::vector<StationObject>& stations, const std::string& stationName)
 {
-    for (const auto& st : array) {  
-        if (st.getName() == stationName) {
-            return st;
-        }
+    for (const auto& station : stations) {
+
+        if (station.getName() == stationName) {return station;}
     }
+
     throw std::runtime_error("Station not found: " + stationName);
 }
 
@@ -70,22 +67,23 @@ vector<HistoricalObject> APIhandler::getHistoricalData(const string& key, int pa
     return vector<HistoricalObject>();
 }
 
-std::vector<ForecastObject> APIhandler::getForecastNext7Days(const StationObject& stationObject)
+std::vector<ForecastObject> APIhandler::getForecastNext7Days(const StationObject& station)
 {
-    std::vector<ForecastObject> result;
+    std::vector<ForecastObject> forecastResult;
 
-    std::string fileToRead = "forecastJson.json";
-    std::string jsonStr = loadFileToString(fileToRead);
+    const std::string jsonFile = "forecastJson.json";
+    std::string jsonContent = loadFileToString(jsonFile);
 
-    DynamicJsonDocument doc(256 * 1024);
-    if (deserializeJson(doc, jsonStr)) return result;
+    DynamicJsonDocument document(512 * 1024);
+    if (deserializeJson(document, jsonContent)) {return forecastResult;}
 
-    JsonArray series = doc["timeSeries"].as<JsonArray>();
-    if (series.isNull()) return result;
-    
-    for (JsonObject entry : series) {
-        const char* timeStr = entry["time"];
-        if (!timeStr || !strstr(timeStr, "12:00:00Z")) continue;
+    JsonArray seriesArray = document["timeSeries"].as<JsonArray>();
+    if (seriesArray.isNull()) {return forecastResult;}
+
+    for (JsonObject entry : seriesArray) {
+        const char* timeString = entry["time"];
+        if (!timeString || !strstr(timeString, "12:00:00Z")) {continue;}
+
         JsonObject data = entry["data"];
         ForecastObject fo{};
         fo.air_pressure_at_mean_sea_level = data["air_pressure_at_mean_sea_level"] | 0;
@@ -111,9 +109,10 @@ std::vector<ForecastObject> APIhandler::getForecastNext7Days(const StationObject
         fo.wind_from_direction = data["wind_from_direction"] | 0;
         fo.wind_speed = data["wind_speed"] | 0.0f;
         fo.wind_speed_of_gust = data["wind_speed_of_gust"] | 0.0f;
-        result.emplace_back(fo);
-        if (result.size() >= 7) break;
+        forecastResult.emplace_back(fo);
+        if (forecastResult.size() >= 7) {break;}
     }
-    return result;
+
+    return forecastResult;
 }
 

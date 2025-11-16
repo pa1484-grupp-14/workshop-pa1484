@@ -22,12 +22,12 @@ int StationObject::getLat()
     return this->latitude;
 }
 
-void StationObject::setKey(string key)
+void StationObject::setKey(const string& key)
 {
     this->key = key;
 }
 
-void StationObject::setName(string name)
+void StationObject::setName(const string& name)
 {
     this->name = name;
 }
