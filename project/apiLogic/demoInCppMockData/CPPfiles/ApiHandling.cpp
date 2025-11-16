@@ -21,43 +21,33 @@ static std::string loadFileToString(const std::string& path)
 
 vector<StationObject> APIhandler::getStationsArray(int parameter)
 {
-    vector<StationObject> array;
-    DynamicJsonDocument doc(100000000);
+    const std::string filePath = "./apiLogic/demoInCppMockData/JsonFiles/parameterJson.json";
+    std::string jsonStr = loadFileToString(filePath);
 
-    std::ifstream jsonData("C:/Users/asrie/OneDrive/Skrivbord/Misc/Personal/Projects/BTH/ProgramvaruutvecklingLearning/API-Testing/API-Testing-Classes-NewOne/API-Testing-Classes-NewOne/parameterJson.json", ios::binary); 
-    if (!jsonData.is_open()) {
-        cerr << "Could not open file!" << endl;
+    StaticJsonDocument<4096> doc;
+    DeserializationError err = deserializeJson(doc, jsonStr);
+
+    if (err) {
+        std::cerr << "JSON parse error (stations): " << err.c_str() << '\n';
+        return {};
     }
 
-    string line, jsonString;
-    while (getline(jsonData, line))
-        jsonString += line + "\n";
-    //cout << jsonString;
- 
+    vector<StationObject> result;
 
-    DeserializationError error = deserializeJson(doc, jsonString.c_str()); 
-    if (error) {
-        cout << "Something went wrong when deserializing the document: " << error.c_str() << "\n"; 
-    }
+    JsonArray stations = doc["station"];
 
-    JsonArray objects = doc["station"].as<JsonArray>(); 
-    if (objects.isNull()) { 
-        cout << "Could not find 'Station' array in JSON.\n"; 
-        return vector<StationObject>(); 
-    }
+    for (JsonObject obj : stations) {
+        const char* key = obj["key"] | "";
+        const char* name = obj["name"] | "";
+        int lon = obj["longitude"] | 0;
+        int lat = obj["latitude"] | 0;
+        result.emplace_back(key, name, lon, lat);
 
-    for (JsonObject obj : objects) {
-     
-        const char* name = obj["name"].as<const char*>();
-        const char* key = obj["key"].as<const char*>(); 
-        int lon = obj["longitude"].as<int>();
-        int lat = obj["latitude"].as<int>();
-        StationObject object(key, name, lon, lat);
-        array.push_back(object);
     }
     
-    return array;
+    return result;
 }
+
 
 StationObject APIhandler::getStationFromArray(const vector<StationObject>& array, const string& stationName) 
 {
