@@ -122,6 +122,9 @@ Tile& Widget::getTile(){
     return *tile;
 }
 
+Container& Widget::addContainer(std::string name){
+    return this->getTile().createContainer(*this, name);
+}
 Label& Widget::addLabel(std::string name){
     return this->getTile().createLabel(*this, name);
 }
@@ -193,30 +196,7 @@ Widget& Widget::center() {
     return *this;
 }
 
-Widget& Widget::setSize(int32_t w, int32_t h) {
-    lv_obj_set_size(this->getWidgetPtr(), w, h);
-    return *this;
-}
 
-Widget& Widget::setWidth(int32_t w) {
-    lv_obj_set_width(this->getWidgetPtr(), w);
-    return *this;
-}
-
-Widget& Widget::setHeight(int32_t h) {
-    lv_obj_set_height(this->getWidgetPtr(), h);
-    return *this;
-}
-
-Widget& Widget::setContentWidth(int32_t w) {
-    lv_obj_set_content_width(this->getWidgetPtr(), w);
-    return *this;
-}
-
-Widget& Widget::setContentHeight(int32_t h) {
-    lv_obj_set_content_height(this->getWidgetPtr(), h);
-    return *this;
-}
 
 Widget& Widget::setFont(const lv_font_t* font, lv_style_selector_t selector) {
     lv_obj_set_style_text_font(this->getWidgetPtr(), font, selector);
@@ -224,5 +204,29 @@ Widget& Widget::setFont(const lv_font_t* font, lv_style_selector_t selector) {
 }
 Widget& Widget::setGridCell(int32_t row_pos, int32_t col_pos, int32_t row_span, int32_t col_span, lv_grid_align_t row_align, lv_grid_align_t column_align) {
     lv_obj_set_grid_cell(this->getWidgetPtr(), column_align, col_pos, col_span, row_align, row_pos, row_span);
+    return *this;
+}
+WidgetContainer& WidgetContainer::setSize(int32_t w, int32_t h) {
+    lv_obj_set_size(this->getWidgetPtr(), w, h);
+    return *this;
+}
+
+WidgetContainer& WidgetContainer::setWidth(int32_t w) {
+    lv_obj_set_width(this->getWidgetPtr(), w);
+    return *this;
+}
+
+WidgetContainer& WidgetContainer::setHeight(int32_t h) {
+    lv_obj_set_height(this->getWidgetPtr(), h);
+    return *this;
+}
+
+WidgetContainer& WidgetContainer::setContentWidth(int32_t w) {
+    lv_obj_set_content_width(this->getWidgetPtr(), w);
+    return *this;
+}
+
+WidgetContainer& WidgetContainer::setContentHeight(int32_t h) {
+    lv_obj_set_content_height(this->getWidgetPtr(), h);
     return *this;
 }

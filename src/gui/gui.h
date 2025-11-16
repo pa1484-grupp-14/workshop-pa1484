@@ -10,6 +10,7 @@
 class GUI;
 #include "lvgl/lvgl.h"
 #include "widgets.h"
+#include "container.h"
 #include "chart.h"
 #include "label.h"
 #include "dropdown.h"
@@ -19,7 +20,7 @@ class GUI;
 class GUI {
     lv_obj_t* tileview;
     std::vector<Tile> tiles;
-    
+
     public:
 
     Tile& operator[](int index) {
