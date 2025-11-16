@@ -51,16 +51,12 @@ vector<StationObject> APIhandler::getStationsArray(int parameter)
 
 StationObject APIhandler::getStationFromArray(const vector<StationObject>& array, const string& stationName) 
 {
-    int count = 0;
-    while (count != array.size())
-    {
-        if (array[count].getName() == stationName)
-        {
-            return array[count];
+    for (const auto& st : array) {  
+        if (st.getName() == stationName) {
+            return st;
         }
-        count++;
     }
-    throw("Station not found");
+    throw std::runtime_error("Station not found: " + stationName);
 }
 
 vector<HistoricalObject> APIhandler::getHistoricalData(const string& key, int parameter)
