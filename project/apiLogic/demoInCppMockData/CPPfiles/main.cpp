@@ -10,7 +10,7 @@ using namespace std;
 int main()
 {  
     APIhandler handler;
-    vector<StationObject> myArr = handler.getSationsArray(1);
+    vector<StationObject> myArr = handler.getStationsArray(1);
     StationObject obj = handler.getStationFromArray(myArr, "Abisko Aut"); 
 
     std::cout << obj.getKey();
