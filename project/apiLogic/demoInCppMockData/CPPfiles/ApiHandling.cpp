@@ -70,7 +70,7 @@ vector<HistoricalObject> APIhandler::getHistoricalData(const string& key, int pa
     return vector<HistoricalObject>();
 }
 
-std::vector<ForecastObject> APIhandler::getForecastNext7Days(const StationObject&)
+std::vector<ForecastObject> APIhandler::getForecastNext7Days(const StationObject& stationObject)
 {
     std::vector<ForecastObject> result;
 
