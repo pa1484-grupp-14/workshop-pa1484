@@ -1,13 +1,13 @@
 #include "StationObject.h"
 
-StationObject::StationObject(string key, string name, int longitude, int latitude) : key(key), name(name), longitude(longitude), latitude(latitude) {} 
+StationObject::StationObject(string key, string name, int longitude, int latitude) : key(key), name(name), longitude(longitude), latitude(latitude) {}
 
-string StationObject::getKey() const
+string StationObject::getKey() const 
 {
     return this->key;
 }
 
-string StationObject::getName() const
+string StationObject::getName() const 
 {
     return this->name;
 }
