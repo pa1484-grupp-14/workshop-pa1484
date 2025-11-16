@@ -14,7 +14,7 @@ class Label;
 class Image;
 class Chart;
 class Dropdown;
-
+class Container;
 
 static size_t id_generator;
 static size_t nextId() {
@@ -52,6 +52,9 @@ class WidgetContainer {
         lv_obj_t* getWidgetPtr() const { return widget_ptr; }
 
         //Add a new label widget as the child of this widget container
+        virtual Container& addContainer(std::string name = nextIdString()) = 0;
+
+        //Add a new label widget as the child of this widget container
         virtual Label& addLabel(std::string name = nextIdString()) = 0;
 
 
@@ -78,6 +81,24 @@ class WidgetContainer {
         // Set up this widget as a grid container
         WidgetContainer& setGridLayout(const int32_t col_dsc[], const int32_t row_dsc[]);
 
+
+        // Sizing
+
+    // # Set size of the widget
+    WidgetContainer& setSize(int32_t w, int32_t h);
+
+    // # Set width of the widget
+    WidgetContainer& setWidth(int32_t w);
+
+    // # Set height of the widget
+    WidgetContainer& setHeight(int32_t h);
+
+    // # Set content width of the widget
+    WidgetContainer& setContentWidth(int32_t w);
+
+    // # Set content height of the widget
+    WidgetContainer& setContentHeight(int32_t h);
+
         //Destructor (which deletes and cleans the widget if and only if it holds the last reference to it)
         ~WidgetContainer();
 
@@ -103,14 +124,15 @@ class Widget: public WidgetContainer {
         Tile& getTile() override;
 
         // # Add label as child of this widget
-        Label& addLabel(std::string name) override;
+        Label& addLabel(std::string name = nextIdString()) override;
         // # Add label as child of this widget
-        Chart& addChart(std::string name) override;
+        Chart& addChart(std::string name = nextIdString()) override;
         // # Add label as child of this widget
-        Image& addImage(std::string name) override;
+        Image& addImage(std::string name = nextIdString()) override;
         // # Add label as child of this widget
-        Dropdown& addDropdown(std::string name) override;
+        Dropdown& addDropdown(std::string name = nextIdString()) override;
 
+        Container& addContainer(std::string name = nextIdString()) override;
         // # Get parent of this widget
         WidgetContainer& getParent() override;
 
@@ -152,23 +174,6 @@ class Widget: public WidgetContainer {
 
         // # Set position of the widget
         Widget& setGridCell(int32_t row_pos, int32_t col_pos, int32_t row_span = 1, int32_t col_span = 1, lv_grid_align_t row_align = LV_GRID_ALIGN_CENTER, lv_grid_align_t column_align = LV_GRID_ALIGN_CENTER);
-
-        // Sizing
-
-        // # Set size of the widget
-        Widget& setSize(int32_t w, int32_t h);
-
-        // # Set width of the widget
-        Widget& setWidth(int32_t w);
-
-        // # Set height of the widget
-        Widget& setHeight(int32_t h);
-
-        // # Set content width of the widget
-        Widget& setContentWidth(int32_t w);
-
-        // # Set content height of the widget
-        Widget& setContentHeight(int32_t h);
 
         // Other Styling
 
