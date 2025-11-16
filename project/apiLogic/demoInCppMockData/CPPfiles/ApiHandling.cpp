@@ -59,7 +59,7 @@ vector<StationObject> APIhandler::getSationsArray(int parameter)
     return array;
 }
 
-StationObject APIhandler::getStationFromArray(vector<StationObject> array, string stationName) 
+StationObject APIhandler::getStationFromArray(const vector<StationObject>& array, const string& stationName) 
 {
     int count = 0;
     while (count != array.size())
@@ -73,7 +73,7 @@ StationObject APIhandler::getStationFromArray(vector<StationObject> array, strin
     throw("Station not found");
 }
 
-vector<HistoricalObject> APIhandler::getHistoricalData(string key, int parameter)
+vector<HistoricalObject> APIhandler::getHistoricalData(const string& key, int parameter)
 {
    
 
