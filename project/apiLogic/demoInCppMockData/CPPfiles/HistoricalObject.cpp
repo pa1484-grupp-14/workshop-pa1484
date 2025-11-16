@@ -1,19 +1,19 @@
 #include "HistoricalObject.h"
 
 
-HistoricalObject::HistoricalObject(string date, float value) : date(date), value(value) {}
+HistoricalObject::HistoricalObject(const string& date, float value) : date(date), value(value) {}
 
-string HistoricalObject::getDate()
+const string& HistoricalObject::getDate() const
 {
     return this->date;
 }
 
-float HistoricalObject::getValue()
+float HistoricalObject::getValue() const
 {
     return this->value;
 }
 
-void HistoricalObject::setDate(string date)
+void HistoricalObject::setDate(const string& date)
 {
     this->date = date;
 }

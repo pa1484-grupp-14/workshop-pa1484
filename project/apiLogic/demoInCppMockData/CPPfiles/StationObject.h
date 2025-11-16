@@ -1,6 +1,5 @@
 #pragma once
 #include <string>
-#include <memory>
 
 using namespace std;
 class StationObject
@@ -11,14 +10,14 @@ private:
     int longitude;
     int latitude;
 public:
-    StationObject(string key, string name, int longitude, int latitude);
-    string getKey() const;
-    string getName() const;
+    StationObject(const string& key, const string& name, int longitude, int latitude);
+    const string& getKey() const;
+    const string& getName() const;
     int getLon();
     int getLat();
 
-    void setKey(string key);
-    void setName(string name);
+    void setKey(const string& key);
+    void setName(const string& name);
     void setLon(int lon);
     void setLat(int lat);
 };
