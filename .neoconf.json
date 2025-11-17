@@ -1,9 +1,0 @@
-{
-  "lspconfig": {
-    "clangd": {
-      "clangd.arguments": [
-        "--query-driver=clang++"
-      ]
-    }
-  }
-}

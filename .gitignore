@@ -4,10 +4,16 @@
 # The build directories
 build/
 .pio/
+.platformio/
 .cache/
 
 # Python executables
 *.pyc
 
-# Ignore files that is supposed to be local only
-*local
+# Ignore compilation commands produced by pio
+/compile_commands.json
+
+# Ignore all files with local signature
+**/*local
+.vscode/c_cpp_properties.json
+.vscode/launch.json
