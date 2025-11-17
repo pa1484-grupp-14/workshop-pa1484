@@ -1,4 +1,4 @@
-#ifdef __has_include
+﻿#ifdef __has_include
     #if __has_include("lvgl.h")
         #ifndef LV_LVGL_H_INCLUDE_SIMPLE
             #define LV_LVGL_H_INCLUDE_SIMPLE
@@ -176,10 +176,13 @@ const LV_ATTRIBUTE_MEM_ALIGN LV_ATTRIBUTE_LARGE_CONST LV_ATTRIBUTE_IMAGE_WI_DAY_
 };
 
 const lv_image_dsc_t wi_day_sprinkle = {
-  .header.cf = LV_COLOR_FORMAT_RGB565A8,
-  .header.magic = LV_IMAGE_HEADER_MAGIC,
-  .header.w = 75,
-  .header.h = 75,
+  .header = {
+        .magic = LV_IMAGE_HEADER_MAGIC,
+        .cf = LV_COLOR_FORMAT_RGB565A8,
+  
+  .w = 75,
+  .h = 75
+},
   .data_size = 5625 * 3,
   .data = wi_day_sprinkle_map,
 };
