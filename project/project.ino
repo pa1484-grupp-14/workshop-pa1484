@@ -8,10 +8,11 @@
 #include <LV_Helper.h>
 #include <lvgl.h>
 #include <initGUI.h>
+#include "apiLogic/apiHandling.h" 
 
 // Wi-Fi credentials (Delete these before commiting to GitHub)
-static const char* WIFI_SSID     = "SSID";
-static const char* WIFI_PASSWORD = "PWD";
+static const char* WIFI_SSID = "";
+static const char* WIFI_PASSWORD = "";
 
 LilyGo_Class amoled;
 
@@ -49,6 +50,10 @@ void setup()
   beginLvglHelper(amoled);   // init LVGL for this board
   constructUi();             // construct initial UI
   //connect_wifi();
+
+  //connect_wifi();
+  //APIhandler handler;
+  //handler.getSationInfo("Abisko Aut", 1);
 }
 
 // Must have function: Loop runs continously on device after setup
