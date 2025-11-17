@@ -4,9 +4,7 @@
 # The build directories
 build/
 .pio/
-
-# Editor configuration
-.vscode/
+.cache/
 
 # Python executables
 *.pyc
