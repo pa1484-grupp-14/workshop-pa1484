@@ -1,4 +1,4 @@
-
+﻿
 #include "ApiHandling.h"
 #include "StationObject.h"
 #include "ForecastObject.h"
@@ -26,7 +26,7 @@ std::vector<StationObject> APIhandler::getStationsArray(int parameter)
     const std::string jsonFile = "./apiLogic/demoInCppMockData/JsonFiles/parameterJson.json";
     std::string jsonContent = loadFileToString(jsonFile);
 
-    DynamicJsonDocument<2 * 1024 * 1024> document;
+    JsonDocument document = JsonDocument();
     DeserializationError error = deserializeJson(document, jsonContent);
     if (error) {return {};}
 
@@ -74,7 +74,7 @@ std::vector<ForecastObject> APIhandler::getForecastNext7Days(const StationObject
     const std::string jsonFile = "forecastJson.json";
     std::string jsonContent = loadFileToString(jsonFile);
 
-    DynamicJsonDocument document(512 * 1024);
+    JsonDocument document = JsonDocument();
     if (deserializeJson(document, jsonContent)) {return forecastResult;}
 
     JsonArray seriesArray = document["timeSeries"].as<JsonArray>();
@@ -86,6 +86,7 @@ std::vector<ForecastObject> APIhandler::getForecastNext7Days(const StationObject
 
         JsonObject data = entry["data"];
         ForecastObject fo{};
+        fo.time = entry["time"] | "";
         fo.air_pressure_at_mean_sea_level = data["air_pressure_at_mean_sea_level"] | 0;
         fo.air_temperature = data["air_temperature"] | 0.0f;
         fo.cloud_area_fraction = data["cloud_area_fraction"] | 0;
