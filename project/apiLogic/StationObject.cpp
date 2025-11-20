@@ -1,43 +1,43 @@
 #include "StationObject.h"
 
-StationObject::StationObject(String key, String name, int longitude, int latitude) : key(key), name(name), longitude(longitude), latitude(latitude){}
+StationObject::StationObject(string key, string name, float longitude, float latitude) : key(key), name(name), longitude(longitude), latitude(latitude) {} 
 
-String StationObject::getKey()
+string StationObject::getKey() const 
 {
     return this->key;
 }
 
-String StationObject::getName()
+string StationObject::getName() const 
 {
     return this->name;
 }
 
-int StationObject::getLon()
+float StationObject::getLon() const
 {
     return this->longitude;
 }
 
-int StationObject::getLat()
+float StationObject::getLat() const
 {
     return this->latitude;
 }
 
-void StationObject::setKey(String key)
+void StationObject::setKey(string key) 
 {
     this->key = key;
 }
 
-void StationObject::setName(String name)
+void StationObject::setName(string name)
 {
     this->name = name;
 }
 
-void StationObject::setLon(int lon)
+void StationObject::setLon(float lon) 
 {
     this->longitude = lon;
 }
 
-void StationObject::setLat(int lat)
+void StationObject::setLat(float lat)
 {
-    this->latitude = latitude;
+    this->latitude = lat;
 }

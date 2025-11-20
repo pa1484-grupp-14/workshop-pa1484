@@ -1,22 +1,16 @@
 #pragma once
-#include <SPI.h>
-#include <HTTPClient.h>
 #include <string> 
-#include <memory>
-#include <unordered_map>
-#include <ArduinoJson.h>  
-#include "Arduino.h"
+#include <vector>
+#include "StationObject.h"
+#include "ForecastObject.h"
+#include "HistoricalObject.h"
 
-using namespace std;
+
 class APIhandler
 {
-private:
-    HTTPClient http; 
-    String baseURLHistorical = "https://opendata-download-metobs.smhi.se/api";
-    String baseURLForecast = "https://opendata-download-metfcst.smhi.se/api/category/snow1g/version/1/geotype/point/lon";
 public:
-    String getSationsArray(int parameter);    
-    String getStationFromArray(String array, String stationName);
-    String getHistoricalData(String key, int parameter);
-    String getForecastNext7Days(String StationObject);
+    vector<StationObject> getStationsArray(int citiesAmount , int parameter);
+    StationObject getStationFromArray(const vector<StationObject>& array,const string& stationName); 
+    std::vector<HistoricalObject> getHistoricalData(const string& key,int parameter);
+    std::vector<ForecastObject> getForecastNext7Days(const StationObject& stationObject);
 };
