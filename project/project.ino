@@ -1,3 +1,5 @@
+#include "apiLogic/ApiHandling.h"
+
 #include <Arduino.h>
 #include <WiFi.h>
 #include <HTTPClient.h>
@@ -7,11 +9,10 @@
 #include <LilyGo_AMOLED.h>
 #include <LV_Helper.h>
 #include <lvgl.h>
-#include "apiLogic/apiHandling.h" 
 
 // Wi-Fi credentials (Delete these before commiting to GitHub)
-static const char* WIFI_SSID = "";
-static const char* WIFI_PASSWORD = "";
+static const char* WIFI_SSID = "Pixel_1137";
+static const char* WIFI_PASSWORD = "7ev6mve3icnxysi";
 
 LilyGo_Class amoled;
 
@@ -108,8 +109,16 @@ void setup()
   beginLvglHelper(amoled);   // init LVGL for this board
   create_ui();
   connect_wifi();
+  
+  //Abelvattnet Aut
   APIhandler handler;
-  handler.getSationInfo("Abisko Aut", 1);
+  vector<StationObject> stationsArray = handler.getStationsArray(30, 1);
+  StationObject station = handler.getStationFromArray(stationsArray, "Abelvattnet Aut");
+  Serial.println("name: " + String(station.getName().c_str()) + " longitude: " + String(station.getLon()) + " latitude: " + String(station.getLat()));
+  vector<ForecastObject> forecasts = handler.getForecastNext7Days(station); 
+
+  Serial.println("precipitation_frozen_part for [0]: " + String(forecasts[0].symbol_code));
+  
 }
 
 // Must have function: Loop runs continously on device after setup
