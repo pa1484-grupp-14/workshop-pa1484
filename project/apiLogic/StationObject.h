@@ -1,24 +1,23 @@
 #pragma once
-#include <String> 
-#include <memory>
-#include "Arduino.h"  
+#include <string>
 
+using namespace std;
 class StationObject
 {
 private:
-    String key;
-    String name; 
-    int longitude;
-    int latitude;
-public: 
-    StationObject(String key, String name, int longitude, int latitude);
-    String getKey();
-    String getName();
-    int getLon(); 
-    int getLat();
-    
-    void setKey(String key);
-    void setName(String name);
-    void setLon(int lon); 
-    void setLat(int lat);
+    string key;
+    string name;
+    float longitude;
+    float latitude;
+public:
+    StationObject(string key, string name, float longitude, float latitude);
+    string getKey() const;
+    string getName() const;
+    float getLon() const;
+    float getLat() const;
+
+    void setKey(string key);
+    void setName(string name);
+    void setLon(float lon);
+    void setLat(float lat);
 };
