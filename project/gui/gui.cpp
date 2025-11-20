@@ -1,6 +1,5 @@
 
 #include "gui.h"
-#include "lvgl/lvgl.h"
 
 
 GUI::~GUI() {}

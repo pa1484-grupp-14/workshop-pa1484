@@ -7,7 +7,7 @@
 #include <string>
 #include <vector>
 
-#include "lvgl/lvgl.h"
+#include <lvgl.h>
 #include "widgets.h"
 #include "label.h"
 

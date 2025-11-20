@@ -1,3 +1,4 @@
+
 #include "HistoricalObject.h"
 
 HistoricalObject::HistoricalObject(String date, float value) : date(date), value(value){}
