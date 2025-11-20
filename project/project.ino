@@ -8,7 +8,8 @@
 #include <LV_Helper.h>
 #include <lvgl.h>
 #include <initGUI.h>
-#include "apiLogic/apiHandling.h" 
+
+#include "apiLogic/ApiHandling.h"
 
 // Wi-Fi credentials (Delete these before commiting to GitHub)
 static const char* WIFI_SSID = "";
@@ -51,9 +52,13 @@ void setup()
   constructUi();             // construct initial UI
   //connect_wifi();
 
-  //connect_wifi();
-  //APIhandler handler;
-  //handler.getSationInfo("Abisko Aut", 1);
+  connect_wifi();
+
+  APIhandler handler;
+  vector<StationObject> stationsArray = handler.getStationsArray(30, 1);
+  StationObject station = handler.getStationFromArray(stationsArray, "Abelvattnet Aut");
+  Serial.println("name: " + String(station.getName().c_str()) + " longitude: " + String(station.getLon()) + " latitude: " + String(station.getLat()));
+  vector<ForecastObject> forecasts = handler.getForecastNext7Days(station); 
 }
 
 // Must have function: Loop runs continously on device after setup

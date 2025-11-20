@@ -1,3 +1,4 @@
+#pragma once
 #include <SPI.h>
 #include <HTTPClient.h>
 #include <string> 

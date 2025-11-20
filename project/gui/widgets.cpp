@@ -1,6 +1,6 @@
 ﻿
 #include "gui.h"
-#include "lvgl/lvgl.h"
+#include <lvgl.h>
 
 
 size_t WidgetContainer::getRefCount() {

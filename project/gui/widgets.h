@@ -1,7 +1,7 @@
 ﻿#ifndef GUI_WIDGET_H
 #define GUI_WIDGET_H
 
-#include "lvgl/lvgl.h"
+#include <lvgl.h>
 
 #include <unordered_map>
 #include <utility>

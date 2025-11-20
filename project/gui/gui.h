@@ -8,7 +8,7 @@
 #include <vector>
 
 class GUI;
-#include "lvgl/lvgl.h"
+#include <lvgl.h>
 #include "widgets.h"
 #include "container.h"
 #include "chart.h"
