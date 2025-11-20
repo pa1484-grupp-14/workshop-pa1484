@@ -1,8 +1,9 @@
 #include "HistoricalObject.h"
 
-HistoricalObject::HistoricalObject(String date, float value) : date(date), value(value){}
 
-String HistoricalObject::getDate()
+HistoricalObject::HistoricalObject(string date, float value) : date(date), value(value) {}
+
+string HistoricalObject::getDate()
 {
     return this->date;
 }
@@ -12,12 +13,12 @@ float HistoricalObject::getValue()
     return this->value;
 }
 
-void HistoricalObject::setDate(String date)
+void HistoricalObject::setDate(string date)
 {
     this->date = date;
 }
 
-void HistoricalObject::setValue(float value)
+void HistoricalObject::setValue(float value) 
 {
     this->value = value;
 }

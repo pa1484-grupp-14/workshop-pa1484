@@ -1,16 +1,17 @@
-#include <String> 
-#include <memory>
-#include "Arduino.h"  
+#pragma once
+#include <string> 
 
+using namespace std;
 class HistoricalObject
 {
 private:
-	String date; 
+	string date;
 	float value;
 public:
-	HistoricalObject(String date, float value);
-	String getDate();
-	float getValue();
-	void setDate(String date);
+	HistoricalObject(string date, float value);   
+	string getDate();   
+	float getValue();   
+	void setDate(string date);  
 	void setValue(float value);
 };
+
