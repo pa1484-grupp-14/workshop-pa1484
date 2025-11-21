@@ -194,7 +194,7 @@ void constructUi() {
     
     //project text
     Widget& project_label = main_screen
-        .addLabel()
+        .addLabel("main label")
         .setText("PA1484 Software development project")
         .setFont(&lv_font_montserrat_28)
         .center();
@@ -204,7 +204,7 @@ void constructUi() {
         .addLabel()
         .setText("Group 14")
         .setFont(&lv_font_montserrat_48)
-        .alignTo(project_label, LV_ALIGN_CENTER, 0, -40)
+        .alignTo(project_label, LV_ALIGN_CENTER, 0, -40).focusOn()
         .getTile().addLabel().setText("Version 2").setFont(&lv_font_montserrat_44).alignTo(project_label, LV_ALIGN_CENTER, 0, 150);
 
     
@@ -292,6 +292,6 @@ void constructUi() {
             .addDropdown().setOptions("Karlskrona\nGothenburg\nStockholm\nMalmo").setListFont(&lv_font_montserrat_26).setFont(&lv_font_montserrat_26)
             .setGridCell(2, 1).setWidth(270).getTile();
 
-        gui.getTile(0).focusOn();
+        gui.getTile(0).getLabel("main label").focusOn();
 }
 
