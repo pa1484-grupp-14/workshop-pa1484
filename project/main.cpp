@@ -3,10 +3,10 @@
 #include "apiLogic/ApiHandling.h"
 #include "apiLogic/ForecastObject.h"
 #include "apiLogic/StationObject.h"
-
+#include "initGUI.h"
 // Wi-Fi credentials (Delete these before commiting to GitHub)
-static const char* WIFI_SSID = "SSID";
-static const char* WIFI_PASSWORD = "PWD";
+static const char* WIFI_SSID = "ssid";
+static const char* WIFI_PASSWORD = "pass";
 
 static hal::Display* amoled;
 
@@ -93,8 +93,8 @@ void setup() {
   amoled = new hal::Display();
   hal::init(amoled);
 
-  create_ui();
   connect_wifi();
+  constructUi();
 }
 
 // Must have function: Loop runs continously on device after setup
