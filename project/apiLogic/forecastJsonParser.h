@@ -4,19 +4,25 @@
 #include "JsonListener.h"
 #include <vector>
 
+
+enum ListeningState {
+  Pending = 0,
+  InTimeSeries,
+  StartingTimeSeries,
+  ProcessingItem,
+  FilteringObject,
+
+};
+
 class ForecastListener: public JsonListener {  
   private: 
-    bool isTimeSeries;
-    bool isTwelveOClock;
-    bool isTime;
-    bool enteredData;
-    bool enteredObject;
+    ListeningState state;
     ForecastObject forecastObjectToAdd;
     String currentKey; 
 
   public:  
+    int itemCount;
     std::vector<ForecastObject> forecasts;
-    int itemCount;  
     
     virtual void whitespace(char c);
   

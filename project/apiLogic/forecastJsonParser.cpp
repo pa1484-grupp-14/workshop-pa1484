@@ -14,29 +14,31 @@ void ForecastListener::startDocument() {
 }
 
 void ForecastListener::key(String key) {
-    Serial.println("key: " + key);
     this->currentKey = key;
     if(key == "time")
-        this->isTime = true;
+        state = ListeningState::FilteringObject;
     else if(key == "timeSeries")
-        this->isTimeSeries = true;
-    else if(key == "data" && !this->enteredData)
-        this->enteredData = true;
+        state = ListeningState::InTimeSeries;
     
 }
 
 void ForecastListener::value(String value) {
-    Serial.println("value: " + value);
-    if(this->isTime)
+    if(state == ListeningState::FilteringObject)
     {
         const char* timeValue = value.c_str();
-        if(strstr(timeValue, "12:00:00Z"))
-            this->isTwelveOClock = true;
-        this->isTime = false;
+        if(strstr(timeValue, "12:00:00Z")) {
+            state = ListeningState::ProcessingItem;
+            Serial.println("Processing item.");
+            this->forecastObjectToAdd.time = value.c_str();
+        } else {
+            state = ListeningState::InTimeSeries;
+        }
+            
     }
-    Serial.println("my Checker: " + String(this->isTwelveOClock) + " : " + String(this->currentKey));
-    if(this->isTwelveOClock && this->isTimeSeries)
+    else if(state == ListeningState::ProcessingItem)
     {
+        Serial.println("my Checker: " + String(this->currentKey) + " : " + value);
+    
         if (this->currentKey == "air_pressure_at_mean_sea_level")
             this->forecastObjectToAdd.air_pressure_at_mean_sea_level = value.toInt();
 
@@ -113,14 +115,14 @@ void ForecastListener::endArray() {
 }
 
 void ForecastListener::endObject() {
-    Serial.println("end object. ");
-    if(this->isTwelveOClock && this->isTimeSeries){
-        this->forecasts.push_back(this->forecastObjectToAdd);
-        this->enteredObject = false;
-        this->enteredData = false;
-        this->isTwelveOClock = false;
-        this->isTimeSeries = false;
-        this->itemCount++;
+    
+    if(state == ListeningState::ProcessingItem){
+        Serial.println("pushed object. ");
+        forecasts.push_back(forecastObjectToAdd);
+        itemCount++;
+        state = ListeningState::InTimeSeries;
+    } else {
+        Serial.println("end object. ");
     }
         
 }
@@ -135,6 +137,6 @@ void ForecastListener::startArray() {
 
 void ForecastListener::startObject() {
     Serial.println("start object. ");
-    if(this->isTimeSeries)
-        this->enteredObject = true;
+    if(state == ListeningState::InTimeSeries)
+        state = ListeningState::FilteringObject;
 }

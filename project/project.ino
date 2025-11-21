@@ -1,5 +1,5 @@
 #include "apiLogic/ApiHandling.h"
-
+#include <initGui.h>
 #include <Arduino.h>
 #include <WiFi.h>
 #include <HTTPClient.h>
@@ -9,10 +9,13 @@
 #include <LilyGo_AMOLED.h>
 #include <LV_Helper.h>
 #include <lvgl.h>
+#include <vector>
+
+
 
 // Wi-Fi credentials (Delete these before commiting to GitHub)
-static const char* WIFI_SSID = "Pixel_1137";
-static const char* WIFI_PASSWORD = "7ev6mve3icnxysi";
+static const char* WIFI_SSID = "B193";
+static const char* WIFI_PASSWORD = "abc123filmisdiare";
 
 LilyGo_Class amoled;
 
@@ -107,17 +110,17 @@ void setup()
   }
 
   beginLvglHelper(amoled);   // init LVGL for this board
-  create_ui();
+  
+      //Container& weather_forecast = gui.addTile().addContainer();
+        //weather_forecast.setSize(600, 1000).setFlexLayout(LV_FLEX_FLOW_COLUMN, LV_FLEX_ALIGN_SPACE_EVENLY);
+        //AddForecastDay(weather_forecast, "Monday", "(15-24)", 46, 86, 6);
   connect_wifi();
+  constructUi();
   
   //Abelvattnet Aut
-  APIhandler handler;
-  vector<StationObject> stationsArray = handler.getStationsArray(30, 1);
-  StationObject station = handler.getStationFromArray(stationsArray, "Abelvattnet Aut");
-  Serial.println("name: " + String(station.getName().c_str()) + " longitude: " + String(station.getLon()) + " latitude: " + String(station.getLat()));
-  vector<ForecastObject> forecasts = handler.getForecastNext7Days(station); 
-
-  Serial.println("precipitation_frozen_part for [0]: " + String(forecasts[0].symbol_code));
+  
+  
+            
   
 }
 
