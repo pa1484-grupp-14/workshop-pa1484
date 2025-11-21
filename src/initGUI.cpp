@@ -292,6 +292,6 @@ void constructUi() {
             .addDropdown().setOptions("Karlskrona\nGothenburg\nStockholm\nMalmo").setListFont(&lv_font_montserrat_26).setFont(&lv_font_montserrat_26)
             .setGridCell(2, 1).setWidth(270).getTile();
 
-        gui.getTile(0).getLabel("main label").focusOn();
+        gui.scrollToTile(0);
 }
 
