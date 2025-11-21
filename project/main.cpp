@@ -95,15 +95,6 @@ void setup() {
 
   create_ui();
   connect_wifi();
-
-  APIhandler handler;
-  vector<StationObject> stationsArray = handler.getStationsArray(30, 1);
-  StationObject station =
-      handler.getStationFromArray(stationsArray, "Abelvattnet Aut");
-  Serial.println("name: " + String(station.getName().c_str()) +
-                 " longitude: " + String(station.getLon()) +
-                 " latitude: " + String(station.getLat()));
-  vector<ForecastObject> forecasts = handler.getForecastNext7Days(station);
 }
 
 // Must have function: Loop runs continously on device after setup

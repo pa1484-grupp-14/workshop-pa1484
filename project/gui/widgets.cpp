@@ -24,6 +24,10 @@ WidgetContainer::~WidgetContainer() {
         }
     }
 }
+Widget& Widget::focusOn() {
+    lv_group_focus_obj(this->getWidgetPtr());
+    return *this;
+}
 WidgetContainer::WidgetContainer(WidgetContainer&& other) {
     widget_ptr = other.widget_ptr;
     if(widget_ptr != nullptr) {

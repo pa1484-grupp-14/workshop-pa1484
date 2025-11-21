@@ -20,12 +20,10 @@
             cmake
             just
           ];
-          shellHook = ''
-            export Arduino_DIR="${arduino-core}"
-            export SDL2_INCLUDE_PATH="${SDL2.dev}/include"
-            export SDL2_LIBRARY_PATH="${SDL2}/lib"
-            export CXXFLAGS="$CXXFLAGS -I$SDL2_INCLUDE_PATH -L$SDL2_LIBRARY_PATH"
-          '';
+          Arduino_DIR = "${arduino-core}";
+          SDL2_INCLUDE_PATH = "${SDL2.dev}/include";
+          SDL2_LIBRARY_PATH = "${SDL2}/lib";
+          CXXFLAGS = "$CXXFLAGS -I$SDL2_INCLUDE_PATH -L$SDL2_LIBRARY_PATH";
           NIX_LD_LIBRARY_PATH = lib.makeLibraryPath [
             stdenv.cc.cc
           ];

@@ -16,6 +16,9 @@ int GUI::nrOfTiles() {
     return tiles.size();
 }
 
+void GUI::scrollToTile(int id) {
+    lv_tileview_set_tile_by_index(this->getTileView(), id, 0, LV_ANIM_OFF);
+}
 Tile& GUI::addTile() {
     uint8_t c_id = this->nrOfTiles();
     uint8_t r_id = 0;
