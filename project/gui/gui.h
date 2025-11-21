@@ -38,6 +38,7 @@ class GUI {
         lv_obj_set_scrollbar_mode(tileview, LV_SCROLLBAR_MODE_OFF);
         return *this;
     }
+    void scrollToTile(int id);
     ~GUI();
     GUI();
 };
