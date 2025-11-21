@@ -7,13 +7,11 @@ build/
 .platformio/
 .cache/
 
-# Python executables
-*.pyc
-
 # Ignore compilation commands produced by pio
 /compile_commands.json
 
 # Ignore all files with local signature
 **/*local
+.env
 .vscode/c_cpp_properties.json
 .vscode/launch.json
