@@ -1,5 +1,8 @@
 #include <time.h>
 #include <HAL.hpp>
+#include "apiLogic/ApiHandling.h"
+#include "apiLogic/ForecastObject.h"
+#include "apiLogic/StationObject.h"
 
 // Wi-Fi credentials (Delete these before commiting to GitHub)
 static const char* WIFI_SSID = "SSID";
@@ -92,6 +95,15 @@ void setup() {
 
   create_ui();
   connect_wifi();
+
+  APIhandler handler;
+  vector<StationObject> stationsArray = handler.getStationsArray(30, 1);
+  StationObject station =
+      handler.getStationFromArray(stationsArray, "Abelvattnet Aut");
+  Serial.println("name: " + String(station.getName().c_str()) +
+                 " longitude: " + String(station.getLon()) +
+                 " latitude: " + String(station.getLat()));
+  vector<ForecastObject> forecasts = handler.getForecastNext7Days(station);
 }
 
 // Must have function: Loop runs continously on device after setup
