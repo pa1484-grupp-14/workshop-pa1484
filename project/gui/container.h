@@ -7,5 +7,6 @@ class Container : public Widget {
 
 public:
     Container(WidgetContainer& parent, uint32_t id);
+    Container& disableFrame();
 };
 #endif

@@ -43,6 +43,7 @@ class Tile: public WidgetContainer {
     Label& getLabel(std::string name) {
         return labels.at(name);
     }
+    Tile& focusOn();
 
     ~Tile();
     friend class GUI;

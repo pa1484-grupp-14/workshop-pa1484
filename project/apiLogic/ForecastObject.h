@@ -1,7 +1,9 @@
 #pragma once
+#include <string>
 
 struct ForecastObject
 {
+	std::string time;
 	int air_pressure_at_mean_sea_level;
 	float air_temperature;
 	int cloud_area_fraction;

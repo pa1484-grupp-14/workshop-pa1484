@@ -56,6 +56,10 @@ Tile::Tile(GUI& ctx, lv_obj_t* tile_id, uint8_t c_id, uint8_t r_id): WidgetConta
 Tile& Tile::getTile() {
     return *this;
 }
+Tile& Tile::focusOn() {
+    lv_group_focus_obj(this->getWidgetPtr());
+    return *this;
+}
 WidgetContainer& Tile::getParent() {
     return *this;
 }
