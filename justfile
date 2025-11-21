@@ -34,25 +34,15 @@ clean_libdeps:
 clean: clean_pio clean_libdeps
 
 # Run GoogleTest specified in /test
-test:
+[positional-arguments]
+test environment="esp32":
   @just write Starting GoogleTest...
-  pio test
-
-#   ___                _ _                                       _
-#  / __|___ _ __  _ __(_) |___   __ ___ _ __  _ __  __ _ _ _  __| |___
-# | (__/ _ \ '  \| '_ \ | / -_) / _/ _ \ '  \| '  \/ _` | ' \/ _` (_-<
-#  \___\___/_|_|_| .__/_|_\___| \__\___/_|_|_|_|_|_\__,_|_||_\__,_/__/
-#                |_|
+  pio test -e {{environment}}
 
 # Generate compile_commands.json
-[group('compile_commands')]
-compile_commands:
-  pio run -t compiledb
-
-# Generate compile_commands.json for the native environment
-[group('compile_commands')]
-compile_commands_native:
-  pio run -t compiledb -e native
+[positional-arguments]
+compile_commands environment="esp32":
+  pio run -t compiledb -e {{environment}}
 
 #  _  _      _   _
 # | \| |__ _| |_(_)_ _____
