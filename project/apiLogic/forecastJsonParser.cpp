@@ -6,7 +6,7 @@
 
 
 void ForecastListener::whitespace(char c) { 
-    Serial.println("whitespace");
+    
 }
 
 void ForecastListener::startDocument() {   
@@ -28,7 +28,6 @@ void ForecastListener::value(String value) {
         const char* timeValue = value.c_str();
         if(strstr(timeValue, "12:00:00Z")) {
             state = ListeningState::ProcessingItem;
-            Serial.println("Processing item.");
             this->forecastObjectToAdd.time = value.c_str();
         } else {
             state = ListeningState::InTimeSeries;
@@ -37,8 +36,7 @@ void ForecastListener::value(String value) {
     }
     else if(state == ListeningState::ProcessingItem)
     {
-        Serial.println("my Checker: " + String(this->currentKey) + " : " + value);
-    
+        
         if (this->currentKey == "air_pressure_at_mean_sea_level")
             this->forecastObjectToAdd.air_pressure_at_mean_sea_level = value.toInt();
 
@@ -111,18 +109,18 @@ void ForecastListener::value(String value) {
 }
 
 void ForecastListener::endArray() {
-    Serial.println("end array. ");
+    
 }
 
 void ForecastListener::endObject() {
     
     if(state == ListeningState::ProcessingItem){
-        Serial.println("pushed object. ");
+        
         forecasts.push_back(forecastObjectToAdd);
         itemCount++;
         state = ListeningState::InTimeSeries;
     } else {
-        Serial.println("end object. ");
+        
     }
         
 }
@@ -132,11 +130,11 @@ void ForecastListener::endDocument() {
 }
 
 void ForecastListener::startArray() {
-    Serial.println("start array. ");
+    
 }
 
 void ForecastListener::startObject() {
-    Serial.println("start object. ");
+    
     if(state == ListeningState::InTimeSeries)
         state = ListeningState::FilteringObject;
 }
