@@ -32,7 +32,15 @@ StationObject APIhandler::getStationFromArray(const vector<StationObject>& array
 
 vector<HistoricalObject> APIhandler::getHistoricalData(const string& key, int parameter)
 {
-   
+    JsonStreamingParser parser;
+
+    const int BUFFER_SIZE = 512;
+    uint8_t buffer[BUFFER_SIZE];
+
+    vector<String> files = {
+        "/historicalJsonVersion1.json",
+        "/historicalJsonVersion2.json"
+    };
 
 
 
