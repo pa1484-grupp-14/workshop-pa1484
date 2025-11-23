@@ -37,36 +37,12 @@ clean: clean_pio clean_libdeps
 [positional-arguments]
 test environment="esp32":
   @just write Starting GoogleTest...
-  pio test -e {{environment}}
+  pio test -e {{environment}} -vv
 
 # Generate compile_commands.json
 [positional-arguments]
 compile_commands environment="esp32":
   pio run -t compiledb -e {{environment}}
-
-#  _  _      _   _
-# | \| |__ _| |_(_)_ _____
-# | .` / _` |  _| \ V / -_)
-# |_|\_\__,_|\__|_|\_/\___|
-#
-
-# Build native environment
-[group('native')]
-build-native:
-    @just write Building native environment
-    pio run -e native
-    @just write Native build complete. Run 'just run' to execute.
-
-# Run the natively compiled binary
-[group('native')]
-run-native:
-  @just write Executing native build
-  ./.pio/build/native/program
-  @just write Execution finished.
-
-# Build and run the native environment
-[group('native')]
-native: build-native run-native
 
 #  ___ ___ ___ _______
 # | __/ __| _ \__ /_  )
@@ -76,7 +52,7 @@ native: build-native run-native
 
 # Build ESP32 environment
 [group('esp32')]
-build-esp32:
+build:
   @just write Building ESP32 environment
   pio run -e esp32
   @just write ESP32 build complete. Run 'just upload' to upload to ESP32.
