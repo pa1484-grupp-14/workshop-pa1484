@@ -11,7 +11,7 @@
 
 ### Linux
 
-Run the following command to add access to the `ttyACM0` port:
+Run the following command to add access to the ESP32 port, e.g. `/dev/ttyACM0`:
 ```sh
 usermod -aG dialout $USER
 ```
@@ -33,7 +33,7 @@ users.users.${ YOUR_USERNAME } = {
 You can do ONE of the following:
 
 - Open Visual Studio Code and navigate to the PlatformIO plugin. Then press build, upload (to the device), and then monitor. See screenshot below.
-- Run `just esp32 /dev/ttyACM0`, see `just --list` for more details.
+- Run `just esp32 ESP32_PORT_NAME"`, see `just --list` for more details. Replace `ESP32_PORT_NAME` with the appropriate port name for your system, e.g. `COM3` on Windows or `/dev/ttyACM0` on Linux.
 
 ![[screenshot](./assets/screenshot.png)](./assets/screenshot.png)
 
