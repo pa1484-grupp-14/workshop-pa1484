@@ -82,6 +82,7 @@ static void connect_wifi() {
   }
 }
 
+#ifndef PIO_UNIT_TESTING
 // Must have function: Setup is run once on startup
 void setup() {
   amoled = new hal::Display();
@@ -96,3 +97,4 @@ void loop() {
   lv_timer_handler();
   delay(5);
 }
+#endif
