@@ -1,12 +1,6 @@
 #include <time.h>
 #include <HAL.hpp>
-#include "apiLogic/ApiHandling.h"
-#include "apiLogic/ForecastObject.h"
-#include "apiLogic/StationObject.h"
 #include "initGUI.h"
-// Wi-Fi credentials (Delete these before commiting to GitHub)
-static const char* WIFI_SSID = "ssid";
-static const char* WIFI_PASSWORD = "pass";
 
 static hal::Display* amoled;
 
