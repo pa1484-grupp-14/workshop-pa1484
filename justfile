@@ -35,9 +35,9 @@ clean: clean_pio clean_libdeps
 
 # Run GoogleTest specified in /test
 [positional-arguments]
-test environment="esp32":
+test upload_port environment="esp32":
   @just write Starting GoogleTest...
-  pio test -e {{environment}} -vv
+  pio test -e {{environment}} -vv --upload-port {{upload_port}}
 
 # Generate compile_commands.json
 [positional-arguments]
@@ -59,9 +59,9 @@ build:
 
 # Upload to ESP32 (T-Display-AMOLED)
 [positional-arguments, group('esp32')]
-upload $UPLOAD_PORT:
-    just write Uploading to $UPLOAD_PORT...
-    pio run --target upload --upload-port $UPLOAD_PORT
+upload upload_port:
+    just write Uploading to {{upload_port}}...
+    pio run --target upload --upload-port {{upload_port}}
 
 # Open the serial monitor for the esp32 environment.
 [group('esp32')]
@@ -71,7 +71,7 @@ monitor:
 
 # Builds the ESP32 target, uploads it, and starts the serial monitor.
 [positional-arguments, group('esp32')]
-esp32 $UPLOAD_PORT:
+esp32 upload_port:
   @just build-esp32
-  @just upload $UPLOAD_PORT
+  @just upload {{upload_port}}
   @just monitor
