@@ -10,8 +10,14 @@ build/
 # Ignore compilation commands produced by pio
 /compile_commands.json
 
-# Ignore all files with local signature
-**/*local
+# Environment files
 .env
+.build.env
+
+# Generated files that contains absolute paths + secrets
 .vscode/c_cpp_properties.json
 .vscode/launch.json
+
+# Ignore all files with local signature
+**/*local
+

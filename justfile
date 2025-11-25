@@ -1,6 +1,6 @@
 set shell := ["bash", "-uc"]
 set windows-shell := ["powershell.exe", "-NoLogo", "-Command"]
-set dotenv-load := true
+set dotenv-filename := ".build.env"
 
 #   ___                       _
 #  / __|___ _ _  ___ _ _ __ _| |
@@ -59,7 +59,7 @@ build:
 
 # Upload to ESP32 (T-Display-AMOLED)
 [positional-arguments, group('esp32')]
-upload upload_port:
+upload upload_port=env("UPLOAD_PORT"):
     just write Uploading to {{upload_port}}...
     pio run --target upload --upload-port {{upload_port}}
 
@@ -71,7 +71,6 @@ monitor:
 
 # Builds the ESP32 target, uploads it, and starts the serial monitor.
 [positional-arguments, group('esp32')]
-esp32 upload_port:
-  @just build-esp32
+esp32 upload_port=env("UPLOAD_PORT"):
   @just upload {{upload_port}}
   @just monitor
