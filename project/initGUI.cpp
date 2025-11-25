@@ -21,9 +21,6 @@
 #include "gui/icons/wi_day_sunny_overcast.c"
 #include "gui/icons/wi_day_thunderstorm.c"
 
-static int32_t columns[] = {300, 300, LV_GRID_TEMPLATE_LAST};
-static int32_t row[] = {120, 70, 70, 70, LV_GRID_TEMPLATE_LAST};
-
 //Symbol Codes as defined by SMHI API
 #define SC_CLEAR_SKY 1
 #define SC_NEARLY_CLEAR_SKY 2
@@ -294,44 +291,8 @@ void constructUi() {
       .addPoints("main series", {20, 40, 30, 50, 60, 5, 10, 99, 80, 0})
       .setSize(500, 300);
 
-  Tile& settings_tile = gui.addTile();
-
-  // Heading
-  settings_tile.setGridLayout(columns, row)
-      .addLabel()
-      .setText("Settings")
-      .setFont(&lv_font_montserrat_48)
-      .setGridCell(0, 0, 1, 2);
-
-  settings_tile.addLabel()
-      .setText("Weather parameter:")
-      .setFont(&lv_font_montserrat_26)
-      .setGridCell(1, 0, 1, 1, LV_GRID_ALIGN_CENTER, LV_GRID_ALIGN_END);
-
   Settings* settings = new Settings();
-
-  settings_tile.addDropdown()
-      .setOptions("Temperature\nMoisture\nWind")
-      .addEventCallback(Settings::change_weather_parameter,
-                        lv_event_code_t::LV_EVENT_VALUE_CHANGED, settings)
-      .setListFont(&lv_font_montserrat_26)
-      .setFont(&lv_font_montserrat_26)
-      .setGridCell(1, 1)
-      .setWidth(270);
-
-  settings_tile.addLabel("Select option 2 ")
-      .setText("Weather location:")
-      .setFont(&lv_font_montserrat_26)
-      .setGridCell(2, 0, 1, 1, LV_GRID_ALIGN_CENTER, LV_GRID_ALIGN_END);
-
-  settings_tile.addDropdown()
-      .setOptions("Karlskrona\nGothenburg\nStockholm\nMalmo")
-      .addEventCallback(Settings::change_city,
-                        lv_event_code_t::LV_EVENT_VALUE_CHANGED, settings)
-      .setListFont(&lv_font_montserrat_26)
-      .setFont(&lv_font_montserrat_26)
-      .setGridCell(2, 1)
-      .setWidth(270);
+  settings->constructUI(&gui);
 
   gui.scrollToTile(0);
 }
