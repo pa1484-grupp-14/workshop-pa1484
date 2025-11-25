@@ -4,9 +4,15 @@
 
 ### General
 
-1. Ensure that one of the following combinations of applications is installed
-    - [just](https://github.com/casey/just) and [platformio](https://platformio.org/install/cli), see [scoop](https://scoop.sh/) for Windows or your systems package manager for Linux/MacOS.
-    - ["PlatformIO IDE"](https://marketplace.visualstudio.com/items?itemName=platformio.platformio-ide) plugin for Visual Studio Code, see [PlatformIO Quick Start](#platformio_quick_start) for more details.
+1. Ensure one of the following combinations is installed:
+
+- **[just](https://github.com/casey/just) and [platformio](https://platformio.org/install/cli)**
+    - For installation on windows, see [scoop](https://scoop.sh/).
+    - For installation on Linux or MacOS, please refer to your operating systems package manager.
+
+- **["PlatformIO IDE"](https://marketplace.visualstudio.com/items?itemName=platformio.platformio-ide) plugin for Visual Studio Code**
+    - For installation see [PlatformIO IDE](https://platformio.org/platformio-ide) for more details.
+
 2. Connect the ESP32 to your computer via a USB cable.
 
 ### Linux
@@ -20,7 +26,7 @@ usermod -aG dialout $USER
 
 Add the following to your NixOS configuration:
 ```nix
-users.users.${ YOUR_USERNAME } = {
+users.users."<YOUR_USERNAME>" } = { # Please change to your personal username
     extraGroups = [ /* other groups such as 'wheel' */ "dialout" ];
     # Other settings for your user here
 };
