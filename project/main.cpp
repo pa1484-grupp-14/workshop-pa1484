@@ -42,10 +42,8 @@ void setup() {
 void loop() {
   int wanted_duration = lv_timer_handler();
   int next_iteration = wanted_duration + millis();
-
-  int wait = next_iteration - millis();
-  if ( wait > 0 ) {
-    delay(wait);
+  while(millis() < next_iteration) {
+      //do small steps of processing requests here
   }
 }
 
