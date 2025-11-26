@@ -30,8 +30,13 @@ clean_libdeps:
   @just write Cleaning dependencies recursively
   rm -r .pio/libdeps
 
+[private]
+clean_clangd:
+  @just write Cleaning clangd cache
+  rm -r .cache
+
 # Clean the pio dependencies, libraries, and build files
-clean: clean_pio clean_libdeps
+clean: clean_pio clean_libdeps clean_clangd
 
 # Run GoogleTest specified in /test
 [positional-arguments]
