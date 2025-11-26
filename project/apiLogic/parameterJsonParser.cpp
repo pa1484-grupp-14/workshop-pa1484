@@ -19,19 +19,20 @@ void StationFilterParser::key(String key) {
         case StationFilter::OutsideStations:
             
             if(key == "station") {
-                Serial.println("Entering Stations collection stage 1.");
                 state = StationFilter::EnteringStation;
             }
             break;
         case StationFilter::InsideStation:
             break;
         case StationFilter::InsideObject:
-            
-            Serial.println(key.c_str());
             if(key == "key")
                 state = StationFilter::GettingKey;
             else if(key == "name")
                 state = StationFilter::GettingName;
+            else if(key == "latitude")
+                state = StationFilter::GettingLatitude;
+            else if(key == "longitude")
+                state = StationFilter::GettingLongitude;
             else
                 state = StationFilter::GettingIrrelevant;
                 break;
@@ -40,53 +41,52 @@ void StationFilterParser::key(String key) {
             break;
     }
 }
-
+StationFilterParser::StationFilterParser(): state(StationFilter::OutsideStations), current_city_name(""), current_station_obj({0,"",0,0}) {}
 void StationFilterParser::value(String value) {
     switch(state) {
-        case StationFilter::OutsideStations:
-            break;
-        case StationFilter::InsideStation:
-            break;
-        case StationFilter::InsideObject:
-            break;
-        case StationFilter::GettingIrrelevant:
-            state = StationFilter::InsideObject;
-            break;
         case StationFilter::GettingKey:
-            current_station_key = value.toInt();
-            state = StationFilter::InsideObject;
+            current_station_obj.setKey(value.toInt());
+            break;
+        case StationFilter::GettingLatitude:
+            current_station_obj.setLat(value.toFloat());
+            break;
+        case StationFilter::GettingLongitude:
+            current_station_obj.setLon(value.toFloat());
             break;
         case StationFilter::GettingName:
-            std::string converted_string = std::string(value.c_str());
-            int a = converted_string.find("-");
-            if(a < 0) {
-                current_station_name = converted_string;
-            } else {
-                current_station_name = converted_string.substr(0,a);
+            {
+                std::string converted_string = std::string(value.c_str());
+                current_station_obj.setName(converted_string);
+                int a = converted_string.find("-");
+                if(a < 0) {
+                    current_city_name = converted_string;
+                } else {
+                    current_city_name = converted_string.substr(0,a);
+                }
             }
-            state = StationFilter::InsideObject;
             break;
+        case StationFilter::GettingIrrelevant:
+            break;
+        default:
+            return;
     }
+    state = StationFilter::InsideObject;
 }
 void StationFilterParser::endArray(){
     if(state == StationFilter::InsideStation) {
         state = StationFilter::OutsideStations;
     } else if (state == StationFilter::GettingIrrelevantArray) {
-        Serial.println("exit irrelevant array");
         state = StationFilter::InsideObject;
     }
 }
 void StationFilterParser::endObject() {
     if (state == StationFilter::InsideObject) {
-        if(current_station_key != 0) {
-            stations.emplace(current_station_name, current_station_key);
-            current_station_key = 0;
-            Serial.println(current_station_name.c_str());
+        if(current_city_name.length() > 0) {
+            stations.emplace(current_city_name, current_station_obj);
+            current_city_name = "";
         }
         state = StationFilter::InsideStation;
-        Serial.println("Exiting Object.");
     } else if (state == StationFilter::GettingIrrelevantObject) {
-        Serial.println("exit irrelevant object");
         state = StationFilter::InsideObject;
     }
 }
@@ -95,19 +95,15 @@ void StationFilterParser::endDocument() {
 }
 void StationFilterParser::startArray() {
     if(state == StationFilter::EnteringStation){
-        Serial.println("Entering Station Collection.");
         state = StationFilter::InsideStation;
     } else if (state == StationFilter::GettingIrrelevant) {
-        Serial.println("starting irrelevant array");
         state = StationFilter::GettingIrrelevantArray;
     }
 }
 void StationFilterParser::startObject() {
     if(state == StationFilter::InsideStation) {
-        Serial.println("Entering Object.");
         state = StationFilter::InsideObject;
     } else if (state == StationFilter::GettingIrrelevant) {
-        Serial.println("starting irrelevant object");
         state = StationFilter::GettingIrrelevantObject;
     }
         

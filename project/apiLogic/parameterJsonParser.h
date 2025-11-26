@@ -8,26 +8,29 @@
 
 
 enum StationFilter {
-  OutsideStations = 0,
-  EnteringStation = 1,
-  InsideStation = 2,
-  InsideObject = 3,
-  GettingKey = 4,
-  GettingName = 5,
-  GettingIrrelevant = 6,
-  GettingIrrelevantArray = 7,
-  GettingIrrelevantObject = 8,
+  OutsideStations,
+  EnteringStation,
+  InsideStation,
+  InsideObject,
+  GettingKey,
+  GettingName,
+  GettingLatitude,
+  GettingLongitude,
+  GettingIrrelevant,
+  GettingIrrelevantArray,
+  GettingIrrelevantObject,
 };
 
 class StationFilterParser: public JsonListener {
     private:
     char filter;
     StationFilter state;
-    std::string current_station_name;
-    int current_station_key;
+    std::string current_city_name;
+    StationObject current_station_obj;
 
     public: 
-    std::unordered_map<std::string, int> stations;
+    StationFilterParser();
+    std::unordered_map<std::string, StationObject> stations;
 
     void whitespace(char c) override;
   

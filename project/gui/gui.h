@@ -16,13 +16,19 @@ class GUI;
 #include "dropdown.h"
 #include "image.h"
 #include "tile.h"
+#include "Popup.h"
 
 class GUI {
+    Popup current_popup;
     lv_obj_t* tileview;
+
     std::vector<Tile> tiles;
 
     public:
 
+    Popup& OpenPopup();
+    void ClosePopup();
+    
     Tile& operator[](int index) {
         return this->getTile(index);
     }

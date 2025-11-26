@@ -35,9 +35,6 @@ void setup() {
   constructUi();
 }
 
-
-
-
 // Must have function: Loop runs continously on device after setup
 void loop() {
   int wanted_duration = lv_timer_handler();

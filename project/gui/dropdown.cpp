@@ -12,6 +12,18 @@ Dropdown& Dropdown::setOptions(const std::string& text) {
     lv_dropdown_set_options(this->getWidgetPtr(), text.c_str());
     return *this;
 }
+Dropdown& Dropdown::setOptions(const std::vector<std::string>& text) {
+    lv_dropdown_clear_options(this->getWidgetPtr());
+    for (size_t i = 0; i < text.size(); i++)
+    {
+        lv_dropdown_add_option(this->getWidgetPtr(), text[i].c_str(), i);
+    }
+    return *this;
+}
+Dropdown& Dropdown::pushOption(const std::string& new_option) {
+    auto len = lv_dropdown_get_option_count(this->getWidgetPtr());
+    lv_dropdown_add_option(this->getWidgetPtr(), new_option.c_str(), len);
+}
 
 Dropdown& Dropdown::addOption(std::string& text, uint32_t pos) {
     lv_dropdown_add_option(this->getWidgetPtr(), text.c_str(), pos);

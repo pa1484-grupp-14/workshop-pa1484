@@ -16,9 +16,9 @@
 #include <JsonListener.h>
 #include <JsonStreamingParser.h>
  
-StationObject APIhandler::getStationFromArray(const std::unordered_map<std::string, int>& array, const std::string& stationName) 
+StationObject APIhandler::getStationFromArray(const std::unordered_map<std::string, StationObject>& array, const std::string& stationName) 
 {
-    return StationObject{array.at(stationName), stationName, 0.0, 0.0};
+    return array.at(stationName);
 }
 
 vector<HistoricalObject> APIhandler::getHistoricalData(const string& key, int parameter)
@@ -86,7 +86,7 @@ std::vector<ForecastObject> APIhandler::getForecastNext7Days(const StationObject
 
 
 
-std::unordered_map<std::string, int> APIhandler::getStationsArray(int citiesAmount , int parameter)    
+std::unordered_map<std::string, StationObject> APIhandler::getStationsArray(int citiesAmount , int parameter)    
 {
 
     WiFiClient client;
@@ -120,7 +120,7 @@ std::unordered_map<std::string, int> APIhandler::getStationsArray(int citiesAmou
         else
         {
             Serial.println("Failed to fetch station keys and cities");
-            return std::unordered_map<std::string, int>();
+            return std::unordered_map<std::string, StationObject>();
         }
 
         http.end();

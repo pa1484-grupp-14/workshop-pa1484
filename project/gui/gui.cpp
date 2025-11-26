@@ -4,9 +4,17 @@
 
 GUI::~GUI() {}
 
-GUI::GUI() {
+GUI::GUI(): current_popup(*this, nullptr) {
     tileview = nullptr;
 }
+
+Popup& GUI::OpenPopup() {
+    this->current_popup = Popup(*this, lv_msgbox_create(nullptr));
+}
+void GUI::ClosePopup() {
+    this->current_popup = Popup(*this, nullptr);
+}
+
 
 lv_obj_t* GUI::getTileView() {
     return tileview;

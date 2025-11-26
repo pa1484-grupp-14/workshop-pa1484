@@ -18,6 +18,11 @@ class Dropdown: public Widget {
     ///on a newline-seperated string. 
     Dropdown& setOptions(const std::string& text);
 
+    ///# WARNING: has additional overhead compared to other versions of this function.
+    Dropdown& setOptions(const std::vector<std::string>& text);
+
+    Dropdown& pushOption(const std::string& new_option);
+
     ///# Dropdown::addOption
     ///inserts a new option at index ``pos``
     Dropdown& addOption(std::string& text, uint32_t pos);

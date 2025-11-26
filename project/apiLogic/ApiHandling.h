@@ -10,8 +10,8 @@
 class APIhandler
 {
 public:
-    std::unordered_map<std::string, int> getStationsArray(int citiesAmount , int parameter);
-    StationObject getStationFromArray(const std::unordered_map<std::string, int>& array,const string& stationName); 
+    std::unordered_map<std::string, StationObject> getStationsArray(int citiesAmount , int parameter);
+    StationObject getStationFromArray(const std::unordered_map<std::string, StationObject>& array,const string& stationName); 
     std::vector<HistoricalObject> getHistoricalData(const string& key,int parameter);
     std::vector<ForecastObject> getForecastNext7Days(const StationObject& stationObject);
 };

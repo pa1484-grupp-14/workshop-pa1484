@@ -55,6 +55,7 @@ static int32_t row[] = {120, 70, 70, 70, LV_GRID_TEMPLATE_LAST};
 #define SC_HEAVY_SNOW 27
 
 
+static std::vector<std::string> cities = {"Karlskrona"};
 
 WidgetContainer& AddForecastDay(WidgetContainer& tile, const std::string& day, const std::string& date, int temp, int moisture, int icon) {
     static int cols[] = { 100, 90, 90, 100, 80, LV_GRID_TEMPLATE_LAST };
@@ -183,6 +184,15 @@ int dayOfWeek(int d, int m, int y) {
 }
 
 
+void city_dropdown_cb(lv_event_t * event) {
+    lv_obj_t* dropdown = (lv_obj_t*)lv_event_get_target(event);
+    int selected = lv_dropdown_get_selected(dropdown);
+    int len = lv_dropdown_get_option_count(dropdown);
+    if(selected == len-1) {
+        gui.OpenPopup().addLabel().setText("Select first letter of the city you want to add:").center();
+    }
+}
+
 void constructUi() {
 
     //init
@@ -215,7 +225,7 @@ void constructUi() {
         weather_report.setFlexLayout(LV_FLEX_FLOW_COLUMN, LV_FLEX_ALIGN_SPACE_EVENLY);
         */
     APIhandler handler;
-  std::unordered_map<std::string, int> stationsArray = handler.getStationsArray(30, 1);
+  std::unordered_map<std::string, StationObject> stationsArray = handler.getStationsArray(30, 1);
   StationObject station = handler.getStationFromArray(stationsArray, "Karlskrona");
   //Serial.println("name: " + String(station.getName().c_str()) + " longitude: " + String(station.getLon()) + " latitude: " + String(station.getLat()));
   std::vector<ForecastObject> forecasts = handler.getForecastNext7Days(station);
@@ -289,7 +299,7 @@ void constructUi() {
             .setGridCell(1, 1).setWidth(270).getTile()
             .addLabel("Select option 2 ").setText("Weather location:").setFont(&lv_font_montserrat_26)
             .setGridCell(2, 0, 1, 1, LV_GRID_ALIGN_CENTER, LV_GRID_ALIGN_END).getTile()
-            .addDropdown().setOptions("Karlskrona\nGothenburg\nStockholm\nMalmo").setListFont(&lv_font_montserrat_26).setFont(&lv_font_montserrat_26)
+            .addDropdown("cities").setOptions(cities).pushOption("Add city...").setListFont(&lv_font_montserrat_26).setFont(&lv_font_montserrat_26).addEventCallback(city_dropdown_cb, LV_EVENT_VALUE_CHANGED, &cities)
             .setGridCell(2, 1).setWidth(270).getTile();
 
         gui.scrollToTile(0);
