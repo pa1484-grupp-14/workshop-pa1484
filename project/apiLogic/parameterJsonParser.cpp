@@ -5,6 +5,75 @@
 
 
 
+void StationFilterParser::whitespace(char c) {
+
+}
+
+void StationFilterParser::startDocument() {
+    state = StationFilter::OutsideStations;
+}
+
+void StationFilterParser::key(String key) {
+    switch(state) {
+        case StationFilter::OutsideStations:
+            if(key == "station") state = StationFilter::InsideStation;
+            break;
+        case StationFilter::InsideStation:
+            break;
+        case StationFilter::InsideObject:
+            if(key == "key")
+                state = StationFilter::GettingKey;
+            else if(key == "name")
+                state = StationFilter::GettingName;
+        default:
+    }
+}
+
+void StationFilterParser::value(String value) {
+    switch(state) {
+        case StationFilter::OutsideStations:
+            break;
+        case StationFilter::InsideStation:
+            break;
+        case StationFilter::InsideObject:
+            break;
+        case StationFilter::GettingKey:
+            current_station_key = value.toInt();
+            state = StationFilter::InsideObject;
+            break;
+        case StationFilter::GettingName:
+            std::string converted_string = std::string(value.c_str());
+            int a = converted_string.find("-");
+            if(a < 0) {
+                current_station_name = converted_string;
+            } else {
+                current_station_name = converted_string.substr(0,a);
+            }
+            state = StationFilter::InsideObject;
+            break;
+    }
+}
+void StationFilterParser::endArray(){
+    
+}
+void StationFilterParser::endObject() {
+    if(state == StationFilter::InsideStation) {
+        state = StationFilter::OutsideStations;
+    } else if (state == StationFilter::InsideObject) {
+        state = StationFilter::InsideStation;
+    }
+}
+void StationFilterParser::endDocument() {
+    
+}
+void StationFilterParser::startArray() {
+    
+}
+void StationFilterParser::startObject() {
+    if(state == StationFilter::InsideStation) 
+        state = StationFilter::InsideObject;
+}
+
 void ExampleListener::whitespace(char c) {
     Serial.println("whitespace");
 }
@@ -32,7 +101,7 @@ void ExampleListener::value(String value) {
     Serial.println("value: " + value);
     if (isKey) {
         this->isKey = false;
-        this->stationToAdd.setKey(value.c_str());
+        this->stationToAdd.setKey(value.toInt());
     } else if (isName) {
         this->stationToAdd.setName(value.c_str());
         this->isName = false;

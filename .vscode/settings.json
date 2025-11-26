@@ -1,7 +1,11 @@
 {
     "files.associations": {
+        "flake.lock": "json",
         "istream": "cpp",
         "ostream": "cpp",
-        "algorithm": "cpp"
+        "algorithm": "cpp",
+        "optional": "cpp",
+        "system_error": "cpp",
+        "regex": "cpp"
     }
 }
