@@ -10,22 +10,30 @@ void StationFilterParser::whitespace(char c) {
 }
 
 void StationFilterParser::startDocument() {
+    Serial.println("Searching stations...");
     state = StationFilter::OutsideStations;
 }
 
 void StationFilterParser::key(String key) {
     switch(state) {
         case StationFilter::OutsideStations:
-            if(key == "station") state = StationFilter::InsideStation;
+            
+            if(key == "station") {
+                Serial.println("Entering Stations collection stage 1.");
+                state = StationFilter::EnteringStation;
+            }
             break;
         case StationFilter::InsideStation:
             break;
         case StationFilter::InsideObject:
+            
+            Serial.println(key.c_str());
             if(key == "key")
                 state = StationFilter::GettingKey;
             else if(key == "name")
                 state = StationFilter::GettingName;
-            
+            else
+                state = StationFilter::GettingIrrelevant;
                 break;
         default:
 
@@ -40,6 +48,9 @@ void StationFilterParser::value(String value) {
         case StationFilter::InsideStation:
             break;
         case StationFilter::InsideObject:
+            break;
+        case StationFilter::GettingIrrelevant:
+            state = StationFilter::InsideObject;
             break;
         case StationFilter::GettingKey:
             current_station_key = value.toInt();
@@ -58,24 +69,48 @@ void StationFilterParser::value(String value) {
     }
 }
 void StationFilterParser::endArray(){
-    
-}
-void StationFilterParser::endObject() {
     if(state == StationFilter::InsideStation) {
         state = StationFilter::OutsideStations;
-    } else if (state == StationFilter::InsideObject) {
+    } else if (state == StationFilter::GettingIrrelevantArray) {
+        Serial.println("exit irrelevant array");
+        state = StationFilter::InsideObject;
+    }
+}
+void StationFilterParser::endObject() {
+    if (state == StationFilter::InsideObject) {
+        if(current_station_key != 0) {
+            stations.emplace(current_station_name, current_station_key);
+            current_station_key = 0;
+            Serial.println(current_station_name.c_str());
+        }
         state = StationFilter::InsideStation;
+        Serial.println("Exiting Object.");
+    } else if (state == StationFilter::GettingIrrelevantObject) {
+        Serial.println("exit irrelevant object");
+        state = StationFilter::InsideObject;
     }
 }
 void StationFilterParser::endDocument() {
-    
+    Serial.println("Station Search Completed.");
 }
 void StationFilterParser::startArray() {
-    
+    if(state == StationFilter::EnteringStation){
+        Serial.println("Entering Station Collection.");
+        state = StationFilter::InsideStation;
+    } else if (state == StationFilter::GettingIrrelevant) {
+        Serial.println("starting irrelevant array");
+        state = StationFilter::GettingIrrelevantArray;
+    }
 }
 void StationFilterParser::startObject() {
-    if(state == StationFilter::InsideStation) 
+    if(state == StationFilter::InsideStation) {
+        Serial.println("Entering Object.");
         state = StationFilter::InsideObject;
+    } else if (state == StationFilter::GettingIrrelevant) {
+        Serial.println("starting irrelevant object");
+        state = StationFilter::GettingIrrelevantObject;
+    }
+        
 }
 
 void ExampleListener::whitespace(char c) {

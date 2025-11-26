@@ -7,7 +7,7 @@ class StationObject
 private:
     int key;
     string name;
-    float longitude;
+    float longitude; 
     float latitude;
 public:
     StationObject(int key, string name, float longitude, float latitude);

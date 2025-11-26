@@ -215,8 +215,8 @@ void constructUi() {
         weather_report.setFlexLayout(LV_FLEX_FLOW_COLUMN, LV_FLEX_ALIGN_SPACE_EVENLY);
         */
     APIhandler handler;
-  vector<StationObject> stationsArray = handler.getStationsArray(30, 1);
-  StationObject station = handler.getStationFromArray(stationsArray, "Karlskrona-Söderstjerna");
+  std::unordered_map<std::string, int> stationsArray = handler.getStationsArray(30, 1);
+  StationObject station = handler.getStationFromArray(stationsArray, "Karlskrona");
   //Serial.println("name: " + String(station.getName().c_str()) + " longitude: " + String(station.getLon()) + " latitude: " + String(station.getLat()));
   std::vector<ForecastObject> forecasts = handler.getForecastNext7Days(station);
 
