@@ -1,5 +1,5 @@
 
-#include "gui.h"
+#include "Gui.h"
 
 
 GUI::~GUI() {}

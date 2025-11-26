@@ -1,6 +1,6 @@
 ﻿#ifndef GUI_DROPDOWN_H
 #define GUI_DROPDOWN_H
-#include "gui.h"
+#include "Widget.h"
 
 class Dropdown: public Widget {
     public:
@@ -14,8 +14,8 @@ class Dropdown: public Widget {
     Dropdown& setListFont(const lv_font_t* font, lv_style_selector_t selector = LV_PART_MAIN);
 
     ///# Dropdown::setOptions
-    ///Sets the available options inside the dropdown based 
-    ///on a newline-seperated string. 
+    ///Sets the available options inside the dropdown based
+    ///on a newline-seperated string.
     Dropdown& setOptions(const std::string& text);
 
     ///# Dropdown::addOption
@@ -25,6 +25,6 @@ class Dropdown: public Widget {
     ///# Dropdown::getSelectedItem
     ///get the index of the currently selected item
     uint32_t getSelectedItem();
-    
+
 };
 #endif

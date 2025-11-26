@@ -1,11 +1,10 @@
-#include "gui.h"
-
-Container::Container(WidgetContainer& parent, uint32_t id): Widget(parent.getTile(), lv_obj_create(parent.getWidgetPtr()), id) {}
+#include "Container.h"
+Container::Container(WidgetContainer& parent, uint32_t id): Widget((WidgetContainer*)&parent.getTile(), lv_obj_create(parent.getWidgetPtr()), id) {}
 
 static bool uninited = true;
 Container& Container::disableFrame() {
     static lv_style_t style_shadow;
-    
+
     if (uninited) {
             lv_style_init(&style_shadow);
     lv_style_set_border_opa(&style_shadow, 0);

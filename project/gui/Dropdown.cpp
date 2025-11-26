@@ -1,7 +1,6 @@
-﻿#include "gui.h"
+﻿#include "Dropdown.h"
 
-
-Dropdown::Dropdown(WidgetContainer& parent, uint32_t id): Widget(parent.getTile(), lv_dropdown_create(parent.getWidgetPtr()), id) {}
+Dropdown::Dropdown(WidgetContainer& parent, uint32_t id): Widget((WidgetContainer*)&parent.getTile(), lv_dropdown_create(parent.getWidgetPtr()), id) {}
 
 Dropdown& Dropdown::setText(std::string text) {
     lv_dropdown_set_text(this->getWidgetPtr(), text.c_str());

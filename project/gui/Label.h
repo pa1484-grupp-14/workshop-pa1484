@@ -1,7 +1,7 @@
 #ifndef GUI_LABEL_H
 #define GUI_LABEL_H
-#include "gui.h"
 
+#include "Widget.h"
 class Label: public Widget {
     public:
     Label(WidgetContainer& parent, uint32_t id);
