@@ -1,6 +1,11 @@
 #include "gui.h"
 
-Popup::~Popup() {}
+Popup::~Popup() {
+    
+}
+void Popup::clear() {
+    content = Tile(*content.ctx, content.getWidgetPtr(), 0, 0);
+}
 Popup::Popup(GUI& ctx, lv_obj_t* tile_id): WidgetContainer(tile_id), 
     content(ctx, lv_msgbox_get_content(this->getWidgetPtr()), 0,0) {
 }
@@ -47,12 +52,14 @@ Popup::Popup(GUI& ctx, lv_obj_t* tile_id): WidgetContainer(tile_id),
 Popup& Popup::addTitle(const std::string& title) {
     auto a = lv_msgbox_add_title(this->getWidgetPtr(), title.c_str());
     lv_obj_set_style_text_font(a, &lv_font_montserrat_44, LV_PART_MAIN);
-    lv_obj_set_height(a, 50);
+    
     return *this;
 }
-Popup& Popup::addButton(const std::string& title) {
+Popup& Popup::addButton(const std::string& title, lv_event_cb_t event_cb, void *user_data) {
     auto a = lv_msgbox_add_footer_button(this->getWidgetPtr(), title.c_str());
     lv_obj_set_style_text_font(a, &lv_font_montserrat_44, LV_PART_MAIN);
-    lv_obj_set_height(a, 50);
+    lv_obj_set_height(lv_msgbox_get_footer(this->getWidgetPtr()), 70);
+    lv_obj_add_event_cb(a, event_cb, LV_EVENT_CLICKED, user_data);
+
     return *this;
 }

@@ -19,6 +19,7 @@ class Popup: public WidgetContainer {
     uint32_t counter;
     Popup(GUI& ctx, lv_obj_t* tile_id);
     public:
+    void clear();
     ~Popup();
 
 //Add a new label widget as the child of this widget container
@@ -46,7 +47,7 @@ class Popup: public WidgetContainer {
         WidgetContainer& getParent() override;
 
         Popup& addTitle(const std::string& title);
-        Popup& addButton(const std::string& name);
+        Popup& addButton(const std::string& title, lv_event_cb_t event_cb, void *user_data = nullptr);
 
     friend class GUI;
 };

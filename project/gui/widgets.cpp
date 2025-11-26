@@ -11,7 +11,7 @@ void WidgetContainer::setRefCount(size_t count) {
 }
 
 WidgetContainer::~WidgetContainer() {
-    if(widget_ptr != nullptr) {
+    if(widget_ptr != nullptr && lv_obj_is_valid(widget_ptr)) {
         size_t ref_count = getRefCount();
         if (ref_count > 1) {
             //were not the last object referencing this widget

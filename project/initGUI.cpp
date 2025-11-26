@@ -183,13 +183,27 @@ int dayOfWeek(int d, int m, int y) {
     return (d + monthCode[m - 1] + yearCode) % 7;
 }
 
-
+void city_cancel_cb(lv_event_t * event) {
+    gui.ClosePopup();
+}
+void city_picker_cb(lv_event_t * event) {
+    gui.OpenPopup().addDropdown().setOptions("Placeholder");
+}
 void city_dropdown_cb(lv_event_t * event) {
     lv_obj_t* dropdown = (lv_obj_t*)lv_event_get_target(event);
     int selected = lv_dropdown_get_selected(dropdown);
     int len = lv_dropdown_get_option_count(dropdown);
     if(selected == len-1) {
-        gui.OpenPopup().addTitle("Add new city...").addButton("Cancel").addButton("Next").getTile().setSize(550, 200).setFlexLayout(LV_FLEX_FLOW_COLUMN, LV_FLEX_ALIGN_SPACE_AROUND).addLabel().setText("Select the first\nletter of your city.").setFont(&lv_font_montserrat_32).getTile().addDropdown().setOptions("A\nB\nC\nD\nE\nF\nG\nH\nI\nJ\nK\nL\nM\nN\nO\nP\nQ\nR\nS\nT\nU\nV\nW\nX\nY\nZ").setListFont(&lv_font_montserrat_44).setFont(&lv_font_montserrat_44);
+        gui.OpenPopup()
+        .addButton("Cancel", city_cancel_cb).addButton("Next", city_picker_cb).getTile().setSize(550, 200)
+        .setFlexLayout(LV_FLEX_FLOW_COLUMN, LV_FLEX_ALIGN_SPACE_AROUND)
+        .addLabel()
+        .setText("Add new city...")
+        .setFont(&lv_font_montserrat_44)
+        .getTile()
+        .addLabel()
+        .setText("Select the first\nletter of your city.")
+        .setFont(&lv_font_montserrat_32).getTile().addDropdown().setOptions("A\nB\nC\nD\nE\nF\nG\nH\nI\nJ\nK\nL\nM\nN\nO\nP\nQ\nR\nS\nT\nU\nV\nW\nX\nY\nZ").setListFont(&lv_font_montserrat_44).setFont(&lv_font_montserrat_44);
         /*
         lv_obj_t* content = lv_msgbox_get_content(popup);
         lv_msgbox_add_title(popup, "Add city...");

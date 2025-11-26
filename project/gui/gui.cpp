@@ -9,11 +9,18 @@ GUI::GUI(): current_popup() {
 }
 
 Popup& GUI::OpenPopup() {
+    if(current_popup.has_value()) {
+        this->ClosePopup();
+    } 
     this->current_popup = std::optional<Popup>{Popup(*this, lv_msgbox_create(nullptr))};
-    (*current_popup).setSize(550, 400);
-    return *current_popup;
+    current_popup.value().setSize(550, 400);
+    return current_popup.value();
 }
 void GUI::ClosePopup() {
+    if(current_popup.has_value()) {
+        current_popup.value().clear();
+        lv_msgbox_close(current_popup.value().getWidgetPtr());
+    }
     this->current_popup = {};
 }
 
