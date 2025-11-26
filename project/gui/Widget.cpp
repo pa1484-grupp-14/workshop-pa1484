@@ -14,8 +14,13 @@ Widget& Widget::focusOn() {
   lv_group_focus_obj(this->getWidgetPtr());
   return *this;
 }
-Widget::Widget(WidgetContainer* parent, lv_obj_t* widget, uint32_t id)
-    : WidgetContainer(widget) {
+Widget::Widget(WidgetContainer* parent, lv_obj_t* widget, uint32_t id) {
+
+  this->widget_ptr = widget;
+  //we *should* be the sole owner of this widget at this point.
+  //otherwise the constructor is being used incorrectly.
+  setRefCount(getRefCount() + 1);
+
   this->tile = &parent->getTile();
   this->parent = parent;
   this->id = id;
@@ -31,19 +36,19 @@ Tile& Widget::getTile() {
 }
 
 Container& Widget::addContainer(std::string name) {
-  return this->getTile().createContainer(*this, name);
+  return parent->getTile().createContainer(*this, name);
 }
 Label& Widget::addLabel(std::string name) {
-  return this->getTile().createLabel(*this, name);
+  return parent->getTile().createLabel(*this, name);
 }
 Image& Widget::addImage(std::string name) {
-  return this->getTile().createImage(*this, name);
+  return parent->getTile().createImage(*this, name);
 }
 Dropdown& Widget::addDropdown(std::string name) {
-  return this->getTile().createDropdown(*this, name);
+  return parent->getTile().createDropdown(*this, name);
 }
 Chart& Widget::addChart(std::string name) {
-  return this->getTile().createChart(*this, name);
+  return parent->getTile().createChart(*this, name);
 }
 
 Widget& Widget::addFlag(lv_obj_flag_t flag) {

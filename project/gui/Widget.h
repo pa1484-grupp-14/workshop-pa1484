@@ -3,93 +3,103 @@
 
 #include <lvgl.h>
 
-#include <unordered_map>
-#include <utility>
 #include <memory>
 #include <string>
+#include <unordered_map>
+#include <utility>
 #include <vector>
 
 #include "WidgetContainer.h"
-
+#include "gui/WidgetCustomizer.h"
 
 /// # Widget
 /// this class implements all generic widget functions from LVGL and should be inherited from for specifi widget wrappers
-class Widget: public WidgetContainer {
-    private:
-        WidgetContainer* parent;
-        Tile* tile;
-        uint32_t id;
-    protected:
-        //Object constructor
-        Widget(WidgetContainer* parent, lv_obj_t* widget, uint32_t id);
-    public:
+class Widget : public WidgetCustomizer<Widget> {
+ private:
+  WidgetContainer* parent;
+  Tile* tile;
+  uint32_t id;
+  lv_obj_t* widget_ptr;
 
-        // # Destructor function
-        ~Widget() {}
+ protected:
+  //Object constructor
+  Widget(WidgetContainer* parent, lv_obj_t* widget, uint32_t id);
 
-        // # Get Parent tile of this Widget
-        Tile& getTile() override;
+ public:
+  // # Destructor function
+  ~Widget() {}
 
-        // # Add label as child of this widget
-        Label& addLabel(std::string name = nextIdString()) override;
-        // # Add label as child of this widget
-        Chart& addChart(std::string name = nextIdString()) override;
-        // # Add label as child of this widget
-        Image& addImage(std::string name = nextIdString()) override;
-        // # Add label as child of this widget
-        Dropdown& addDropdown(std::string name = nextIdString()) override;
+  //getter function for the underlying widget pointer
+  lv_obj_t* getWidgetPtr() const { return widget_ptr; }
 
-        Container& addContainer(std::string name = nextIdString()) override;
-        // # Get parent of this widget
-        WidgetContainer& getParent() override;
+  // # Get Parent tile of this Widget
+  Tile& getTile() override;
 
-        // # Add an event callback to the widget
-        Widget& addEventCallback(lv_event_cb_t event_cb, lv_event_code_t filter, void *user_data = nullptr);
+  // # Add label as child of this widget
+  Label& addLabel(std::string name = nextIdString()) override;
+  // # Add label as child of this widget
+  Chart& addChart(std::string name = nextIdString()) override;
+  // # Add label as child of this widget
+  Image& addImage(std::string name = nextIdString()) override;
+  // # Add label as child of this widget
+  Dropdown& addDropdown(std::string name = nextIdString()) override;
 
+  Container& addContainer(std::string name = nextIdString()) override;
+  // # Get parent of this widget
+  WidgetContainer& getParent() override;
 
-        //FLAGS
+  // # Add an event callback to the widget
+  Widget& addEventCallback(lv_event_cb_t event_cb, lv_event_code_t filter,
+                           void* user_data = nullptr);
 
-        // # Add a widget flag to the widget
-        Widget& addFlag(lv_obj_flag_t flag);
+  //FLAGS
 
-        // # Remove a widget flag to the widget
-        Widget& removeFlag(lv_obj_flag_t flag);
+  // # Add a widget flag to the widget
+  Widget& addFlag(lv_obj_flag_t flag);
 
-        Widget& focusOn();
+  // # Remove a widget flag to the widget
+  Widget& removeFlag(lv_obj_flag_t flag);
 
-        // Positioning
+  Widget& focusOn();
 
-        // # Set position of the widget
-        Widget& setPos(int32_t x, int32_t y);
+  // Positioning
 
-        // # Set the X coordinate of the widget
-        Widget& setX(int32_t x);
+  // # Set position of the widget
+  Widget& setPos(int32_t x, int32_t y);
 
-        // # Set the Y coordinate of the widget
-        Widget& setY(int32_t y);
+  // # Set the X coordinate of the widget
+  Widget& setX(int32_t x);
 
-        // # Set the alignment type of the widget
-        Widget& setAlign(lv_align_t align);
+  // # Set the Y coordinate of the widget
+  Widget& setY(int32_t y);
 
-        // # Set the alignment and offset relative to widget parent
-        Widget& align(lv_align_t align, int32_t x_offset, int32_t y_offset);
+  // # Set the alignment type of the widget
+  Widget& setAlign(lv_align_t align);
 
-        // # Set the alignment and offset relative to arbitrary widget
-        Widget& alignTo(Widget& base, lv_align_t align, int32_t x_offset, int32_t y_offset);
+  // # Set the alignment and offset relative to widget parent
+  Widget& align(lv_align_t align, int32_t x_offset, int32_t y_offset);
 
-        // # Center widget
-        Widget& center();
+  // # Set the alignment and offset relative to arbitrary widget
+  Widget& alignTo(Widget& base, lv_align_t align, int32_t x_offset,
+                  int32_t y_offset);
 
-        // # Set position of the widget
-        Widget& setGridCell(int32_t row_pos, int32_t col_pos, int32_t row_span = 1, int32_t col_span = 1, lv_grid_align_t row_align = LV_GRID_ALIGN_CENTER, lv_grid_align_t column_align = LV_GRID_ALIGN_CENTER);
+  // # Center widget
+  Widget& center();
 
-        // Other Styling
+  // # Set position of the widget
+  Widget& setGridCell(int32_t row_pos, int32_t col_pos, int32_t row_span = 1,
+                      int32_t col_span = 1,
+                      lv_grid_align_t row_align = LV_GRID_ALIGN_CENTER,
+                      lv_grid_align_t column_align = LV_GRID_ALIGN_CENTER);
 
-        ///# Widget::setFont
-        /// @brief Set the font styling of the label
-        /// @param font the LVGL font for this label to use
-        /// @param selector the part of the label the font applies to (by default the main text)
-        /// @return A new reference to the calling label
-        Widget& setFont(const lv_font_t* font, lv_style_selector_t selector = LV_PART_MAIN);
+  // Other Styling
+
+  ///# Widget::setFont
+  /// @brief Set the font styling of the label
+  /// @param font the LVGL font for this label to use
+  /// @param selector the part of the label the font applies to (by default the main text)
+  /// @return A new reference to the calling label
+  Widget& setFont(const lv_font_t* font,
+                  lv_style_selector_t selector = LV_PART_MAIN);
 };
 #endif
