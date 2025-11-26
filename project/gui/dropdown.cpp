@@ -1,7 +1,7 @@
 ﻿#include "gui.h"
 
 
-Dropdown::Dropdown(WidgetContainer& parent, uint32_t id): Widget(parent.getTile(), lv_dropdown_create(parent.getWidgetPtr()), id) {}
+Dropdown::Dropdown(WidgetContainer& parent, uint32_t id): Widget(parent, lv_dropdown_create(parent.getWidgetPtr()), id) {}
 
 Dropdown& Dropdown::setText(std::string text) {
     lv_dropdown_set_text(this->getWidgetPtr(), text.c_str());
@@ -23,6 +23,7 @@ Dropdown& Dropdown::setOptions(const std::vector<std::string>& text) {
 Dropdown& Dropdown::pushOption(const std::string& new_option) {
     auto len = lv_dropdown_get_option_count(this->getWidgetPtr());
     lv_dropdown_add_option(this->getWidgetPtr(), new_option.c_str(), len);
+    return *this;
 }
 
 Dropdown& Dropdown::addOption(std::string& text, uint32_t pos) {

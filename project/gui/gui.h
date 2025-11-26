@@ -19,7 +19,7 @@ class GUI;
 #include "Popup.h"
 
 class GUI {
-    Popup current_popup;
+    std::optional<Popup> current_popup;
     lv_obj_t* tileview;
 
     std::vector<Tile> tiles;

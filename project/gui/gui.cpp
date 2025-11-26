@@ -4,15 +4,17 @@
 
 GUI::~GUI() {}
 
-GUI::GUI(): current_popup(*this, nullptr) {
+GUI::GUI(): current_popup() {
     tileview = nullptr;
 }
 
 Popup& GUI::OpenPopup() {
-    this->current_popup = Popup(*this, lv_msgbox_create(nullptr));
+    this->current_popup = std::optional<Popup>{Popup(*this, lv_msgbox_create(nullptr))};
+    (*current_popup).setSize(550, 400);
+    return *current_popup;
 }
 void GUI::ClosePopup() {
-    this->current_popup = Popup(*this, nullptr);
+    this->current_popup = {};
 }
 
 

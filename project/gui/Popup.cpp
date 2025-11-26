@@ -1,61 +1,58 @@
 #include "gui.h"
 
 Popup::~Popup() {}
-
-Label& Popup::createLabel(WidgetContainer& parent, std::string name) {
-    Label label = Label(parent, counter++);
-    labels.emplace(name, std::move(label));
-    return labels.at(name);
-}
-Label& Popup::addLabel(std::string name){
-    return this->createLabel(*this, name);
-}
-
-Chart& Popup::createChart(WidgetContainer& parent, std::string name) {
-    Chart label = Chart(parent, counter++);
-    charts.emplace(name, std::move(label));
-    return charts.at(name);
-}
-Chart& Popup::addChart(std::string name) {
-    return this->createChart(*this, name);
-}
-
-Container& Popup::createContainer(WidgetContainer& parent, std::string name) {
-    Container label = Container(parent, counter++);
-    containers.emplace(name, std::move(label));
-    return containers.at(name);
-}
-Container& Popup::addContainer(std::string name) {
-    return this->createContainer(*this, name);
-}
-
-Image& Popup::createImage(WidgetContainer& parent, std::string name) {
-    Image label = Image(parent, counter++);
-    images.emplace(name, std::move(label));
-    return images.at(name);
-}
-Image& Popup::addImage(std::string name) {
-    return this->createImage(*this, name);
-}
-Dropdown& Popup::createDropdown(WidgetContainer& parent, std::string name) {
-    Dropdown label = Dropdown(parent, counter++);
-    dropdowns.emplace(name, std::move(label));
-    return dropdowns.at(name);
-}
-Dropdown& Popup::addDropdown(std::string name) {
-    return this->createDropdown(*this, name);
+Popup::Popup(GUI& ctx, lv_obj_t* tile_id): WidgetContainer(tile_id), 
+    content(ctx, lv_msgbox_get_content(this->getWidgetPtr()), 0,0) {
 }
 
 
+//Add a new label widget as the child of this widget container
+        Container& Popup::addContainer(std::string name) {
+            return content.addContainer(name);
+        }
 
-Popup::Popup(GUI& ctx, lv_obj_t* tile_id): WidgetContainer(tile_id) {
-    this->ctx = &ctx;
-}
-Tile& Popup::getTile() {
-    static int todo = 0;
-    return (Tile&)todo;
-}
+        //Add a new label widget as the child of this widget container
+        Label& Popup::addLabel(std::string name) {
+            return content.addLabel(name);
+        }
 
-WidgetContainer& Popup::getParent() {
+
+        //Add a new label widget as the child of this widget container
+        Image& Popup::addImage(std::string name) {
+            return content.addImage(name);
+        }
+
+
+        //Add a new label widget as the child of this widget container
+        Dropdown& Popup::addDropdown(std::string name) {
+            return content.addDropdown(name);
+        }
+
+
+        //Add a new label widget as the child of this widget container
+        Chart& Popup::addChart(std::string name) {
+            return content.addChart(name);
+        }
+
+        //Get a reference to the parent tile container
+        Tile& Popup::getTile() {
+            return content;
+        }
+
+        //Get a reference to the parent widget/container
+        WidgetContainer& Popup::getParent() {
+            return content;
+        }
+
+Popup& Popup::addTitle(const std::string& title) {
+    auto a = lv_msgbox_add_title(this->getWidgetPtr(), title.c_str());
+    lv_obj_set_style_text_font(a, &lv_font_montserrat_44, LV_PART_MAIN);
+    lv_obj_set_height(a, 50);
+    return *this;
+}
+Popup& Popup::addButton(const std::string& title) {
+    auto a = lv_msgbox_add_footer_button(this->getWidgetPtr(), title.c_str());
+    lv_obj_set_style_text_font(a, &lv_font_montserrat_44, LV_PART_MAIN);
+    lv_obj_set_height(a, 50);
     return *this;
 }

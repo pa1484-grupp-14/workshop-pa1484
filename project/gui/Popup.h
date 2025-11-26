@@ -14,34 +14,40 @@
 
 
 class Popup: public WidgetContainer {
-    GUI* ctx;
-
-    std::unordered_map<std::string, Label> labels;
-    std::unordered_map<std::string, Image> images;
-    std::unordered_map<std::string, Dropdown> dropdowns;
-    std::unordered_map<std::string, Chart> charts;
-    std::unordered_map<std::string, Container> containers;
+    Tile content;
 
     uint32_t counter;
     Popup(GUI& ctx, lv_obj_t* tile_id);
     public:
-
-    Label& createLabel(WidgetContainer& parent, std::string name);
-    Chart& createChart(WidgetContainer& parent, std::string name);
-    Image& createImage(WidgetContainer& parent, std::string name);
-    Dropdown& createDropdown(WidgetContainer& parent, std::string name);
-    Container& createContainer(WidgetContainer& parent, std::string name);
-    Tile& getTile() override;
-    WidgetContainer& getParent() override;
-    Label& addLabel(std::string name = nextIdString()) override;
-    Chart& addChart(std::string name = nextIdString()) override;
-    Image& addImage(std::string name = nextIdString()) override;
-    Container& addContainer(std::string name = nextIdString()) override;
-    Dropdown& addDropdown(std::string name = nextIdString()) override;
-    Label& getLabel(std::string name) {
-        return labels.at(name);
-    }
     ~Popup();
+
+//Add a new label widget as the child of this widget container
+        Container& addContainer(std::string name = nextIdString())  override;
+
+        //Add a new label widget as the child of this widget container
+        Label& addLabel(std::string name = nextIdString())  override;
+
+
+        //Add a new label widget as the child of this widget container
+        Image& addImage(std::string name = nextIdString())  override;
+
+
+        //Add a new label widget as the child of this widget container
+        Dropdown& addDropdown(std::string name = nextIdString())  override;
+
+
+        //Add a new label widget as the child of this widget container
+        Chart& addChart(std::string name = nextIdString())  override;
+
+        //Get a reference to the parent tile container
+        Tile& getTile()  override;
+
+        //Get a reference to the parent widget/container
+        WidgetContainer& getParent() override;
+
+        Popup& addTitle(const std::string& title);
+        Popup& addButton(const std::string& name);
+
     friend class GUI;
 };
 

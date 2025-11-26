@@ -2,7 +2,7 @@
 #include "gui.h"
 #include <stdexcept>
 
-Chart::Chart(WidgetContainer& parent, uint32_t id): Widget(parent.getTile(), lv_chart_create(parent.getWidgetPtr()), id) {}
+Chart::Chart(WidgetContainer& parent, uint32_t id): Widget(parent, lv_chart_create(parent.getWidgetPtr()), id) {}
 
 Chart& Chart::setType(lv_chart_type_t type) {
     lv_chart_set_type(this->getWidgetPtr(), type);

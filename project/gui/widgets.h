@@ -49,7 +49,7 @@ class WidgetContainer {
         void setRefCount(size_t count);
     public:
         //getter function for the underlying widget pointer
-        lv_obj_t* getWidgetPtr() const { return widget_ptr; }
+        virtual lv_obj_t* getWidgetPtr() const { return widget_ptr; }
 
 
         //Add a new label widget as the child of this widget container
@@ -185,5 +185,6 @@ class Widget: public WidgetContainer {
         /// @param selector the part of the label the font applies to (by default the main text)
         /// @return A new reference to the calling label
         Widget& setFont(const lv_font_t* font, lv_style_selector_t selector = LV_PART_MAIN);
-};
+        friend class Popup;
+    };
 #endif

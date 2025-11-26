@@ -189,7 +189,15 @@ void city_dropdown_cb(lv_event_t * event) {
     int selected = lv_dropdown_get_selected(dropdown);
     int len = lv_dropdown_get_option_count(dropdown);
     if(selected == len-1) {
-        gui.OpenPopup().addLabel().setText("Select first letter of the city you want to add:").center();
+        gui.OpenPopup().addTitle("Add new city...").addButton("Cancel").addButton("Next").getTile().setSize(550, 200).setFlexLayout(LV_FLEX_FLOW_COLUMN, LV_FLEX_ALIGN_SPACE_AROUND).addLabel().setText("Select the first\nletter of your city.").setFont(&lv_font_montserrat_32).getTile().addDropdown().setOptions("A\nB\nC\nD\nE\nF\nG\nH\nI\nJ\nK\nL\nM\nN\nO\nP\nQ\nR\nS\nT\nU\nV\nW\nX\nY\nZ").setListFont(&lv_font_montserrat_44).setFont(&lv_font_montserrat_44);
+        /*
+        lv_obj_t* content = lv_msgbox_get_content(popup);
+        lv_msgbox_add_title(popup, "Add city...");
+        lv_msgbox_add_footer_button(popup, "Cancel");
+        lv_msgbox_add_footer_button(popup, "Next");
+        lv_obj_t* dropdown = lv_dropdown_create(content);
+        lv_dropdown_set_options(dropdown, );
+        */
     }
 }
 
@@ -299,7 +307,12 @@ void constructUi() {
             .setGridCell(1, 1).setWidth(270).getTile()
             .addLabel("Select option 2 ").setText("Weather location:").setFont(&lv_font_montserrat_26)
             .setGridCell(2, 0, 1, 1, LV_GRID_ALIGN_CENTER, LV_GRID_ALIGN_END).getTile()
-            .addDropdown("cities").setOptions(cities).pushOption("Add city...").setListFont(&lv_font_montserrat_26).setFont(&lv_font_montserrat_26).addEventCallback(city_dropdown_cb, LV_EVENT_VALUE_CHANGED, &cities)
+            .addDropdown("cities")
+            .setOptions(cities)
+            .pushOption("add city...")
+            .setListFont(&lv_font_montserrat_26)
+            .setFont(&lv_font_montserrat_26)
+            .addEventCallback(city_dropdown_cb, LV_EVENT_VALUE_CHANGED, &cities)
             .setGridCell(2, 1).setWidth(270).getTile();
 
         gui.scrollToTile(0);

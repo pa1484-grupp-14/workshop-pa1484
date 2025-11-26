@@ -47,6 +47,7 @@ class Tile: public WidgetContainer {
 
     ~Tile();
     friend class GUI;
+    friend class Popup;
 };
 
 #endif
