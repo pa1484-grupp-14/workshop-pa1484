@@ -73,9 +73,3 @@ upload upload_port=env("UPLOAD_PORT"):
 monitor:
     @just write Starting serial monitor...
     pio device monitor -e esp32
-
-# Builds the ESP32 target, uploads it, and starts the serial monitor.
-[positional-arguments, group('esp32')]
-esp32 upload_port=env("UPLOAD_PORT"):
-  @just upload {{upload_port}}
-  @just monitor
