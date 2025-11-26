@@ -25,7 +25,11 @@ void StationFilterParser::key(String key) {
                 state = StationFilter::GettingKey;
             else if(key == "name")
                 state = StationFilter::GettingName;
+            
+                break;
         default:
+
+            break;
     }
 }
 
