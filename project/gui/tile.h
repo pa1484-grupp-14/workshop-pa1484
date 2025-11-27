@@ -40,6 +40,7 @@ class Tile: public WidgetContainer {
     Image& addImage(std::string name = nextIdString()) override;
     Container& addContainer(std::string name = nextIdString()) override;
     Dropdown& addDropdown(std::string name = nextIdString()) override;
+    Dropdown& getDropdown(const std::string& name) override;
     Label& getLabel(std::string name) {
         return labels.at(name);
     }

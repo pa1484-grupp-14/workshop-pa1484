@@ -8,15 +8,20 @@ GUI::GUI(): current_popup() {
     tileview = nullptr;
 }
 
-Popup& GUI::OpenPopup() {
-    if(current_popup.has_value()) {
-        this->ClosePopup();
+Popup& GUI::openPopup() {
+    if(!current_popup.has_value()) { 
+        this->current_popup = std::optional<Popup>{Popup(*this, lv_msgbox_create(nullptr))};
+        current_popup.value().setSize(550, 400);
     } 
-    this->current_popup = std::optional<Popup>{Popup(*this, lv_msgbox_create(nullptr))};
-    current_popup.value().setSize(550, 400);
     return current_popup.value();
 }
-void GUI::ClosePopup() {
+Popup& GUI::switchPopup() {
+    if(current_popup.has_value()) {
+        this->closePopup();
+    }
+    return this->openPopup();
+}
+void GUI::closePopup() {
     if(current_popup.has_value()) {
         current_popup.value().clear();
         lv_msgbox_close(current_popup.value().getWidgetPtr());

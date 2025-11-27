@@ -36,7 +36,7 @@ class Popup: public WidgetContainer {
         //Add a new label widget as the child of this widget container
         Dropdown& addDropdown(std::string name = nextIdString())  override;
 
-
+        Dropdown& getDropdown(const std::string& name) override;
         //Add a new label widget as the child of this widget container
         Chart& addChart(std::string name = nextIdString())  override;
 

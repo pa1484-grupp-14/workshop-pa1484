@@ -56,7 +56,9 @@ Tile::Tile(GUI& ctx, lv_obj_t* tile_id, uint8_t c_id, uint8_t r_id): WidgetConta
 Tile& Tile::getTile() {
     return *this;
 }
-
+Dropdown& Tile::getDropdown(const std::string& name) {
+    return dropdowns.at(name);
+}
 WidgetContainer& Tile::getParent() {
     return *this;
 }

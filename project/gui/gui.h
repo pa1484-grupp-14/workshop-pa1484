@@ -17,6 +17,7 @@ class GUI;
 #include "image.h"
 #include "tile.h"
 #include "Popup.h"
+#include "fonts/fonts.h"
 
 class GUI {
     std::optional<Popup> current_popup;
@@ -26,8 +27,12 @@ class GUI {
 
     public:
 
-    Popup& OpenPopup();
-    void ClosePopup();
+    //Opens the current popup in the ui, if one doesn't exist, it will be created
+    Popup& openPopup();
+    //Close the current popup and start with another one, if one doesn't exist, it will be created
+    Popup& switchPopup();
+    //Close the currently opened popup, if one doesn't exist, this does nothing.
+    void closePopup();
     
     Tile& operator[](int index) {
         return this->getTile(index);

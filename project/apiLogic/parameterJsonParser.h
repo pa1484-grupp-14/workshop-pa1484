@@ -21,7 +21,7 @@ enum StationFilter {
   GettingIrrelevantObject,
 };
 
-class StationFilterParser: public JsonListener {
+class StationParser: public JsonListener {
     private:
     char filter;
     StationFilter state;
@@ -29,7 +29,7 @@ class StationFilterParser: public JsonListener {
     StationObject current_station_obj;
 
     public: 
-    StationFilterParser();
+    StationParser();
     std::unordered_map<std::string, StationObject> stations;
 
     void whitespace(char c) override;

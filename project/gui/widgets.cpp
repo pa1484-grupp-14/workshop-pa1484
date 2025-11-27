@@ -125,7 +125,9 @@ Widget& Widget::addEventCallback(lv_event_cb_t event_cb, lv_event_code_t filter,
 Tile& Widget::getTile(){
     return *tile;
 }
-
+Dropdown& Widget::getDropdown(const std::string& name) {
+    return this->getTile().getDropdown(name);
+}
 Container& Widget::addContainer(std::string name){
     return this->getTile().createContainer(*this, name);
 }
@@ -141,7 +143,10 @@ Dropdown& Widget::addDropdown(std::string name) {
 Chart& Widget::addChart(std::string name) {
     return this->getTile().createChart(*this, name);
 }
-
+Widget& Widget::setTextAlign(lv_text_align_t align, lv_style_selector_t selector) {
+    lv_obj_set_style_text_align(this->getWidgetPtr(), align, selector);
+    return *this;
+}
 Widget& Widget::addFlag(lv_obj_flag_t flag) {
     lv_obj_add_flag(this->getWidgetPtr(), flag);
     return *this;

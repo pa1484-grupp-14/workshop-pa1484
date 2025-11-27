@@ -92,7 +92,7 @@ std::unordered_map<std::string, StationObject> APIhandler::getStationsArray(int 
     WiFiClient client;
     HTTPClient http;
     JsonStreamingParser parser;
-    StationFilterParser listener;
+    StationParser listener;
     String url = "http://opendata-download-metobs.smhi.se/api/version/latest/parameter/" + String(parameter) + ".json";
 
     if (http.begin(client, url)) {

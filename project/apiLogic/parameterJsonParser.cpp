@@ -5,16 +5,16 @@
 
 
 
-void StationFilterParser::whitespace(char c) {
+void StationParser::whitespace(char c) {
 
 }
 
-void StationFilterParser::startDocument() {
+void StationParser::startDocument() {
     Serial.println("Searching stations...");
     state = StationFilter::OutsideStations;
 }
 
-void StationFilterParser::key(String key) {
+void StationParser::key(String key) {
     switch(state) {
         case StationFilter::OutsideStations:
             
@@ -41,8 +41,8 @@ void StationFilterParser::key(String key) {
             break;
     }
 }
-StationFilterParser::StationFilterParser(): state(StationFilter::OutsideStations), current_city_name(""), current_station_obj({0,"",0,0}) {}
-void StationFilterParser::value(String value) {
+StationParser::StationParser(): state(StationFilter::OutsideStations), current_city_name(""), current_station_obj({0,"",0,0}) {}
+void StationParser::value(String value) {
     switch(state) {
         case StationFilter::GettingKey:
             current_station_obj.setKey(value.toInt());
@@ -58,10 +58,15 @@ void StationFilterParser::value(String value) {
                 std::string converted_string = std::string(value.c_str());
                 current_station_obj.setName(converted_string);
                 int a = converted_string.find("-");
-                if(a < 0) {
+                int b = converted_string.find(" ");
+                if(a < 0 && b < 0) {
                     current_city_name = converted_string;
-                } else {
+                } else if (b < 0) {
                     current_city_name = converted_string.substr(0,a);
+                } else if (a < 0) {
+                    current_city_name = converted_string.substr(0,b);
+                } else {
+                    current_city_name = converted_string.substr(0,min(a,b));
                 }
             }
             break;
@@ -72,14 +77,14 @@ void StationFilterParser::value(String value) {
     }
     state = StationFilter::InsideObject;
 }
-void StationFilterParser::endArray(){
+void StationParser::endArray(){
     if(state == StationFilter::InsideStation) {
         state = StationFilter::OutsideStations;
     } else if (state == StationFilter::GettingIrrelevantArray) {
         state = StationFilter::InsideObject;
     }
 }
-void StationFilterParser::endObject() {
+void StationParser::endObject() {
     if (state == StationFilter::InsideObject) {
         if(current_city_name.length() > 0) {
             stations.emplace(current_city_name, current_station_obj);
@@ -90,17 +95,17 @@ void StationFilterParser::endObject() {
         state = StationFilter::InsideObject;
     }
 }
-void StationFilterParser::endDocument() {
+void StationParser::endDocument() {
     Serial.println("Station Search Completed.");
 }
-void StationFilterParser::startArray() {
+void StationParser::startArray() {
     if(state == StationFilter::EnteringStation){
         state = StationFilter::InsideStation;
     } else if (state == StationFilter::GettingIrrelevant) {
         state = StationFilter::GettingIrrelevantArray;
     }
 }
-void StationFilterParser::startObject() {
+void StationParser::startObject() {
     if(state == StationFilter::InsideStation) {
         state = StationFilter::InsideObject;
     } else if (state == StationFilter::GettingIrrelevant) {

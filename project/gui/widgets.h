@@ -66,6 +66,8 @@ class WidgetContainer {
         //Add a new label widget as the child of this widget container
         virtual Dropdown& addDropdown(std::string name = nextIdString()) = 0;
 
+        //Add a new label widget as the child of this widget container
+        virtual Dropdown& getDropdown(const std::string& name) = 0;
 
         //Add a new label widget as the child of this widget container
         virtual Chart& addChart(std::string name = nextIdString()) = 0;
@@ -133,6 +135,8 @@ class Widget: public WidgetContainer {
         // # Add label as child of this widget
         Dropdown& addDropdown(std::string name = nextIdString()) override;
 
+        Dropdown& getDropdown(const std::string& name) override;
+
         Container& addContainer(std::string name = nextIdString()) override;
         // # Get parent of this widget
         WidgetContainer& getParent() override;
@@ -164,6 +168,9 @@ class Widget: public WidgetContainer {
 
         // # Set the alignment type of the widget
         Widget& setAlign(lv_align_t align);
+
+        // # Set the alignment type of the widget
+        Widget& setTextAlign(lv_text_align_t align, lv_style_selector_t selector = LV_PART_MAIN);
 
         // # Set the alignment and offset relative to widget parent
         Widget& align(lv_align_t align, int32_t x_offset, int32_t y_offset);
