@@ -9,7 +9,6 @@
 
 class GUI;
 #include <lvgl.h>
-#include "Label.h"
 #include "WidgetContainer.h"
 
 class Tile : public WidgetContainer {
@@ -40,11 +39,13 @@ class Tile : public WidgetContainer {
   Image& addImage(std::string name = nextIdString()) override;
   Container& addContainer(std::string name = nextIdString()) override;
   Dropdown& addDropdown(std::string name = nextIdString()) override;
+  Dropdown& getDropdown(const std::string& name) override;
   Label& getLabel(std::string name) { return *labels.at(name); }
   Tile& focusOn();
 
   ~Tile();
   friend class GUI;
+  friend class Popup;
 };
 
 #endif

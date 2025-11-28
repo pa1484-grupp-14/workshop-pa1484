@@ -51,6 +51,10 @@ Dropdown& Tile::addDropdown(std::string name) {
   return this->createDropdown(*this, name);
 }
 
+Dropdown& Tile::getDropdown(const std::string& name) {
+  return *dropdowns.at(name);
+}
+
 Tile::Tile(GUI& ctx, lv_obj_t* tile_id, uint8_t c_id, uint8_t r_id)
     : WidgetContainer(tile_id) {
   this->ctx = &ctx;

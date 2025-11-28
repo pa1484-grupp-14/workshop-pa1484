@@ -42,7 +42,7 @@ class WidgetContainer {
 
  public:
   //getter function for the underlying widget pointer
-  lv_obj_t* getWidgetPtr() const { return widget_ptr; }
+  virtual lv_obj_t* getWidgetPtr() const { return widget_ptr; }
 
   //Add a new label widget as the child of this widget container
   virtual Container& addContainer(std::string name = nextIdString()) = 0;
@@ -55,6 +55,9 @@ class WidgetContainer {
 
   //Add a new label widget as the child of this widget container
   virtual Dropdown& addDropdown(std::string name = nextIdString()) = 0;
+
+  //Add a new label widget as the child of this widget container
+  virtual Dropdown& getDropdown(const std::string& name) = 0;
 
   //Add a new label widget as the child of this widget container
   virtual Chart& addChart(std::string name = nextIdString()) = 0;
@@ -96,4 +99,5 @@ class WidgetContainer {
   ~WidgetContainer();
 
   friend class Tile;
+  friend class Popup;
 };

@@ -33,15 +33,23 @@ Tile& Widget::getTile() {
 Container& Widget::addContainer(std::string name) {
   return this->getTile().createContainer(*this, name);
 }
+
 Label& Widget::addLabel(std::string name) {
   return this->getTile().createLabel(*this, name);
 }
+
 Image& Widget::addImage(std::string name) {
   return this->getTile().createImage(*this, name);
 }
+
 Dropdown& Widget::addDropdown(std::string name) {
   return this->getTile().createDropdown(*this, name);
 }
+
+Dropdown& Widget::getDropdown(const std::string& name) {
+  return this->getTile().getDropdown(name);
+}
+
 Chart& Widget::addChart(std::string name) {
   return this->getTile().createChart(*this, name);
 }
@@ -73,6 +81,12 @@ Widget& Widget::setY(int32_t y) {
 
 Widget& Widget::setAlign(lv_align_t align) {
   lv_obj_set_align(this->getWidgetPtr(), align);
+  return *this;
+}
+
+Widget& Widget::setTextAlign(lv_text_align_t align,
+                             lv_style_selector_t selector) {
+  lv_obj_set_style_text_align(this->getWidgetPtr(), align, selector);
   return *this;
 }
 

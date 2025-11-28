@@ -2,10 +2,13 @@
 #define GUI_H
 
 #include <memory>
+#include <optional>
 #include <string>
 #include <unordered_map>
 #include <utility>
 #include <vector>
+
+#include "fonts/fonts.h"
 
 class GUI;
 #include <lvgl.h>
@@ -15,19 +18,27 @@ class GUI;
 
 #include "Widget.h"
 
-
 #include "Chart.h"
 #include "Container.h"
 #include "Dropdown.h"
 #include "Image.h"
 #include "Label.h"
 
+#include "Popup.h"
 
 class GUI {
+  std::optional<Popup> current_popup;
   lv_obj_t* tileview;
   std::vector<Tile> tiles;
 
  public:
+  //Opens the current popup in the ui, if one doesn't exist, it will be created
+  Popup& openPopup();
+  //Close the current popup and start with another one, if one doesn't exist, it will be created
+  Popup& switchPopup();
+  //Close the currently opened popup, if one doesn't exist, this does nothing.
+  void closePopup();
+
   Tile& operator[](int index) { return this->getTile(index); }
   Tile& getTile(int id) { return tiles.at(id); }
   Tile& addTile();

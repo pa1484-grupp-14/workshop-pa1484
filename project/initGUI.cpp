@@ -2,7 +2,7 @@
 #include "apiLogic/ApiHandling.h"
 #include <vector>
 #include <unordered_map>
-
+#include <iostream>
 
 #include "gui/icons/wi_cloudy.c"
 #include "gui/icons/wi_celsius.c"
@@ -20,8 +20,8 @@
 #include "gui/icons/wi_day_sprinkle.c"
 
 
-static int32_t columns[] = {300, 300, LV_GRID_TEMPLATE_LAST};
-static int32_t row[] = {120, 70, 70, 70, LV_GRID_TEMPLATE_LAST};
+static int32_t columns[] = {200, 400, LV_GRID_TEMPLATE_LAST};
+static int32_t row[] = {110, 80, 80, 80, LV_GRID_TEMPLATE_LAST};
 
 
 
@@ -54,10 +54,11 @@ static int32_t row[] = {120, 70, 70, 70, LV_GRID_TEMPLATE_LAST};
 #define SC_MODERATE_SNOW 26
 #define SC_HEAVY_SNOW 27
 
-
+static std::unordered_map<std::string, StationObject> placeholder_cities_list = std::unordered_map<std::string, StationObject>();
+static std::vector<std::string> cities = {"Karlskrona"};
 
 WidgetContainer& AddForecastDay(WidgetContainer& tile, const std::string& day, const std::string& date, int temp, int moisture, int icon) {
-    static int cols[] = { 100, 90, 90, 100, 80, LV_GRID_TEMPLATE_LAST };
+    static int cols[] = { 80, 90, 90, 90, 110, LV_GRID_TEMPLATE_LAST };
     static int rows[] = { 35,40, LV_GRID_TEMPLATE_LAST };
     const lv_image_dsc_t* icon_image = &wi_day_sunny;
 
@@ -152,10 +153,10 @@ WidgetContainer& AddForecastDay(WidgetContainer& tile, const std::string& day, c
     container.setGridLayout(cols, rows).setSize(550, 125);
     container.addImage().setSource(icon_image).setGridCell(0, 0, 2, 1).setSize(100, 80);
     container.addLabel().setText(day).setFont(&lv_font_montserrat_48).setGridCell(0, 1, 1, 3);
-    container.addLabel().setText(date).setFont(&lv_font_montserrat_28).setGridCell(0, 4).setSize(100,40);
-    container.addLabel().setText(std::to_string(temp)).setFont(&lv_font_montserrat_28).setGridCell(1, 1,1,1,LV_GRID_ALIGN_CENTER, LV_GRID_ALIGN_END);
+    container.addLabel().setText(date).setFont(&font_regular).setGridCell(0, 4).setSize(110,40);
+    container.addLabel().setText(std::to_string(temp)).setFont(&font_regular).setGridCell(1, 1,1,1,LV_GRID_ALIGN_CENTER, LV_GRID_ALIGN_END);
     container.addImage().setSource(&wi_celsius).setGridCell(1, 2, 1, 1, LV_GRID_ALIGN_CENTER, LV_GRID_ALIGN_START);
-    container.addLabel().setText(std::to_string(moisture) + "%").setFont(&lv_font_montserrat_28).setGridCell(1, 3, 1, 1, LV_GRID_ALIGN_CENTER, LV_GRID_ALIGN_END);
+    container.addLabel().setText(std::to_string(moisture) + "%").setFont(&font_regular).setGridCell(1, 3, 1, 1, LV_GRID_ALIGN_CENTER, LV_GRID_ALIGN_END);
     container.addImage().setSource(&wi_raindrop).setGridCell(1, 4, 1, 1, LV_GRID_ALIGN_CENTER, LV_GRID_ALIGN_START);
 
     return tile;
@@ -183,6 +184,85 @@ int dayOfWeek(int d, int m, int y) {
 }
 
 
+void city_cancel_cb(lv_event_t * event) {
+    gui.closePopup();
+}
+void city_confirm_cb(lv_event_t * event) {
+    char filtering_text[100]; 
+    Dropdown* old_dropdown = (Dropdown*)lv_event_get_user_data(event);
+    lv_dropdown_get_selected_str(old_dropdown->getWidgetPtr(), filtering_text, 100);
+    gui.closePopup();
+    std::string city = std::string(filtering_text);
+    for(auto& check: cities) {
+        if(check == city) {
+            return;
+        }
+    }
+    cities.push_back(city);
+    gui.getTile(3).getDropdown("cities").setOptions(cities)
+            .pushOption("add location...");
+
+}
+void city_picker_cb(lv_event_t * event) {
+    char filtering_text[2]; 
+    Dropdown* old_dropdown = (Dropdown*)lv_event_get_user_data(event);
+    lv_dropdown_get_selected_str(old_dropdown->getWidgetPtr(), filtering_text, 2);
+    Popup& popup = gui.switchPopup();
+    
+    Dropdown& dropdown = popup.getTile().setSize(550, 200)
+        .setFlexLayout(LV_FLEX_FLOW_COLUMN, LV_FLEX_ALIGN_SPACE_EVENLY)
+        .addLabel()
+        .setText("Add new location...")
+        .setFont(&font_header)
+        .getTile()
+        .addLabel()
+        .setText("Select the location\nyou'd like to add.")
+        .setFont(&font_regular).setTextAlign(LV_TEXT_ALIGN_CENTER).getTile().addDropdown();
+
+    dropdown.setOptions("").setListFont(&font_regular).setFont(&font_regular).setWidth(300);
+    int option_counter = 0;
+    for(auto city : placeholder_cities_list) {
+        if(city.first.at(0) == filtering_text[0]) {
+            dropdown.pushOption(city.first);
+            option_counter++;
+        }
+    }
+    if(option_counter > 0) {
+        popup.addButton("Cancel", city_cancel_cb).addButton("Finish", city_confirm_cb, &dropdown);
+    } else {
+        gui.switchPopup().addButton("Okay", city_cancel_cb).getTile().setSize(550, 200)
+        .setFlexLayout(LV_FLEX_FLOW_COLUMN, LV_FLEX_ALIGN_SPACE_AROUND)
+        .addLabel()
+        .setText("Add new location...")
+        .setFont(&font_header)
+        .getTile()
+        .addLabel()
+        .setText("There were no locations\nbeginning with this letter\n\n")
+        .setFont(&lv_font_montserrat_32).setTextAlign(LV_TEXT_ALIGN_CENTER);
+    }
+    
+}
+void city_dropdown_cb(lv_event_t * event) {
+    lv_obj_t* dropdown = (lv_obj_t*)lv_event_get_target(event);
+    int selected = lv_dropdown_get_selected(dropdown);
+    int len = lv_dropdown_get_option_count(dropdown);
+    if(selected == len-1) {
+        Popup& popup = gui.openPopup();
+        popup.getTile().setSize(550, 200)
+        .setFlexLayout(LV_FLEX_FLOW_COLUMN, LV_FLEX_ALIGN_SPACE_AROUND)
+        .addLabel()
+        .setText("Add new location...")
+        .setFont(&font_header)
+        .getTile()
+        .addLabel()
+        .setText("Select the first\nletter of your location.")
+        .setFont(&lv_font_montserrat_32).setTextAlign(LV_TEXT_ALIGN_CENTER);
+        Dropdown& dropdown = popup.getTile().addDropdown();
+        dropdown.setOptions("A\nB\nC\nD\nE\nF\nG\nH\nI\nJ\nK\nL\nM\nN\nO\nP\nQ\nR\nS\nT\nU\nV\nW\nX\nY\nZ").setListFont(&font_header).setFont(&font_header);
+        popup.addButton("Cancel", city_cancel_cb).addButton("Next", city_picker_cb, &dropdown);
+    }
+}
+
 void constructUi() {
 
     //init
@@ -195,17 +275,18 @@ void constructUi() {
     //project text
     Widget& project_label = main_screen
         .addLabel("main label")
-        .setText("PA1484 Software development project")
-        .setFont(&lv_font_montserrat_28)
+        .setText("Software development project")
+        .setFont(&font_regular)
         .center();
+    project_label.setHeight(80);
 
     //group number label
     main_screen
         .addLabel()
-        .setText("Group 14")
+        .setText("PA1484 Group 14")
         .setFont(&lv_font_montserrat_48)
-        .alignTo(project_label, LV_ALIGN_CENTER, 0, -40).focusOn()
-        .getTile().addLabel().setText("Version 2").setFont(&lv_font_montserrat_44).alignTo(project_label, LV_ALIGN_CENTER, 0, 150);
+        .alignTo(project_label, LV_ALIGN_CENTER, 0, -60).focusOn()
+        .getTile().addLabel().setText("Version 3").setFont(&font_header).alignTo(project_label, LV_ALIGN_CENTER, 0, 150);
 
 
 
@@ -215,8 +296,8 @@ void constructUi() {
         weather_report.setFlexLayout(LV_FLEX_FLOW_COLUMN, LV_FLEX_ALIGN_SPACE_EVENLY);
         */
     APIhandler handler;
-  vector<StationObject> stationsArray = handler.getStationsArray(30, 1);
-  StationObject station = handler.getStationFromArray(stationsArray, "Karlskrona-Söderstjerna");
+  placeholder_cities_list = handler.getStationsArray(30, 1);
+  StationObject station = handler.getStationFromArray(placeholder_cities_list, "Karlskrona");
   //Serial.println("name: " + String(station.getName().c_str()) + " longitude: " + String(station.getLon()) + " latitude: " + String(station.getLat()));
   std::vector<ForecastObject> forecasts = handler.getForecastNext7Days(station);
 
@@ -283,14 +364,19 @@ void constructUi() {
             .setGridLayout(columns, row)
             .addLabel().setText("Settings").setFont(&lv_font_montserrat_48)
             .setGridCell(0, 0, 1, 2).getTile()
-            .addLabel().setText("Weather parameter:").setFont(&lv_font_montserrat_26)
+            .addLabel().setText("Parameter:").setFont(&font_regular)
             .setGridCell(1, 0, 1, 1, LV_GRID_ALIGN_CENTER, LV_GRID_ALIGN_END).getTile()
-            .addDropdown().setOptions("Temperature\nMoisture\nWind").setListFont(&lv_font_montserrat_26).setFont(&lv_font_montserrat_26)
-            .setGridCell(1, 1).setWidth(270).getTile()
-            .addLabel("Select option 2 ").setText("Weather location:").setFont(&lv_font_montserrat_26)
+            .addDropdown().setOptions("Temperature\nMoisture\nWind").setListFont(&font_regular).setFont(&font_regular)
+            .setGridCell(1, 1).setWidth(370).getTile()
+            .addLabel("Select option 2 ").setText("Location:").setFont(&font_regular)
             .setGridCell(2, 0, 1, 1, LV_GRID_ALIGN_CENTER, LV_GRID_ALIGN_END).getTile()
-            .addDropdown().setOptions("Karlskrona\nGothenburg\nStockholm\nMalmo").setListFont(&lv_font_montserrat_26).setFont(&lv_font_montserrat_26)
-            .setGridCell(2, 1).setWidth(270).getTile();
+            .addDropdown("cities")
+            .setOptions(cities)
+            .pushOption("add location...")
+            .setListFont(&font_regular)
+            .setFont(&font_regular)
+            .addEventCallback(city_dropdown_cb, LV_EVENT_VALUE_CHANGED, &cities)
+            .setGridCell(2, 1).setWidth(370).getTile();
 
         gui.scrollToTile(0);
 }
