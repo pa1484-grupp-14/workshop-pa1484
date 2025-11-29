@@ -77,6 +77,21 @@ void StationParser::value(String value) {
     }
     state = StationFilter::InsideObject;
 }
+void StationParser::startArray() {
+    if(state == StationFilter::EnteringStation){
+        state = StationFilter::InsideStation;
+    } else if (state == StationFilter::GettingIrrelevant) {
+        state = StationFilter::GettingIrrelevantArray;
+    }
+}
+void StationParser::startObject() {
+    if(state == StationFilter::InsideStation) {
+        state = StationFilter::InsideObject;
+    } else if (state == StationFilter::GettingIrrelevant) {
+        state = StationFilter::GettingIrrelevantObject;
+    }
+        
+}
 void StationParser::endArray(){
     if(state == StationFilter::InsideStation) {
         state = StationFilter::OutsideStations;
@@ -98,21 +113,7 @@ void StationParser::endObject() {
 void StationParser::endDocument() {
     Serial.println("Station Search Completed.");
 }
-void StationParser::startArray() {
-    if(state == StationFilter::EnteringStation){
-        state = StationFilter::InsideStation;
-    } else if (state == StationFilter::GettingIrrelevant) {
-        state = StationFilter::GettingIrrelevantArray;
-    }
-}
-void StationParser::startObject() {
-    if(state == StationFilter::InsideStation) {
-        state = StationFilter::InsideObject;
-    } else if (state == StationFilter::GettingIrrelevant) {
-        state = StationFilter::GettingIrrelevantObject;
-    }
-        
-}
+
 
 void ExampleListener::whitespace(char c) {
     Serial.println("whitespace");
