@@ -15,6 +15,7 @@ class Image;
 class Chart;
 class Dropdown;
 class Container;
+class Spinner;
 
 static size_t id_generator;
 static size_t nextId() {
@@ -65,6 +66,8 @@ class WidgetContainer {
 
         //Add a new label widget as the child of this widget container
         virtual Dropdown& addDropdown(std::string name = nextIdString()) = 0;
+
+        virtual Spinner& addSpinner(std::string name = nextIdString()) = 0;
 
 
         //Add a new label widget as the child of this widget container
@@ -132,6 +135,8 @@ class Widget: public WidgetContainer {
         Image& addImage(std::string name = nextIdString()) override;
         // # Add label as child of this widget
         Dropdown& addDropdown(std::string name = nextIdString()) override;
+
+        Spinner& addSpinner(std::string name = nextIdString()) override;
 
         Container& addContainer(std::string name = nextIdString()) override;
         // # Get parent of this widget

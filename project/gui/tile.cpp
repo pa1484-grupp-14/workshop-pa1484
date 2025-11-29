@@ -19,6 +19,23 @@ Chart& Tile::createChart(WidgetContainer& parent, std::string name) {
 Chart& Tile::addChart(std::string name) {
     return this->createChart(*this, name);
 }
+void Tile::clear() {
+    labels.clear();
+    images.clear();
+    dropdowns.clear();
+    charts.clear();
+    containers.clear();
+    spinners.clear();
+  
+}
+Spinner& Tile::createSpinner(WidgetContainer& parent, std::string name) {
+    Spinner label = Spinner(parent, counter++);
+    spinners.emplace(name, std::move(label));
+    return spinners.at(name);
+}
+Spinner& Tile::addSpinner(std::string name) {
+    return this->createSpinner(*this, name);
+}
 
 Container& Tile::createContainer(WidgetContainer& parent, std::string name) {
     Container label = Container(parent, counter++);

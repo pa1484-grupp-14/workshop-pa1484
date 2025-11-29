@@ -22,22 +22,25 @@ class Tile: public WidgetContainer {
     std::unordered_map<std::string, Dropdown> dropdowns;
     std::unordered_map<std::string, Chart> charts;
     std::unordered_map<std::string, Container> containers;
+    std::unordered_map<std::string, Spinner> spinners;
 
     uint32_t counter;
 
     Tile(GUI& ctx, lv_obj_t* tile_id, uint8_t c_id, uint8_t r_id);
     public:
-
+    void clear();
     Label& createLabel(WidgetContainer& parent, std::string name);
     Chart& createChart(WidgetContainer& parent, std::string name);
     Image& createImage(WidgetContainer& parent, std::string name);
     Dropdown& createDropdown(WidgetContainer& parent, std::string name);
     Container& createContainer(WidgetContainer& parent, std::string name);
+    Spinner& createSpinner(WidgetContainer& parent, std::string name);
     Tile& getTile() override;
     WidgetContainer& getParent() override;
     Label& addLabel(std::string name = nextIdString()) override;
     Chart& addChart(std::string name = nextIdString()) override;
     Image& addImage(std::string name = nextIdString()) override;
+    Spinner& addSpinner(std::string name = nextIdString()) override;
     Container& addContainer(std::string name = nextIdString()) override;
     Dropdown& addDropdown(std::string name = nextIdString()) override;
     Label& getLabel(std::string name) {

@@ -6,6 +6,7 @@ GUI::~GUI() {}
 
 GUI::GUI() {
     tileview = nullptr;
+    tiles.reserve(4);
 }
 
 lv_obj_t* GUI::getTileView() {

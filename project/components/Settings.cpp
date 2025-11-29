@@ -1,8 +1,7 @@
 #include "Settings.h"
-#include "globals.h"
+#include "constants.h"
 
-#include "misc/lv_event.h"
-#include "widgets/dropdown/lv_dropdown.h"
+#include <lvgl.h>
 
 Settings::Settings() {}
 Settings::~Settings() {}
@@ -24,8 +23,10 @@ void Settings::change_city(lv_event_t* event) {
   settings->city = std::string(buf, buf_size);
 }
 
-void Settings::constructUI(GUI* gui) {
-  Tile& settings_tile = gui->addTile();
+void Settings::process() {}
+
+void Settings::constructUI(Tile* gui) {
+  Tile& settings_tile = *gui;
 
   // Heading
   settings_tile.setGridLayout(columns, row)

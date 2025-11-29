@@ -11,6 +11,7 @@ class GUI;
 #include <lvgl.h>
 #include "widgets.h"
 
+#include "Spinner.h"
 #include "chart.h"
 #include "container.h"
 #include "dropdown.h"
@@ -41,9 +42,10 @@ class GUI {
   GUI();
 };
 
-class Graphical {
+class Component {
  public:
-  virtual void constructUI(GUI* gui) = 0;
+  virtual void constructUI(Tile* gui) = 0;
+  virtual void process() = 0;
 };
 
 #endif

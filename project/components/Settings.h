@@ -3,7 +3,6 @@
 #include <lvgl.h>
 #include <string>
 #include "gui/gui.h"
-#include "misc/lv_types.h"
 
 enum WeatherParameter {
   Temperature = 0,
@@ -14,7 +13,7 @@ enum WeatherParameter {
   SunshineTime,
 };
 
-class Settings : public Graphical {
+class Settings : public Component {
  private:
   WeatherParameter weather_parameter;
   std::string city;
@@ -22,7 +21,8 @@ class Settings : public Graphical {
  public:
   Settings();
   ~Settings();
-  void constructUI(GUI *gui) override;
+  void constructUI(Tile *gui) override;
+  void process() override;
   static void change_weather_parameter(lv_event_t* event);
   static void change_city(lv_event_t* event);
 };
