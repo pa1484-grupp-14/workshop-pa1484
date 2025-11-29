@@ -275,10 +275,10 @@ void Forecast::process() {
       try {
 
       StationObject station =
-      handler.getStationFromArray(stationsArray, "Karlskrona-Söderstjerna"); 
+      handler.getStationFromArray(stationsArray, "Karlskrona"); 
         //Serial.println("name: " + String(station.getName().c_str()) + " longitude: " + String(station.getLon()) + " latitude: " + String(station.getLat()));
       std::vector<ForecastObject> forecasts = handler.getForecastNext7Days(station);
-        
+        ui_tile->clear();
         construct_forecast_ui(ui_tile, forecasts);
         status = ForecastStatus::Fetched;
       } catch(int err) {

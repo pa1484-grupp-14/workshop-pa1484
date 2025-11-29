@@ -33,6 +33,7 @@ void Tile::clear() {
   charts.clear();
   containers.clear();
   spinners.clear();
+  lv_obj_clean(this->getWidgetPtr());
 }
 
 Spinner& Tile::createSpinner(WidgetContainer& parent, std::string name) {

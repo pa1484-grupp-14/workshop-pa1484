@@ -19,7 +19,7 @@ class Settings : public Component {
   std::vector<std::string> available_cities;
   WeatherParameter weather_parameter;
   std::string city;
-
+  Tile* ui_tile;
  public:
   Settings();
   ~Settings();
@@ -27,4 +27,6 @@ class Settings : public Component {
   void process() override;
   static void change_weather_parameter(lv_event_t* event);
   static void change_city(lv_event_t* event);
+  static void city_picker_cb(lv_event_t* event);
+  static void city_confirm_cb(lv_event_t * event);
 };
