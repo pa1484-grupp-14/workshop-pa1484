@@ -21,7 +21,7 @@ class Tile : public WidgetContainer {
   std::unordered_map<std::string, Dropdown*> dropdowns;
   std::unordered_map<std::string, Chart*> charts;
   std::unordered_map<std::string, Container*> containers;
-  std::unordered_map<std::string, Spinner> spinners;
+  std::unordered_map<std::string, Spinner*> spinners;
 
   uint32_t counter;
 

@@ -40,6 +40,8 @@ class Widget : public WidgetContainer {
   // # Add label as child of this widget
   Dropdown& addDropdown(std::string name = nextIdString()) override;
 
+  Spinner& addSpinner(std::string name = nextIdString()) override;
+
   Dropdown& getDropdown(const std::string& name) override;
 
   Container& addContainer(std::string name = nextIdString()) override;

@@ -1,7 +1,7 @@
 #ifndef GUI_SPINNER_H
 #define GUI_SPINNER_H
 
-#include "Gui.h"
+#include "Widget.h"
 
 class Spinner : public Widget {
 public:

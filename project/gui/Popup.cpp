@@ -26,6 +26,9 @@ Image& Popup::addImage(std::string name) {
   return content.addImage(name);
 }
 
+Spinner& Popup::addSpinner(std::string name) {
+  return content.addSpinner();
+}
 //Add a new label widget as the child of this widget container
 Dropdown& Popup::addDropdown(std::string name) {
   return content.addDropdown(name);

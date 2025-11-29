@@ -23,6 +23,7 @@ class GUI;
 #include "Dropdown.h"
 #include "Image.h"
 #include "Label.h"
+#include "Spinner.h"
 
 #include "Popup.h"
 

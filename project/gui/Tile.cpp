@@ -5,6 +5,7 @@
 #include "Dropdown.h"
 #include "Image.h"
 #include "Label.h"
+#include "Spinner.h"
 Tile::~Tile() {}
 
 Label& Tile::createLabel(WidgetContainer& parent, std::string name) {
@@ -35,9 +36,10 @@ void Tile::clear() {
 }
 
 Spinner& Tile::createSpinner(WidgetContainer& parent, std::string name) {
-  Spinner label = Spinner(parent, counter++);
+  Spinner* label = new Spinner(parent, counter++);
+  
   spinners.emplace(name, std::move(label));
-  return spinners.at(name);
+  return *spinners.at(name);
 }
 
 Spinner& Tile::addSpinner(std::string name) {

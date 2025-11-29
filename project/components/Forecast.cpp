@@ -151,19 +151,19 @@ WidgetContainer& AddForecastDay(WidgetContainer& tile, const std::string& day,
       .setGridCell(0, 1, 1, 3);
   container.addLabel()
       .setText(date)
-      .setFont(&lv_font_montserrat_28)
+      .setFont(&lv_font_montserrat_24)
       .setGridCell(0, 4)
       .setSize(100, 40);
   container.addLabel()
       .setText(std::to_string(temp))
-      .setFont(&lv_font_montserrat_28)
+      .setFont(&lv_font_montserrat_24)
       .setGridCell(1, 1, 1, 1, LV_GRID_ALIGN_CENTER, LV_GRID_ALIGN_END);
   container.addImage()
       .setSource(&wi_celsius)
       .setGridCell(1, 2, 1, 1, LV_GRID_ALIGN_CENTER, LV_GRID_ALIGN_START);
   container.addLabel()
       .setText(std::to_string(moisture) + "%")
-      .setFont(&lv_font_montserrat_28)
+      .setFont(&lv_font_montserrat_32)
       .setGridCell(1, 3, 1, 1, LV_GRID_ALIGN_CENTER, LV_GRID_ALIGN_END);
   container.addImage()
       .setSource(&wi_raindrop)
@@ -266,7 +266,7 @@ void Forecast::process() {
       }
     } else if (status == ForecastStatus::Fetching) {
       APIhandler handler;
-      vector<StationObject> stationsArray = handler.getStationsArray(30, 1);
+      std::unordered_map<std::string, StationObject> stationsArray = handler.getStationsArray(30, 1);
       if(stationsArray.size() < 1) {
         ui_tile->clear();
         ui_tile->addLabel().setText("Failed fetching available weather stations.").center();

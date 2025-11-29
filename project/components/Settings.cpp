@@ -37,13 +37,13 @@ void Settings::constructUI(Tile* gui) {
 
   settings_tile.addLabel()
       .setText("Weather parameter:")
-      .setFont(&lv_font_montserrat_26)
+      .setFont(&lv_font_montserrat_32)
       .setGridCell(1, 0, 1, 1, LV_GRID_ALIGN_CENTER, LV_GRID_ALIGN_END);
 
   settings_tile.addDropdown()
       .setOptions("Temperature\nMoisture\nWind")
-      .setListFont(&lv_font_montserrat_26)
-      .setFont(&lv_font_montserrat_26)
+      .setListFont(&lv_font_montserrat_32)
+      .setFont(&lv_font_montserrat_32)
       .addEventCallback(Settings::change_weather_parameter,
                         lv_event_code_t::LV_EVENT_VALUE_CHANGED, this)
       .setGridCell(1, 1)
@@ -51,13 +51,13 @@ void Settings::constructUI(Tile* gui) {
 
   settings_tile.addLabel("Select option 2 ")
       .setText("Weather location:")
-      .setFont(&lv_font_montserrat_26)
+      .setFont(&lv_font_montserrat_32)
       .setGridCell(2, 0, 1, 1, LV_GRID_ALIGN_CENTER, LV_GRID_ALIGN_END);
 
   settings_tile.addDropdown()
       .setOptions("Karlskrona\nGothenburg\nStockholm\nMalmo")
-      .setListFont(&lv_font_montserrat_26)
-      .setFont(&lv_font_montserrat_26)
+      .setListFont(&lv_font_montserrat_32)
+      .setFont(&lv_font_montserrat_32)
       .addEventCallback(Settings::change_city,
                         lv_event_code_t::LV_EVENT_VALUE_CHANGED, this)
       .setGridCell(2, 1)

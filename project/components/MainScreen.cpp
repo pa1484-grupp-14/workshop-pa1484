@@ -10,19 +10,19 @@ void MainScreen::constructUI(Tile* tile) {
 
   //project text
   Widget& project_label = main_screen.addLabel("main label")
-                              .setText("PA1484 Software development project")
-                              .setFont(&lv_font_montserrat_28)
+                              .setText("Software development project")
+                              .setFont(&lv_font_montserrat_32)
                               .center();
 
   //group number label
   main_screen.addLabel()
-      .setText("Group 14")
+      .setText("PA1484 Group 14")
       .setFont(&lv_font_montserrat_48)
       .alignTo(project_label, LV_ALIGN_CENTER, 0, -40)
       .focusOn()
       .getTile()
       .addLabel()
-      .setText("Version 2")
-      .setFont(&lv_font_montserrat_44)
+      .setText("Version 3")
+      .setFont(&lv_font_montserrat_48)
       .alignTo(project_label, LV_ALIGN_CENTER, 0, 150);
 }
