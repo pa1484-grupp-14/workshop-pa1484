@@ -40,6 +40,8 @@ class Popup : public WidgetContainer {
   Dropdown& getDropdown(const std::string& name) override;
   //Add a new label widget as the child of this widget container
   Chart& addChart(std::string name = nextIdString()) override;
+    //Add a new label widget as the child of this widget container
+  Button& addButton(std::string name = nextIdString()) override;
 
   //Get a reference to the parent tile container
   Tile& getTile() override;
