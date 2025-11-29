@@ -55,7 +55,7 @@ void Settings::city_picker_cb(lv_event_t * event) {
     int option_counter = 0;
     APIhandler handler;
 
-   std::unordered_map<std::string, StationObject> placeholder_cities_list = handler.getStationsArray(30, 1);
+   std::unordered_map<std::string, StationObject> placeholder_cities_list = handler.getStationsArray(1);
 
     
     for(auto city : placeholder_cities_list) {

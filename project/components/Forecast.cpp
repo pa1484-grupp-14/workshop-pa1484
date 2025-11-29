@@ -290,7 +290,7 @@ void Forecast::process() {
 
       APIhandler handler;
 
-      std::unordered_map<std::string, StationObject> stationsArray = handler.getStationsArray(30, 1);
+      std::unordered_map<std::string, StationObject> stationsArray = handler.getStationsArray(1);
       
       if(stationsArray.size() < 1) {
         ui_tile->clear();

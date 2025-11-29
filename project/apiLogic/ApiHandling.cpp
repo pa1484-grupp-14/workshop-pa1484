@@ -86,7 +86,7 @@ std::vector<ForecastObject> APIhandler::getForecastNext7Days(const StationObject
 
 
 
-std::unordered_map<std::string, StationObject> APIhandler::getStationsArray(int citiesAmount , int parameter)    
+std::unordered_map<std::string, StationObject> APIhandler::getStationsArray(int parameter)    
 {
 
     WiFiClient client;
