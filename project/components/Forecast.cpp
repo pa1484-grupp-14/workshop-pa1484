@@ -178,6 +178,7 @@ WidgetContainer& AddForecastDay(WidgetContainer& tile, const std::string& day,
 // Function to calculate the day of the week using the formula-based approach
 int dayOfWeek(int d, int m, int y) {
   // Predefined month codes for each month
+  // As each month is not an integer ammount of weeks long, it needs to be offset by this many days to account for carryover into the next month.
   static int monthCode[] = {5, 1, 1, 4, 6, 2, 4, 0, 3, 5, 1, 3};
 
   // Adjust year for January and February
