@@ -45,6 +45,7 @@ class Widget : public WidgetContainer {
   Dropdown& getDropdown(const std::string& name) override;
 
   Container& addContainer(std::string name = nextIdString()) override;
+  Button& addButton(std::string name = nextIdString()) override;
   // # Get parent of this widget
   WidgetContainer& getParent() override;
 

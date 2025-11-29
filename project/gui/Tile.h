@@ -22,6 +22,7 @@ class Tile : public WidgetContainer {
   std::unordered_map<std::string, Chart*> charts;
   std::unordered_map<std::string, Container*> containers;
   std::unordered_map<std::string, Spinner*> spinners;
+  std::unordered_map<std::string, Button*> buttons;
 
   uint32_t counter;
 
@@ -34,6 +35,7 @@ class Tile : public WidgetContainer {
   Dropdown& createDropdown(WidgetContainer& parent, std::string name);
   Container& createContainer(WidgetContainer& parent, std::string name);
   Spinner& createSpinner(WidgetContainer& parent, std::string name);
+  Button& createButton(WidgetContainer& parent, std::string name);
 
   Tile& getTile() override;
   WidgetContainer& getParent() override;
@@ -43,6 +45,7 @@ class Tile : public WidgetContainer {
   Container& addContainer(std::string name = nextIdString()) override;
   Dropdown& addDropdown(std::string name = nextIdString()) override;
   Spinner& addSpinner(std::string name = nextIdString()) override;
+  Button& addButton(std::string name = nextIdString()) override;
 
   Dropdown& getDropdown(const std::string& name) override;
   Label& getLabel(std::string name) { return *labels.at(name); }

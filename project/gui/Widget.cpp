@@ -54,7 +54,9 @@ Dropdown& Widget::getDropdown(const std::string& name) {
 Chart& Widget::addChart(std::string name) {
   return this->getTile().createChart(*this, name);
 }
-
+Button& Widget::addButton(std::string name) {
+  return this->getTile().createButton(*this, name);
+}
 Spinner& Widget::addSpinner(std::string name) {
 
   return this->getTile().createSpinner(*this, name);
