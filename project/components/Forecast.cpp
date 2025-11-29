@@ -210,7 +210,14 @@ void Forecast::constructUI(Tile* tile) {
     
 
 }
-
+void Forecast::reset() {
+  ui_tile->clear();
+  Widget& spinner = ui_tile->addSpinner().center();
+    spinner.setSize(60,60);
+    ui_tile->addLabel().setText("Waiting for wifi...").setFont(&lv_font_montserrat_32).alignTo(spinner, LV_ALIGN_BOTTOM_MID, 0, 50);
+  status = ForecastStatus::WaitingForWifi;
+    
+}
 void construct_forecast_ui(Tile* tile, std::vector<ForecastObject> forecasts) {
   tile->clear();
   Container& weather_forecast = tile->addContainer().disableFrame();
@@ -257,12 +264,20 @@ void construct_forecast_ui(Tile* tile, std::vector<ForecastObject> forecasts) {
         day.air_temperature, day.relative_humidity, day.symbol_code);
   }
 }
+void Forecast::switchToForecastScreen(std::vector<ForecastObject>& forecasts) {
+    ui_tile->clear();
+    construct_forecast_ui(ui_tile, forecasts);
+    status = ForecastStatus::Fetched;
+}
+void Forecast::switchToLoadingScreen() {
+    status = ForecastStatus::Fetching;
+    ui_tile->clear();
+    ui_tile->addLabel().setText("Fetching Forecast...\n(Please remain patient)").setFont(&lv_font_montserrat_48).center();
+}
 void Forecast::process() {
     if(status == ForecastStatus::WaitingForWifi) {
       if(is_wifi_connected()) {
-        status = ForecastStatus::Fetching;
-        ui_tile->clear();
-        ui_tile->addLabel().setText("Fetching Forecast...\n(Please remain patient)").setFont(&lv_font_montserrat_48).center();
+        this->switchToLoadingScreen();
       }
     } else if (status == ForecastStatus::Fetching) {
       APIhandler handler;
@@ -278,9 +293,7 @@ void Forecast::process() {
       handler.getStationFromArray(stationsArray, "Karlskrona"); 
         //Serial.println("name: " + String(station.getName().c_str()) + " longitude: " + String(station.getLon()) + " latitude: " + String(station.getLat()));
       std::vector<ForecastObject> forecasts = handler.getForecastNext7Days(station);
-        ui_tile->clear();
-        construct_forecast_ui(ui_tile, forecasts);
-        status = ForecastStatus::Fetched;
+        this->switchToForecastScreen(forecasts);
       } catch(int err) {
         ui_tile->clear();
         ui_tile->addLabel().setText("Failed fetching forecast data.").center();

@@ -1,7 +1,6 @@
 #include <time.h>
 #include <HAL.hpp>
-#include "components/prelude.h"
-#include "initGUI.h"
+#include "prelude.h"
 
 static hal::Display* amoled;
 
@@ -15,10 +14,7 @@ static void connect_wifi() {
 #ifndef PIO_UNIT_TESTING
 
 // Must have function: Setup is run once on startup
-MainScreen* mainScreen;
-Forecast* forecast;
-WeatherChart* weatherChart;
-Settings* settings;
+
 
 void setup() {
   amoled = new hal::Display();
@@ -31,14 +27,14 @@ void setup() {
   mainScreen = new MainScreen();
   mainScreen->constructUI(&gui.addTile());
 
-  forecast = new Forecast();
-  forecast->constructUI(&gui.addTile());
+  forecastScreen = new Forecast();
+  forecastScreen->constructUI(&gui.addTile());
 
-  weatherChart = new WeatherChart();
-  weatherChart->constructUI(&gui.addTile());
+  weatherChartScreen = new WeatherChart();
+  weatherChartScreen->constructUI(&gui.addTile());
 
-  settings = new Settings();
-  settings->constructUI(&gui.addTile());
+  settingsScreen = new Settings();
+  settingsScreen->constructUI(&gui.addTile());
 
   gui.scrollToTile(0);
 }
@@ -48,9 +44,9 @@ void loop() {
   int wait = lv_timer_handler() + millis();
   while (millis() < wait) {
     mainScreen->process();
-    forecast->process();
-    weatherChart->process();
-    settings->process();
+    forecastScreen->process();
+    weatherChartScreen->process();
+    settingsScreen->process();
   }
 }
 

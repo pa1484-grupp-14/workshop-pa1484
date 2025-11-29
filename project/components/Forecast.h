@@ -25,5 +25,12 @@ class Forecast : public Component {
     Forecast();
     ~Forecast();
     void constructUI(Tile *gui) override;
+
+    void switchToForecastScreen(std::vector<ForecastObject>& forecasts);
+    void switchToLoadingScreen();
+
+    void reset();
+    
+
     void process() override;
 };

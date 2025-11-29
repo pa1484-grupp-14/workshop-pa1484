@@ -1,6 +1,6 @@
 #include "Settings.h"
 #include "constants.h"
-#include "initGUI.h"
+#include "../prelude.h"
 #include "apiLogic/ApiHandling.h"
 #include <lvgl.h>
 
