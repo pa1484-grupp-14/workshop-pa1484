@@ -312,7 +312,7 @@ void Forecast::process() {
         ui_tile->clear();
         ui_tile->addLabel().setText("Failed fetching forecast data.").center();
         status == ForecastStatus::FailedFetch;
-        Serial.println("failed");
+        Serial.println("Failed fetching forecast data.");
       }
       }
       
