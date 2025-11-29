@@ -1,5 +1,6 @@
 #include "Forecast.h"
 #include "utilities.h"
+#include "../prelude.h"
 
 #include "gui/icons/wi_celsius.c"
 #include "gui/icons/wi_cloudy.c"
@@ -211,12 +212,17 @@ void Forecast::constructUI(Tile* tile) {
 
 }
 void Forecast::reset() {
-  ui_tile->clear();
-  Widget& spinner = ui_tile->addSpinner().center();
-    spinner.setSize(60,60);
-    ui_tile->addLabel().setText("Waiting for wifi...").setFont(&lv_font_montserrat_32).alignTo(spinner, LV_ALIGN_BOTTOM_MID, 0, 50);
-  status = ForecastStatus::WaitingForWifi;
+  if(ui_tile == nullptr) {
+    Serial.println("FORECAST TILE IS NULL!");
+  } else {
+
+    ui_tile->clear();
+    Widget& spinner = ui_tile->addSpinner().center();
+      spinner.setSize(60,60);
+      ui_tile->addLabel().setText("Waiting for wifi...").setFont(&lv_font_montserrat_32).alignTo(spinner, LV_ALIGN_BOTTOM_MID, 0, 50);
+    status = ForecastStatus::WaitingForWifi;
     
+  } 
 }
 void construct_forecast_ui(Tile* tile, std::vector<ForecastObject> forecasts) {
   tile->clear();
@@ -280,17 +286,24 @@ void Forecast::process() {
         this->switchToLoadingScreen();
       }
     } else if (status == ForecastStatus::Fetching) {
+      if(true) {
+
       APIhandler handler;
+
       std::unordered_map<std::string, StationObject> stationsArray = handler.getStationsArray(30, 1);
+      
       if(stationsArray.size() < 1) {
         ui_tile->clear();
         ui_tile->addLabel().setText("Failed fetching available weather stations.").center();
         status == ForecastStatus::FailedFetch;
       }
       try {
-
+        Serial.print("Beginning fetch of city: ");
+        std::string selected_city = getSettingsScreen().getSelectedCity();
+        Serial.println(selected_city.c_str());
+        Serial.print("banan");
       StationObject station =
-      handler.getStationFromArray(stationsArray, "Karlskrona"); 
+      handler.getStationFromArray(stationsArray, selected_city); 
         //Serial.println("name: " + String(station.getName().c_str()) + " longitude: " + String(station.getLon()) + " latitude: " + String(station.getLat()));
       std::vector<ForecastObject> forecasts = handler.getForecastNext7Days(station);
         this->switchToForecastScreen(forecasts);
@@ -298,6 +311,8 @@ void Forecast::process() {
         ui_tile->clear();
         ui_tile->addLabel().setText("Failed fetching forecast data.").center();
         status == ForecastStatus::FailedFetch;
+        Serial.println("failed");
+      }
       }
       
     }

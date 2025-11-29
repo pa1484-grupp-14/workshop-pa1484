@@ -25,8 +25,10 @@ class Settings : public Component {
   ~Settings();
   void constructUI(Tile *gui) override;
   void process() override;
+  std::string getSelectedCity();
   static void change_weather_parameter(lv_event_t* event);
   static void change_city(lv_event_t* event);
   static void city_picker_cb(lv_event_t* event);
   static void city_confirm_cb(lv_event_t * event);
+  static void city_dropdown_cb(lv_event_t * event);
 };

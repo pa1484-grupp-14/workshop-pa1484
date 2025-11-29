@@ -7,33 +7,39 @@
 
 
 void city_cancel_cb(lv_event_t * event) {
-    gui.closePopup();
+    getGui().closePopup();
 }
 void Settings::city_confirm_cb(lv_event_t * event) {
     char filtering_text[100]; 
     Settings* old_dropdown = (Settings*)lv_event_get_user_data(event);
-    lv_dropdown_get_selected_str(gui.openPopup().getDropdown("cities").getWidgetPtr(), filtering_text, 100);
-    gui.closePopup();
+    lv_dropdown_get_selected_str(getGui().openPopup().getDropdown("cities").getWidgetPtr(), filtering_text, 100);
+    getGui().closePopup();
     std::string city = std::string(filtering_text);
-    /*
-    for(auto& check: cities) {
+    
+    for(auto& check: old_dropdown->available_cities) {
         if(check == city) {
             return;
         }
     }
-    */
+    
     old_dropdown->available_cities.push_back(city);
+
+    old_dropdown->city = city;
+    getForecastScreen().reset();
     
     old_dropdown->ui_tile->getDropdown("cities").setOptions(old_dropdown->available_cities)
             .pushOption("add location...");
             
 
 }
+std::string Settings::getSelectedCity() {
+    return this->city;
+}
 void Settings::city_picker_cb(lv_event_t * event) {
     char filtering_text[2]; 
     Settings* old_dropdown = (Settings*)lv_event_get_user_data(event);
-    lv_dropdown_get_selected_str(gui.openPopup().getDropdown("letters").getWidgetPtr(), filtering_text, 2);
-    Popup& popup = gui.switchPopup();
+    lv_dropdown_get_selected_str(getGui().openPopup().getDropdown("letters").getWidgetPtr(), filtering_text, 2);
+    Popup& popup = getGui().switchPopup();
     
     Dropdown& dropdown = popup.getTile().setSize(550, 200)
         .setFlexLayout(LV_FLEX_FLOW_COLUMN, LV_FLEX_ALIGN_SPACE_EVENLY)
@@ -62,7 +68,7 @@ void Settings::city_picker_cb(lv_event_t * event) {
     if(option_counter > 0) {
         popup.addButton("Cancel", city_cancel_cb).addButton("Finish", city_confirm_cb, old_dropdown);
     } else {
-        gui.switchPopup().addButton("Okay", city_cancel_cb).getTile().setSize(550, 200)
+        getGui().switchPopup().addButton("Okay", city_cancel_cb).getTile().setSize(550, 200)
         .setFlexLayout(LV_FLEX_FLOW_COLUMN, LV_FLEX_ALIGN_SPACE_AROUND)
         .addLabel()
         .setText("Add new location...")
@@ -74,13 +80,13 @@ void Settings::city_picker_cb(lv_event_t * event) {
     }
     
 }
-void city_dropdown_cb(lv_event_t * event) {
+void Settings::city_dropdown_cb(lv_event_t * event) {
     lv_obj_t* dropdown = (lv_obj_t*)lv_event_get_target(event);
     Settings* settings = (Settings*)lv_event_get_user_data(event);
     int selected = lv_dropdown_get_selected(dropdown);
     int len = lv_dropdown_get_option_count(dropdown);
     if(selected == len-1) {
-        Popup& popup = gui.openPopup();
+        Popup& popup = getGui().openPopup();
         popup.getTile().setSize(550, 200)
         .setFlexLayout(LV_FLEX_FLOW_COLUMN, LV_FLEX_ALIGN_SPACE_AROUND)
         .addLabel()
@@ -94,11 +100,15 @@ void city_dropdown_cb(lv_event_t * event) {
         dropdown.setOptions("A\nB\nC\nD\nE\nF\nG\nH\nI\nJ\nK\nL\nM\nN\nO\nP\nQ\nR\nS\nT\nU\nV\nW\nX\nY\nZ").setListFont(&font_header).setFont(&font_header);
         
         popup.addButton("Cancel", city_cancel_cb).addButton("Next", Settings::city_picker_cb, settings);
+    } else {
+      settings->city = settings->available_cities.at(selected);
+      getForecastScreen().reset();
     }
 }
 
 Settings::Settings() {
   available_cities = {"Karlskrona"};
+  city = "Karlskrona";
 }
 Settings::~Settings() {}
 

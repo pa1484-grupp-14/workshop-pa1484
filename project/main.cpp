@@ -20,21 +20,15 @@ void setup() {
   amoled = new hal::Display();
   hal::init(amoled);
 
+  GUI& gui = getGui();
   connect_wifi();
   //init
   gui.init();
 
-  mainScreen = new MainScreen();
-  mainScreen->constructUI(&gui.addTile());
-
-  forecastScreen = new Forecast();
-  forecastScreen->constructUI(&gui.addTile());
-
-  weatherChartScreen = new WeatherChart();
-  weatherChartScreen->constructUI(&gui.addTile());
-
-  settingsScreen = new Settings();
-  settingsScreen->constructUI(&gui.addTile());
+  getMainScreen().constructUI(&gui.addTile());
+  getForecastScreen().constructUI(&gui.addTile());
+  getWeatherChartScreen().constructUI(&gui.addTile());
+  getSettingsScreen().constructUI(&gui.addTile());
 
   gui.scrollToTile(0);
 }
@@ -43,10 +37,10 @@ void setup() {
 void loop() {
   int wait = lv_timer_handler() + millis();
   while (millis() < wait) {
-    mainScreen->process();
-    forecastScreen->process();
-    weatherChartScreen->process();
-    settingsScreen->process();
+    getMainScreen().process();
+    getForecastScreen().process();
+    getWeatherChartScreen().process();
+    getSettingsScreen().process();
   }
 }
 
