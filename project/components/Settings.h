@@ -2,6 +2,7 @@
 
 #include <lvgl.h>
 #include <string>
+#include <vector>
 #include "gui/Gui.h"
 
 enum WeatherParameter {
@@ -15,6 +16,7 @@ enum WeatherParameter {
 
 class Settings : public Component {
  private:
+  std::vector<std::string> available_cities;
   WeatherParameter weather_parameter;
   std::string city;
 
