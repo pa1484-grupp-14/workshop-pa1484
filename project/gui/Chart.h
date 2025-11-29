@@ -1,7 +1,7 @@
 ﻿#ifndef GUI_CHART_H
 
 #define GUI_CHART_H
-#include "gui.h"
+#include "Widget.h"
 #include <unordered_map>
 class Chart: public Widget {
     std::unordered_map<std::string, lv_chart_series_t*> series;

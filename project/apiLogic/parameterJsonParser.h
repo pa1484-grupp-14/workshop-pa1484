@@ -3,6 +3,54 @@
 #include "StationObject.h"
 #include "JsonListener.h"
 #include <vector>
+#include <unordered_map>
+#include <string>
+
+
+enum StationFilter {
+  OutsideStations,
+  EnteringStation,
+  InsideStation,
+  InsideObject,
+  GettingKey,
+  GettingName,
+  GettingLatitude,
+  GettingLongitude,
+  GettingIrrelevant,
+  GettingIrrelevantArray,
+  GettingIrrelevantObject,
+};
+
+class StationParser: public JsonListener {
+    private:
+    char filter;
+    StationFilter state;
+    std::string current_city_name;
+    StationObject current_station_obj;
+
+    public: 
+    StationParser();
+    std::unordered_map<std::string, StationObject> stations;
+
+    void whitespace(char c) override;
+  
+    void startDocument() override;
+
+    void key(String key) override;
+
+    void value(String value) override;
+
+    void endArray() override;
+
+    void endObject() override;
+
+    void endDocument() override;
+
+    void startArray() override;
+
+    void startObject() override;
+};
+
 
 class ExampleListener: public JsonListener {  
   private: 
@@ -12,7 +60,7 @@ class ExampleListener: public JsonListener {
     bool isLat = false;
     bool stationArrayEntered = false;
     bool stationObjectEntered = false; 
-    StationObject stationToAdd{"", "", 1, 1};
+    StationObject stationToAdd{1, "", 1, 1};
 
   public:  
     int itemCount = 0;

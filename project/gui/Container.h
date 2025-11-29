@@ -1,7 +1,7 @@
 #ifndef GUI_CONTAINER_H
 #define GUI_CONTAINER_H
 
-#include "gui.h"
+#include "Widget.h"
 
 class Container : public Widget {
 

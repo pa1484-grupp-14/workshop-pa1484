@@ -1,7 +1,7 @@
 #pragma once
 
 #include <lvgl.h>
-#include "gui/gui.h"
+#include "gui/Gui.h"
 #include "apiLogic/ApiHandling.h"
 
 
@@ -20,8 +20,8 @@ class Forecast : public Component {
         ForecastStatus status;
 
         std::optional<StationObject> current_station;
-    
-    public: 
+
+    public:
     Forecast();
     ~Forecast();
     void constructUI(Tile *gui) override;

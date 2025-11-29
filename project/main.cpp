@@ -1,7 +1,7 @@
 #include <time.h>
 #include <HAL.hpp>
-#include "initGUI.h"
 #include "components/prelude.h"
+#include "initGUI.h"
 
 static hal::Display* amoled;
 
@@ -13,9 +13,10 @@ static void connect_wifi() {
 }
 
 #ifndef PIO_UNIT_TESTING
+
 // Must have function: Setup is run once on startup
-MainScreen *mainScreen;
-Forecast *forecast;
+MainScreen* mainScreen;
+Forecast* forecast;
 WeatherChart* weatherChart;
 Settings* settings;
 
@@ -24,9 +25,9 @@ void setup() {
   hal::init(amoled);
 
   connect_wifi();
-    //init
+  //init
   gui.init();
-  
+
   mainScreen = new MainScreen();
   mainScreen->constructUI(&gui.addTile());
 
@@ -45,11 +46,12 @@ void setup() {
 // Must have function: Loop runs continously on device after setup
 void loop() {
   int wait = lv_timer_handler() + millis();
-  while(millis() < wait) {
+  while (millis() < wait) {
     mainScreen->process();
     forecast->process();
     weatherChart->process();
     settings->process();
   }
 }
+
 #endif

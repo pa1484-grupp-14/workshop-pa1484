@@ -2,7 +2,7 @@
 
 #include <lvgl.h>
 #include <string>
-#include "gui/gui.h"
+#include "gui/Gui.h"
 
 class MainScreen : public Component {
  private:
