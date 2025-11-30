@@ -42,6 +42,7 @@ vector<HistoricalObject> APIhandler::getHistoricalData(const string& key, int pa
 
 std::vector<ForecastObject> APIhandler::getForecastNext7Days(const StationObject& stationObject)
 {
+    std::cout << "[APIHandler]: Starting to fetch forecast data for the current station." << std::endl;
     float lon = stationObject.getLon();
     float lat = stationObject.getLat();
     String url = "http://opendata-download-metfcst.smhi.se/api/category/snow1g/version/1/geotype/point/lon/";
@@ -99,15 +100,22 @@ std::vector<ForecastObject> APIhandler::getForecastNext7Days(const StationObject
             //Since were fetching from a stream it might timeout, so this loop fetches every "chunk" until were finished or an error occurs.
             while(result == DeserializationError::IncompleteInput) {
                 //deserialize the request
+                auto before = millis();
                 result = deserializeJson(doc, stream);
+                auto after = millis();
+                std::cout << "[APIHandler]: One fetch cycle complete, took " << after-before << "ms" << std::endl;
             }
             switch(result.code()) {
                 case DeserializationError::Ok:
                 {
-                    //get the samples and prepare vector
                     JsonArray samples = doc["timeSeries"];
+
+                    std::cout << "[APIHandler]: Fetched " << samples.size() << " samples." << std::endl;
+                    //get the samples and prepare vector
+                    
                     vector.reserve(7);
 
+                    auto before = millis();
                     //search through each sample
                     for(const auto& sample : samples) {
                         //if the sample isn't at 12:00, skip it
@@ -146,8 +154,11 @@ std::vector<ForecastObject> APIhandler::getForecastNext7Days(const StationObject
                         //if our forecast is finished, prematurely break the loop
                         if(vector.size() >= 7) break;
                     }
+                    auto after = millis();
+                    std::cout << "[APIHandler]: Took " << after-before << "ms to filter all the forecast data" << std::endl;
                     
                 }
+                    break;
                 default:
                     std::cout << "[APIHandler]: An error occured while parsing the response data for stations fetch";
                     break;
@@ -183,6 +194,7 @@ std::vector<ForecastObject> APIhandler::getForecastNext7Days(const StationObject
 std::unordered_map<std::string, StationObject> APIhandler::getStationsArray(int parameter)    
 {
 
+    std::cout << "[APIHandler]: Starting to fetch all the weather stations." << std::endl;
     WiFiClient client;
     HTTPClient http;
     //JsonStreamingParser parser;
@@ -210,10 +222,14 @@ std::unordered_map<std::string, StationObject> APIhandler::getStationsArray(int 
             
             JsonDocument doc;
             DeserializationError result = DeserializationError::IncompleteInput;
+            
             //Since were fetching from a stream it might timeout, so this loop fetches every "chunk" until were finished or an error occurs.
             while(result == DeserializationError::IncompleteInput) {
                 //deserialize the request
-                result = deserializeJson(doc, stream, DeserializationOption::Filter(filter));
+                auto before = millis();
+                result = deserializeJson(doc, stream);
+                auto after = millis();
+                std::cout << "[APIHandler]: One fetch cycle complete, took " << after-before << "ms" << std::endl;
             }
             //act on the result
             switch(result.code()) {
@@ -221,6 +237,9 @@ std::unordered_map<std::string, StationObject> APIhandler::getStationsArray(int 
                 {
                     //get the stations array from document and prepare hashmap
                     JsonArray stations = doc["station"];
+                    std::cout << "[APIHandler]: Fetched " << stations.size() << " stations." << std::endl;
+                 
+                    auto before = millis();
                     hashmap.reserve(stations.size());
                     for(const auto& station : stations) {
                         //construct station objects and place in the hashmap
@@ -228,16 +247,18 @@ std::unordered_map<std::string, StationObject> APIhandler::getStationsArray(int 
                         StationObject obj = {station["key"], station["name"], station["longitude"], station["latitude"]};
                         hashmap.emplace(city, obj);
                     }
-                    
+                    auto after = millis();
+                    std::cout << "[APIHandler]: Took " << after-before << "ms to insert everything into the hashmap" << std::endl;
                 }
+                    break;
                 default:
-                    std::cout << "[APIHandler]: An error occured while parsing the response data for stations fetch";
+                    std::cout << "[APIHandler]: An error occured while parsing the response data for stations fetch (RESULT: " << result << ")" << std::endl;
                     break;
             }
         }
         else
         {
-            std::cout << "[APIHandler]: Failed to fetch station keys and cities";
+            std::cout << "[APIHandler]: Failed to fetch station keys and cities (HTTP CODE: " << code << ")" << std::endl;
         }
 
         http.end();

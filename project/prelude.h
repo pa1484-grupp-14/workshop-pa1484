@@ -2,9 +2,11 @@
 #include "gui/Gui.h"
 #include "components/prelude.h"
 
+unsigned long millis();
+
 #ifndef LILYGO_BUILD
 
-unsigned long millis();
+
 #define WIFI_STA 0
 class Wifi {
     public:

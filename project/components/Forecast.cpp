@@ -301,9 +301,8 @@ void Forecast::process() {
         status == ForecastStatus::FailedFetch;
       }
       try {
-        std::cout << "Beginning fetch of city: ";
         std::string selected_city = getSettingsScreen().getSelectedCity();
-        std::cout << selected_city.c_str();
+        std::cout << "[ForecastScreen]: Beginning fetch of city: " << selected_city.c_str() << std::endl;
       StationObject station =
       handler.getStationFromArray(stationsArray, selected_city); 
       std::vector<ForecastObject> forecasts = handler.getForecastNext7Days(station);
@@ -312,7 +311,7 @@ void Forecast::process() {
         ui_tile->clear();
         ui_tile->addLabel().setText("Failed fetching forecast data.").center();
         status == ForecastStatus::FailedFetch;
-        std::cout << "Failed fetching forecast data.";
+        std::cout << "[ForecastScreen]: Failed fetching forecast data." << std::endl;
       }
       }
       

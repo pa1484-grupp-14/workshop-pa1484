@@ -31,7 +31,7 @@ void setup() {
   getWeatherChartScreen().constructUI(&gui.addTile());
   getSettingsScreen().constructUI(&gui.addTile());
 
-  gui.scrollToTile(1);
+  gui.scrollToTile(0);
 }
 
 // Must have function: Loop runs continously on device after setup
