@@ -3,16 +3,32 @@
 #include <JsonListener.h>
 #include <string>
 
-
-
-void ForecastListener::whitespace(char c) { 
-    
-}
-
 void ForecastListener::startDocument() {   
     Serial.println("start document");
 }
-
+void ForecastListener::endDocument() {
+    Serial.println("end document. ");
+}
+void ForecastListener::startArray() {}
+void ForecastListener::endArray() {}
+void ForecastListener::startObject() {
+    
+    if(state == ListeningState::InTimeSeries)
+        state = ListeningState::FilteringObject;
+}
+void ForecastListener::endObject() {
+    
+    if(state == ListeningState::ProcessingItem){
+        
+        forecasts.push_back(forecastObjectToAdd);
+        itemCount++;
+        state = ListeningState::InTimeSeries;
+    } else {
+        
+    }
+        
+}
+void ForecastListener::whitespace(char c) {}
 void ForecastListener::key(String key) {
     this->currentKey = key;
     if(key == "time")
@@ -108,33 +124,4 @@ void ForecastListener::value(String value) {
     }
 }
 
-void ForecastListener::endArray() {
-    
-}
 
-void ForecastListener::endObject() {
-    
-    if(state == ListeningState::ProcessingItem){
-        
-        forecasts.push_back(forecastObjectToAdd);
-        itemCount++;
-        state = ListeningState::InTimeSeries;
-    } else {
-        
-    }
-        
-}
-
-void ForecastListener::endDocument() {
-    Serial.println("end document. ");
-}
-
-void ForecastListener::startArray() {
-    
-}
-
-void ForecastListener::startObject() {
-    
-    if(state == ListeningState::InTimeSeries)
-        state = ListeningState::FilteringObject;
-}

@@ -5,18 +5,18 @@ using namespace std;
 class StationObject
 {
 private:
-    string key;
+    int key;
     string name;
-    float longitude;
+    float longitude; 
     float latitude;
 public:
-    StationObject(string key, string name, float longitude, float latitude);
-    string getKey() const;
+    StationObject(int key, string name, float longitude, float latitude);
+    int getKey() const;
     string getName() const;
     float getLon() const;
     float getLat() const;
 
-    void setKey(string key);
+    void setKey(int key);
     void setName(string name);
     void setLon(float lon);
     void setLat(float lat);

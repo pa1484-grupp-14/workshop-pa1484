@@ -1,7 +1,7 @@
 ﻿#ifndef GUI_IMAGE_H
 #define GUI_IMAGE_H
 
-#include "gui.h"
+#include "Widget.h"
 
 class Image : public Widget {
 

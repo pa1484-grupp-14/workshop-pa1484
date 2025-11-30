@@ -16,18 +16,9 @@
 #include <JsonListener.h>
 #include <JsonStreamingParser.h>
  
-StationObject APIhandler::getStationFromArray(const vector<StationObject>& array, const string& stationName) 
+StationObject APIhandler::getStationFromArray(const std::unordered_map<std::string, StationObject>& array, const std::string& stationName) 
 {
-    int count = 0;
-    while (count != array.size())
-    {
-        if (array[count].getName() == stationName) 
-        {
-            return array[count];
-        }
-        count++;
-    }
-    throw("Station not found");
+    return array.at(stationName);
 }
 
 vector<HistoricalObject> APIhandler::getHistoricalData(const string& key, int parameter)
@@ -95,13 +86,13 @@ std::vector<ForecastObject> APIhandler::getForecastNext7Days(const StationObject
 
 
 
-vector<StationObject> APIhandler::getStationsArray(int citiesAmount , int parameter)    
+std::unordered_map<std::string, StationObject> APIhandler::getStationsArray(int parameter)    
 {
 
     WiFiClient client;
     HTTPClient http;
     JsonStreamingParser parser;
-    ExampleListener listener;
+    StationParser listener;
     String url = "http://opendata-download-metobs.smhi.se/api/version/latest/parameter/" + String(parameter) + ".json";
 
     if (http.begin(client, url)) {
@@ -119,7 +110,7 @@ vector<StationObject> APIhandler::getStationsArray(int citiesAmount , int parame
             const int BUFFER_SIZE = 512;
             uint8_t buffer[BUFFER_SIZE];
    
-            while ((stream->connected() || stream->available()) && listener.itemCount != citiesAmount) {
+            while ((stream->connected() || stream->available())) {
                 int len = stream->readBytes(buffer, BUFFER_SIZE);
                 for (int i = 0; i < len; i++) {
                     parser.parse((char)buffer[i]);
@@ -128,8 +119,8 @@ vector<StationObject> APIhandler::getStationsArray(int citiesAmount , int parame
         }
         else
         {
-            Serial.println("Failed to fetch");
-            return vector<StationObject>();
+            Serial.println("Failed to fetch station keys and cities");
+            return std::unordered_map<std::string, StationObject>();
         }
 
         http.end();

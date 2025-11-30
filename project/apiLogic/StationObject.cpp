@@ -1,8 +1,8 @@
 #include "StationObject.h"
 
-StationObject::StationObject(string key, string name, float longitude, float latitude) : key(key), name(name), longitude(longitude), latitude(latitude) {} 
+StationObject::StationObject(int key, string name, float longitude, float latitude) : key(key), name(name), longitude(longitude), latitude(latitude) {} 
 
-string StationObject::getKey() const 
+int StationObject::getKey() const 
 {
     return this->key;
 }
@@ -22,7 +22,7 @@ float StationObject::getLat() const
     return this->latitude;
 }
 
-void StationObject::setKey(string key) 
+void StationObject::setKey(int key) 
 {
     this->key = key;
 }

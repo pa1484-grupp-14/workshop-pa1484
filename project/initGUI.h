@@ -1,4 +1,4 @@
 #pragma once
-#include "gui/gui.h"
-static GUI gui;
+#include "gui/Gui.h"
+
 void constructUi();
