@@ -7,6 +7,7 @@
  *
  */
 
+#ifdef LILYGO_BUILD
 #include "LilyGo_AMOLED.h"
 #include <driver/gpio.h>
 
@@ -1295,3 +1296,4 @@ bool LilyGo_AMOLED::hasRTC()
 {
     return _hasRTC;
 }
+#endif

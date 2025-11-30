@@ -9,7 +9,32 @@ lv_color_t hal::SDLDisplay::buf1[hal::SDLDisplay::SCREEN_WIDTH *
 lv_color_t hal::SDLDisplay::buf2[hal::SDLDisplay::SCREEN_WIDTH *
                                  hal::SDLDisplay::SCREEN_HEIGHT];
 
+
+
+
 namespace hal {
+
+static int touchpad_x;
+static int touchpad_y;
+static lv_indev_state_t touchpad_state;
+
+void SDLDisplay::updateMouse() {
+  if(this->mouse_dsc.left_button_down) {
+
+        touchpad_state = LV_INDEV_STATE_PRESSED;
+    } else {
+        touchpad_state = LV_INDEV_STATE_RELEASED;
+    }
+          touchpad_x = this->mouse_dsc.last_x;
+        touchpad_y = this->mouse_dsc.last_y;
+}
+void touch_read(lv_indev_t * indev, lv_indev_data_t * data)
+{
+    data->point.x = touchpad_x;
+    data->point.y = touchpad_y;
+    data->state = touchpad_state;
+    //std::cout << "UPDATED INPUT" << touchpad_x  << " " << touchpad_y << " " << touchpad_state << std::endl;
+}
 
 SDLDisplay::SDLDisplay()
     : screen_width(SCREEN_WIDTH),
@@ -113,7 +138,7 @@ bool SDLDisplay::init() {
           (unsigned int)buf_size_bytes, SCREEN_WIDTH, SCREEN_HEIGHT,
           (int)sizeof(lv_color_t));
 
-  lv_display_set_flush_cb(disp_drv, flush_cb_static);
+  lv_display_set_flush_cb(disp_drv, SDLDisplay::flush_cb_static);
 
   lv_display_set_buffers(disp_drv, buf1, buf2, buf_size_bytes,
                          LV_DISPLAY_RENDER_MODE_DIRECT);
@@ -129,10 +154,18 @@ bool SDLDisplay::init() {
   std::cout << "LVGL Display Driver Setup Complete." << std::endl;
   SDL_Log("Init running on thread ID: %lu", SDL_ThreadID());
 
-  lv_group_t* group = lv_group_create();
-  lv_group_set_default(group);
+  //lv_group_t* group = lv_group_create();
+  //lv_group_set_default(group);
+  lv_indev_t * indev = lv_indev_create();
+  lv_indev_set_type(indev, LV_INDEV_TYPE_POINTER);
+  lv_indev_set_read_cb(indev, touch_read);
+  //  lv_indev_set_group(indev, group);
+  //lv_indev_set_disp(indev, disp);
 
+  /*
   lv_indev_t* mouse_indev = lv_sdl_mouse_create();
+  this->mouse_dsc = (lv_sdl_mouse_t*)lv_indev_get_driver_data(mouse_indev);
+  this->mouse = mouse_indev;
   if (mouse_indev) {
     lv_indev_set_group(mouse_indev, group);
     lv_indev_set_disp(mouse_indev, disp);
@@ -157,13 +190,13 @@ bool SDLDisplay::init() {
     std::cerr << "Warning: Failed to create SDL keyboard input device."
               << std::endl;
   }
+  */
 
   return true;
 }
 
 void SDLDisplay::flush_cb_static(lv_display_t* drv, const lv_area_t* area,
                                  uint8_t* color_p) {
-
   SDLDisplay* display = static_cast<SDLDisplay*>(lv_display_get_user_data(drv));
   if (display) {
     display->flush_display(drv, area, color_p);
@@ -176,7 +209,7 @@ void SDLDisplay::flush_cb_static(lv_display_t* drv, const lv_area_t* area,
 void SDLDisplay::flush_display(lv_display_t* drv, const lv_area_t* area,
                                uint8_t* color_p) {
 
-  SDL_Log("--- FLUSH (DIRECT MODE - LOCKTEXTURE) ---");
+  //SDL_Log("--- FLUSH (DIRECT MODE - LOCKTEXTURE) ---");
 
   if (!renderer || !texture || !drv || !area || !color_p) {
     SDL_Log("Error: NULL pointer passed to flush_display!");
@@ -192,7 +225,7 @@ void SDLDisplay::flush_display(lv_display_t* drv, const lv_area_t* area,
   int w = lv_area_get_width(area);
   int h = lv_area_get_height(area);
 
-  SDL_Log("Area to flush: x1=%d, y1=%d, w=%d, h=%d", x1, y1, w, h);
+  //SDL_Log("Area to flush: x1=%d, y1=%d, w=%d, h=%d", x1, y1, w, h);
 
   if (w <= 0 || h <= 0) {
     SDL_Log("Skipping flush: w or h is <= 0.");
@@ -217,24 +250,16 @@ void SDLDisplay::flush_display(lv_display_t* drv, const lv_area_t* area,
 
   uint8_t* dest_pixels = static_cast<uint8_t*>(texture_pixels);
 
-  SDL_Log("Texture locked: dest_ptr=%p, texture_pitch=%d", (void*)dest_pixels,
-          texture_pitch);
-  SDL_Log("Source locked:  source_start=%p, source_pitch=%d",
-          (void*)source_start, source_pitch);
+  //SDL_Log("Texture locked: dest_ptr=%p, texture_pitch=%d", (void*)dest_pixels,
+  //        texture_pitch);
+  //SDL_Log("Source locked:  source_start=%p, source_pitch=%d",
+  //        (void*)source_start, source_pitch);
 
   int bytes_per_row_to_copy = w * sizeof(lv_color_t);
-
-  if (texture_pitch == source_pitch) {
-    SDL_Log("Pitches match! Doing single memcpy.");
-    int total_bytes = bytes_per_row_to_copy * h;
-    memcpy(dest_pixels, source_start, total_bytes);
-  } else {
-    SDL_Log("Pitch mismatch! Copying row-by-row.");
     for (int y = 0; y < h; ++y) {
       memcpy(dest_pixels + (y * texture_pitch),
              source_start + (y * source_pitch), bytes_per_row_to_copy);
     }
-  }
 
   SDL_UnlockTexture(texture);
   if (SDL_RenderCopy(renderer, texture, NULL, NULL) != 0) {
@@ -244,15 +269,16 @@ void SDLDisplay::flush_display(lv_display_t* drv, const lv_area_t* area,
   }
 
   bool is_last = lv_display_flush_is_last(drv);
-  SDL_Log("Is last flush? %s", is_last ? "YES" : "NO");
+  //SDL_Log("Is last flush? %s", is_last ? "YES" : "NO");
 
   if (is_last) {
-    SDL_Log(">>> Presenting to screen <<<");
+    //SDL_Log(">>> Presenting to screen <<<");
     SDL_RenderPresent(renderer);
   }
-  SDL_Log("--- FLUSH END ---");
+ 
 
   lv_display_flush_ready(drv);
+  //SDL_Log("--- FLUSH END ---");
 }
 
 void SDLDisplay::setBrightness(uint8_t brightness) {
@@ -270,7 +296,17 @@ int SDLDisplay::handle_events() {
     if (event.type == SDL_QUIT) {
       return 1;  // Signal to exit
     }
+    if (event.type == SDL_MOUSEMOTION)
+    {
+      int deltaX = event.motion.x;
+      int deltaY = event.motion.x;
+      mouse_dsc.last_x = deltaX;
+      mouse_dsc.last_y = deltaY;
+      mouse_dsc.left_button_down = event.button.button == SDL_BUTTON_LEFT;
+      this->updateMouse();
+    }
   }
+  
   return 0;  // Continue running
 }
 

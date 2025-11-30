@@ -1,20 +1,14 @@
 
 #include "ApiHandling.h"
-#include "parameterJsonParser.h"
-#include "StationObject.h"
-#include "ForecastObject.h"
-#include "forecastJsonParser.h" 
-
 
 #include <ArduinoJson.h>
-#include <fstream>
-#include <sstream>
 #include <iostream>
-#include <stdexcept>
-#include <cstring>
-#include <HTTPClient.h> 
-//#include <JsonListener.h>
-//#include <JsonStreamingParser.h>
+
+#ifdef LILYGO_BUILD
+#include <HTTPClient.h>
+#else
+#include "nativeReplacements/HTTPClient.h"
+#endif 
 
 std::string extractCityName(const std::string& stationName) {
     int a = stationName.find("-");
@@ -155,7 +149,7 @@ std::vector<ForecastObject> APIhandler::getForecastNext7Days(const StationObject
                     
                 }
                 default:
-                    Serial.println("An error occured while parsing the response data for stations fetch");
+                    std::cout << "[APIHandler]: An error occured while parsing the response data for stations fetch";
                     break;
             }
             /*
@@ -176,7 +170,7 @@ std::vector<ForecastObject> APIhandler::getForecastNext7Days(const StationObject
         }
         else
         {
-            Serial.println("Failed to fetch weather forecast");
+            std::cout << "[APIHandler]: Failed to fetch weather forecast";
         }
         http.end();
     }
@@ -193,7 +187,8 @@ std::unordered_map<std::string, StationObject> APIhandler::getStationsArray(int 
     HTTPClient http;
     //JsonStreamingParser parser;
     //StationParser listener;
-    String url = "http://opendata-download-metobs.smhi.se/api/version/latest/parameter/" + String(parameter) + ".json";
+    String url = "http://opendata-download-metobs.smhi.se/api/version/latest/parameter/";
+    url += String(parameter) + ".json";
 
     std::unordered_map<std::string, StationObject> hashmap;
 
@@ -236,13 +231,13 @@ std::unordered_map<std::string, StationObject> APIhandler::getStationsArray(int 
                     
                 }
                 default:
-                    Serial.println("An error occured while parsing the response data for stations fetch");
+                    std::cout << "[APIHandler]: An error occured while parsing the response data for stations fetch";
                     break;
             }
         }
         else
         {
-            Serial.println("Failed to fetch station keys and cities");
+            std::cout << "[APIHandler]: Failed to fetch station keys and cities";
         }
 
         http.end();

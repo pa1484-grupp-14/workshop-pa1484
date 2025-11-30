@@ -23,3 +23,18 @@ WeatherChart& getWeatherChartScreen() {
 Settings& getSettingsScreen() {
     return settingsScreen;
 }
+
+#ifndef LILYGO_BUILD
+#include <chrono>
+static std::chrono::time_point<std::chrono::system_clock> start;
+static bool started = false;
+unsigned long millis() {
+    if(!started) {
+        started = true;
+        start = std::chrono::system_clock::now();
+    }
+    auto rightNow = std::chrono::system_clock::now();
+    std::chrono::duration<double> elapsed = rightNow-start;
+    return long(elapsed.count() * 1000.0);
+}
+#endif
