@@ -1,10 +1,10 @@
 #pragma once
 
 #include "ForecastObject.h"
-#include "JsonListener.h"
+//#include "JsonListener.h"
 #include <vector>
 
-
+/*
 enum ListeningState {
   Pending = 0,
   InTimeSeries,
@@ -42,3 +42,4 @@ class ForecastListener: public JsonListener {
 
     virtual void startObject();
 };
+*/

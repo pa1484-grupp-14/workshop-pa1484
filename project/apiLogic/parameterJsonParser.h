@@ -1,12 +1,12 @@
 #pragma once
 
 #include "StationObject.h"
-#include "JsonListener.h"
+//#include "JsonListener.h"
 #include <vector>
 #include <unordered_map>
 #include <string>
 
-
+/*
 enum StationFilter {
   OutsideStations,
   EnteringStation,
@@ -84,3 +84,4 @@ class ExampleListener: public JsonListener {
 
     virtual void startObject();
 };
+*/
