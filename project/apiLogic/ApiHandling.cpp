@@ -12,16 +12,10 @@
 #include <stdexcept>
 #include <cstring>
 
-#ifdef LILYGO_BUILD
 #include <JsonListener.h>
 #include <JsonStreamingParser.h>
 #include <HTTPClient.h> 
-#endif
-#ifdef NATIVE_BUILD
-#include "nativeReplacements/JsonListener.h"
-#include "nativeReplacements/JsonStreamingParser.h"
-#include "nativeReplacements/HTTPClient.h"
-#endif
+
 StationObject APIhandler::getStationFromArray(const std::unordered_map<std::string, StationObject>& array, const std::string& stationName) 
 {
     return array.at(stationName);
@@ -29,12 +23,6 @@ StationObject APIhandler::getStationFromArray(const std::unordered_map<std::stri
 
 vector<HistoricalObject> APIhandler::getHistoricalData(const string& key, int parameter)
 {
-   
-
-
-
-    
-
     return vector<HistoricalObject>();
 }
 
@@ -77,11 +65,11 @@ std::vector<ForecastObject> APIhandler::getForecastNext7Days(const StationObject
                 }
             }
             auto after = millis();
-            std::cout << "[APIHandler]: took " << after-before << "ms to parse all statsions." << std::endl;
+            std::cout << "[APIHandler]: took " << after-before << "ms to parse all forecast data." << std::endl;
         }
         else
         {
-            std::cout << "Failed to fetch" << std::endl;
+            std::cout << "[APIHandler]: Failed to fetch forecast data." << std::endl;
             return vector<ForecastObject>();
         }
            
@@ -128,11 +116,11 @@ std::unordered_map<std::string, StationObject> APIhandler::getStationsArray(int 
                 }
             }
             auto after = millis();
-            std::cout << "[APIHandler]: took " << after-before << "ms to parse all forecast days." << std::endl;
+            std::cout << "[APIHandler]: took " << after-before << "ms to parse all weather stations." << std::endl;
         }
         else
         {
-            std::cout << "Failed to fetch station keys and cities" << std::endl;
+            std::cout << "[APIHandler]: Failed to fetch station keys and cities" << std::endl;
             return std::unordered_map<std::string, StationObject>();
         }
 

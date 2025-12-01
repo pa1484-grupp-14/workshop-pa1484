@@ -1,7 +1,6 @@
 //
 //  HTTPRequest
 //
-#ifdef NATIVE_BUILD
 #ifndef HTTPREQUEST_HPP
 #define HTTPREQUEST_HPP
 
@@ -1329,4 +1328,3 @@ namespace http
 }
 
 #endif // HTTPREQUEST_HPP
-#endif

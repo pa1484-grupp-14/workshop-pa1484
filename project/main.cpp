@@ -53,19 +53,24 @@ void loop() {
 unsigned int tick_cb() {
   return millis();
 }
-void WinMain() {
-  
+int main() {
   #include <SDL2/SDL.h>
   
   setup();
   lv_tick_set_cb(tick_cb);
   while(true) {
     auto a = millis();
-    if(amoled->handle_events()) return;
+    if(amoled->handle_events()) return 0;
     loop();
     lv_task_handler();
     auto b = millis();
     lv_tick_inc(b-a);
   }
+}
+int WinMain() {
+  return main();
+}
+int _start() {
+  return main();
 }
 #endif

@@ -4,10 +4,8 @@
 #include <iostream>
 #include <fstream>
 #include "HTTPRequest.hpp"
-#include "nativeReplacements/String.h"
+#include "String.h"
 
-
-#ifdef NATIVE_BUILD
 #define HTTP_CODE_OK 200
 class WiFiClient {
     private:
@@ -80,4 +78,3 @@ class HTTPClient {
         return dummy;
     }
 };
-#endif

@@ -2,7 +2,7 @@
 #include <string>
 #include <iterator>
 #include <cstddef>
-#ifdef NATIVE_BUILD
+
 bool strstr(const std::string& a, const std::string& b );
 class String {
     private:
@@ -56,4 +56,3 @@ class String {
     }
     friend class HTTPClient;
 };
-#endif
