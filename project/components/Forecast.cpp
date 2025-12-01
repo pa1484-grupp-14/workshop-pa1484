@@ -238,35 +238,9 @@ void construct_forecast_ui(Tile* tile, std::vector<ForecastObject> forecasts) {
     int year = std::stoi(day.time.substr(0, 4));
     int month = std::stoi(day.time.substr(5, 2));
     int d = std::stoi(day.time.substr(8, 2));
-    std::string day_string;
-    switch (dayOfWeek(d, month, year)) {
-      case 0:
-        day_string = "Monday";
-        break;
-      case 1:
-        day_string = "Tuesday";
-        break;
-      case 2:
-        day_string = "Wednesday";
-        break;
-      case 3:
-        day_string = "Thursday";
-        break;
-      case 4:
-        day_string = "Friday";
-        break;
-      case 5:
-        day_string = "Saturday";
-        break;
-      case 6:
-        day_string = "Sunday";
-        break;
-
-      default:
-        day_string = "null";
-        break;
-    }
-
+    const char* weekdaysArray[] = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
+    std::string day_string = weekdaysArray[dayOfWeek(d, month, year)];
+    
     AddForecastDay(
         weather_forecast, day_string,
         "(" + day.time.substr(5, 2) + "/" + day.time.substr(8, 2) + ")",
