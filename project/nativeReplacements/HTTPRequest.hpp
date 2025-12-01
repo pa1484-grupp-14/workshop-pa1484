@@ -1,7 +1,7 @@
 //
 //  HTTPRequest
 //
-
+#ifndef LILYGO_BUILD
 #ifndef HTTPREQUEST_HPP
 #define HTTPREQUEST_HPP
 
@@ -1329,3 +1329,4 @@ namespace http
 }
 
 #endif // HTTPREQUEST_HPP
+#endif
