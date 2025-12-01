@@ -229,22 +229,20 @@ void Forecast::reset() {
 }
 void construct_forecast_ui(Tile* tile, std::vector<ForecastObject> forecasts) {
   tile->clear();
-  Container& weather_forecast = tile->addContainer().disableFrame();
-  weather_forecast.setSize(600, 1000).setFlexLayout(LV_FLEX_FLOW_COLUMN,
+  Container& forecast = tile->addContainer().disableFrame();
+  forecast.setSize(600, 1000).setFlexLayout(LV_FLEX_FLOW_COLUMN,
                                                     LV_FLEX_ALIGN_SPACE_EVENLY);
   std::cout << "[construct_forecast_ui]: we have " << forecasts.size() << " forecast data points" << std::endl;
   for (size_t i = 0; i < 7; i++) {
-    ForecastObject& day = forecasts.at(i);
-    int year = std::stoi(day.time.substr(0, 4));
-    int month = std::stoi(day.time.substr(5, 2));
-    int d = std::stoi(day.time.substr(8, 2));
+    ForecastObject& sample = forecasts.at(i);
+    int year = std::stoi(sample.time.substr(0, 4));
+    int month = std::stoi(sample.time.substr(5, 2));
+    int day = std::stoi(sample.time.substr(8, 2));
     const char* weekdaysArray[] = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
-    std::string day_string = weekdaysArray[dayOfWeek(d, month, year)];
-    
-    AddForecastDay(
-        weather_forecast, day_string,
-        "(" + day.time.substr(5, 2) + "/" + day.time.substr(8, 2) + ")",
-        day.air_temperature, day.relative_humidity, day.symbol_code);
+    std::string dayString = weekdaysArray[dayOfWeek(day, month, year)];
+    std::string dateString = "(" + sample.time.substr(5, 2) + "/" + sample.time.substr(8, 2) + ")";
+    AddForecastDay(forecast, dayString, dateString, sample.air_temperature,
+                   sample.relative_humidity, sample.symbol_code);
   }
 }
 void Forecast::switchToForecastScreen(std::vector<ForecastObject>& forecasts) {
