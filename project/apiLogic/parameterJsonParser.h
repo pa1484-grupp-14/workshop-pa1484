@@ -1,12 +1,16 @@
 #pragma once
 
 #include "StationObject.h"
-//#include "JsonListener.h"
+#ifdef LILYGO_BUILD
+#include "JsonListener.h"
+#else
+#include "nativeReplacements/JsonListener.h"
+#endif
 #include <vector>
 #include <unordered_map>
 #include <string>
 
-/*
+
 enum StationFilter {
   OutsideStations,
   EnteringStation,
@@ -84,4 +88,3 @@ class ExampleListener: public JsonListener {
 
     virtual void startObject();
 };
-*/

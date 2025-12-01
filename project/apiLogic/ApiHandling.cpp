@@ -1,4 +1,141 @@
+#include "ApiHandling.h"
+#include "parameterJsonParser.h"
+#include "StationObject.h"
+#include "ForecastObject.h"
+#include "forecastJsonParser.h" 
 
+#include <iostream>
+#include <ArduinoJson.h>
+#include <fstream>
+#include <sstream>
+#include <iostream>
+#include <stdexcept>
+#include <cstring>
+
+#ifdef LILYGO_BUILD
+#include <JsonListener.h>
+#include <JsonStreamingParser.h>
+#include <HTTPClient.h> 
+#endif
+#ifdef NATIVE_BUILD
+#include "nativeReplacements/JsonListener.h"
+#include "nativeReplacements/JsonStreamingParser.h"
+#include "nativeReplacements/HTTPClient.h"
+#endif
+StationObject APIhandler::getStationFromArray(const std::unordered_map<std::string, StationObject>& array, const std::string& stationName) 
+{
+    return array.at(stationName);
+}
+
+vector<HistoricalObject> APIhandler::getHistoricalData(const string& key, int parameter)
+{
+   
+
+
+
+    
+
+    return vector<HistoricalObject>();
+}
+
+std::vector<ForecastObject> APIhandler::getForecastNext7Days(const StationObject& stationObject)
+{
+    float lon = stationObject.getLon();
+    float lat = stationObject.getLat();
+    String url = "http://opendata-download-metfcst.smhi.se/api/category/snow1g/version/1/geotype/point/lon/";
+    url += String(lon) + "/" +"lat/" + String(lat) + "/data.json";
+    
+    // Your Domain name with URL path or IP address with path   
+    WiFiClient client;
+    HTTPClient http;
+    JsonStreamingParser parser;
+    ForecastListener listener;
+
+    // If your need Node-RED/server authentication, insert user and password below
+    //http.setAuthorization("REPLACE_WITH_SERVER_USERNAME", "REPLACE_WITH_SERVER_PASSWORD");
+
+    if (http.begin(client, url)) {
+
+        int code = http.GET();
+        if (code == HTTP_CODE_OK) {
+
+            // Get stream
+            WiFiClient * stream = http.getStreamPtr();
+
+            // Initialize your streaming parser
+            parser.setListener(&listener);
+
+            // Read response in chunks
+            const int BUFFER_SIZE = 512;
+            uint8_t buffer[BUFFER_SIZE];
+   
+            while ((stream->connected() || stream->available()) && listener.itemCount != 7) {
+                int len = stream->readBytes(buffer, BUFFER_SIZE);
+                for (int i = 0; i < len; i++) {
+                    parser.parse((char)buffer[i]);
+                }
+            }
+        }
+        else
+        {
+            std::cout << "Failed to fetch" << std::endl;
+            return vector<ForecastObject>();
+        }
+           
+            
+
+        http.end();
+    }
+    
+    return listener.forecasts;
+}
+
+
+
+std::unordered_map<std::string, StationObject> APIhandler::getStationsArray(int parameter)    
+{
+
+    WiFiClient client;
+    HTTPClient http;
+    JsonStreamingParser parser;
+    StationParser listener;
+    String url = "http://opendata-download-metobs.smhi.se/api/version/latest/parameter/";
+    url += String(parameter) + ".json";
+
+    if (http.begin(client, url)) {
+
+        int code = http.GET();
+        if (code == HTTP_CODE_OK) {
+
+            // Get stream
+            WiFiClient * stream = http.getStreamPtr();
+
+            // Initialize your streaming parser
+            parser.setListener(&listener);
+
+            // Read response in chunks
+            const int BUFFER_SIZE = 512;
+            uint8_t buffer[BUFFER_SIZE];
+   
+            while ((stream->connected() || stream->available())) {
+                int len = stream->readBytes(buffer, BUFFER_SIZE);
+                for (int i = 0; i < len; i++) {
+                    parser.parse((char)buffer[i]);
+                }
+            }
+        }
+        else
+        {
+            std::cout << "Failed to fetch station keys and cities" << std::endl;
+            return std::unordered_map<std::string, StationObject>();
+        }
+
+        http.end();
+    }
+    return listener.stations;
+}
+
+/*
 #include "ApiHandling.h"
 
 #include <ArduinoJson.h>
@@ -67,33 +204,7 @@ std::vector<ForecastObject> APIhandler::getForecastNext7Days(const StationObject
             WiFiClient& stream = *http.getStreamPtr();
             //create a filter document so we only get our wanted fields
             JsonDocument filter;
-            /*
-            filter["timeSeries"][0]["time"] = true;
-            filter["timeSeries"][0]["data"]["air_temperature"] = true;
-            filter["timeSeries"][0]["data"]["wind_from_direction"] = true;
-            filter["timeSeries"][0]["data"]["wind_speed"] = true;
-            filter["timeSeries"][0]["data"]["wind_speed_of_gust"] = true;
-            filter["timeSeries"][0]["data"]["relative_humidity"] = true;
-            filter["timeSeries"][0]["data"]["air_pressure_at_mean_sea_level"] = true;
-            filter["timeSeries"][0]["data"]["visibility_in_air"] = true;
-            filter["timeSeries"][0]["data"]["thunderstorm_probability"] = true;
-            filter["timeSeries"][0]["data"]["probability_of_frozen_precipitation"] = true;
-            filter["timeSeries"][0]["data"]["cloud_area_fraction"] = true;
-            filter["timeSeries"][0]["data"]["low_type_cloud_area_fraction"] = true;
-            filter["timeSeries"][0]["data"]["medium_type_cloud_area_fraction"] = true;
-            filter["timeSeries"][0]["data"]["high_type_cloud_area_fraction"] = true;
-            filter["timeSeries"][0]["data"]["cloud_base_altitude"] = true;
-            filter["timeSeries"][0]["data"]["cloud_top_altitude"] = true;
-            filter["timeSeries"][0]["data"]["mtpr"] = true;
-            filter["timeSeries"][0]["data"]["precipitation_amount_mean"] = true;
-            filter["timeSeries"][0]["data"]["precipitation_amount_min"] = true;
-            filter["timeSeries"][0]["data"]["precipitation_amount_max"] = true;
-            filter["timeSeries"][0]["data"]["precipitation_amount_median"] = true;
-            filter["timeSeries"][0]["data"]["probability_of_precipitation"] = true;
-            filter["timeSeries"][0]["data"]["precipitation_frozen_part"] = true;
-            filter["timeSeries"][0]["data"]["predominant_precipitation_type_at_surface"] = true;
-            filter["timeSeries"][0]["data"]["symbol_code"] = true;
-            */
+            
             
             JsonDocument doc;
             DeserializationError result = DeserializationError::IncompleteInput;
@@ -163,20 +274,6 @@ std::vector<ForecastObject> APIhandler::getForecastNext7Days(const StationObject
                     std::cout << "[APIHandler]: An error occured while parsing the response data for stations fetch";
                     break;
             }
-            /*
-            // Initialize your streaming parser
-            parser.setListener(&listener);
-
-            // Read response in chunks
-            const int BUFFER_SIZE = 512;
-            uint8_t buffer[BUFFER_SIZE];
-   
-            while ((stream->connected() || stream->available()) && listener.itemCount != 7) {
-                int len = stream->readBytes(buffer, BUFFER_SIZE);
-                for (int i = 0; i < len; i++) {
-                    parser.parse((char)buffer[i]);
-                }
-            }*/
 
         }
         else
@@ -265,3 +362,4 @@ std::unordered_map<std::string, StationObject> APIhandler::getStationsArray(int 
     }
     return hashmap;
 }
+*/

@@ -24,7 +24,7 @@ See more at http://blog.squix.ch and https://github.com/squix78/json-streaming-p
 */
 
 #pragma once
-#ifndef LILYGO_BUILD
+#ifdef NATIVE_BUILD
 
 //#include <Arduino.h>
 #include "JsonListener.h"

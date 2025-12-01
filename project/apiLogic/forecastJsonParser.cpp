@@ -1,14 +1,14 @@
 #include "forecastJsonParser.h" 
 #include "StationObject.h"
-//#include <JsonListener.h>
 #include <string>
+#include <iostream>
 
-/*
+
 void ForecastListener::startDocument() {   
-    Serial.println("start document");
+    std::cout << "[ForecastListener]: start document" << std::endl;
 }
 void ForecastListener::endDocument() {
-    Serial.println("end document. ");
+    std::cout << "[ForecastListener]: end document" << std::endl;
 }
 void ForecastListener::startArray() {}
 void ForecastListener::endArray() {}
@@ -125,4 +125,4 @@ void ForecastListener::value(String value) {
     }
 }
 
-*/
+

@@ -1,17 +1,32 @@
+#pragma once
 #include "prelude.h"
 #include <string>
 #include <iostream>
 #include <fstream>
 #include "HTTPRequest.hpp"
 #include "nativeReplacements/String.h"
+
+
+#ifdef NATIVE_BUILD
 #define HTTP_CODE_OK 200
-
-
 class WiFiClient {
     private:
     std::optional<http::Response> response;
     size_t position;
     public:
+    int connected() {
+        if (response.has_value()) {
+            return position < response.value().body.size();
+        } else return false;
+    }
+    size_t readBytes(uint8_t *buf, size_t size) {
+        return this->read(buf, size);
+    }
+    int available() {
+        if (response.has_value()) {
+            return position < response.value().body.size();
+        } else return false;
+    }
     int read(uint8_t *buf, size_t size)
     {
         int res = -1;
@@ -65,3 +80,4 @@ class HTTPClient {
         return dummy;
     }
 };
+#endif

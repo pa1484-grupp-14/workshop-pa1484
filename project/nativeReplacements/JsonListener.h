@@ -1,5 +1,5 @@
 #pragma once
-#ifndef LILYGO_BUILD
+#ifdef NATIVE_BUILD
 #include "String.h"
 ///this is a netive reimplemenation of squix78's streamingJsonParser Library.
 

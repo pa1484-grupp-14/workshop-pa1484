@@ -1,7 +1,7 @@
 //
 //  HTTPRequest
 //
-#ifndef LILYGO_BUILD
+#ifdef NATIVE_BUILD
 #ifndef HTTPREQUEST_HPP
 #define HTTPREQUEST_HPP
 

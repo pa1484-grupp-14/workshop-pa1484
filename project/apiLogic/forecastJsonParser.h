@@ -1,10 +1,14 @@
 #pragma once
 
 #include "ForecastObject.h"
-//#include "JsonListener.h"
+#ifdef LILYGO_BUILD
+#include "JsonListener.h"
+#else
+#include "nativeReplacements/JsonListener.h"
+#endif
 #include <vector>
 
-/*
+
 enum ListeningState {
   Pending = 0,
   InTimeSeries,
@@ -42,4 +46,3 @@ class ForecastListener: public JsonListener {
 
     virtual void startObject();
 };
-*/

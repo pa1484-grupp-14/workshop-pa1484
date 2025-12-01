@@ -2,15 +2,16 @@
 #include "StationObject.h"
 //#include <JsonListener.h>
 #include <string>
+#include <iostream>
 
-/*
+
 
 void StationParser::whitespace(char c) {
 
 }
 
 void StationParser::startDocument() {
-    Serial.println("Searching stations...");
+    std::cout << "[StationParser]: Searching stations..." << std::endl;
     state = StationFilter::OutsideStations;
 }
 
@@ -111,20 +112,21 @@ void StationParser::endObject() {
     }
 }
 void StationParser::endDocument() {
-    Serial.println("Station Search Completed.");
+    std::cout << "[StationParser]: Station Search Completed." << std::endl;
 }
 
 
 void ExampleListener::whitespace(char c) {
-    Serial.println("whitespace");
+    std::cout << "[ExampleListener]: whitespace" << std::endl;
 }
 
 void ExampleListener::startDocument() {
-    Serial.println("start document");
+    std::cout << "[ExampleListener]: start document" << std::endl;
 }
 
 void ExampleListener::key(String key) {
-    Serial.println("key: " + key);
+    
+    std::cout << "[ExampleListener]: key: " << key.c_str() << std::endl;
     if(key == "key" && this->stationArrayEntered)
         this->isKey = true;
     else if (key == "name" && this->stationArrayEntered)
@@ -139,7 +141,7 @@ void ExampleListener::key(String key) {
 }
 
 void ExampleListener::value(String value) {
-    Serial.println("value: " + value);
+    std::cout << "[ExampleListener]: value: " << value.c_str() << std::endl;
     if (isKey) {
         this->isKey = false;
         this->stationToAdd.setKey(value.toInt());
@@ -157,11 +159,11 @@ void ExampleListener::value(String value) {
 }
 
 void ExampleListener::endArray() {
-    Serial.println("end array. ");
+    std::cout << "[ExampleListener]: end array" << std::endl;
 }
 
 void ExampleListener::endObject() {
-    Serial.println("end object. ");
+    std::cout << "[ExampleListener]: end object" << std::endl;
     if(this->stationArrayEntered)
     {
         this->stations.push_back(this->stationToAdd);
@@ -171,16 +173,16 @@ void ExampleListener::endObject() {
 }
 
 void ExampleListener::endDocument() {
-    Serial.println("end document. ");
+    std::cout << "[ExampleListener]: end document" << std::endl;
 }
 
 void ExampleListener::startArray() {
-    Serial.println("start array. ");
+    std::cout << "[ExampleListener]: start array" << std::endl;
 }
 
 void ExampleListener::startObject() {
-    Serial.println("start object. ");
+    std::cout << "[ExampleListener]: start object" << std::endl;
     if(this->stationArrayEntered)
         this->stationObjectEntered = true;
 }
-        */
+        

@@ -232,7 +232,7 @@ void construct_forecast_ui(Tile* tile, std::vector<ForecastObject> forecasts) {
   Container& weather_forecast = tile->addContainer().disableFrame();
   weather_forecast.setSize(600, 1000).setFlexLayout(LV_FLEX_FLOW_COLUMN,
                                                     LV_FLEX_ALIGN_SPACE_EVENLY);
-
+  std::cout << "[construct_forecast_ui]: we have " << forecasts.size() << " forecast days" << std::endl;
   for (size_t i = 0; i < 7; i++) {
     ForecastObject& day = forecasts.at(i);
     int year = std::stoi(day.time.substr(0, 4));
