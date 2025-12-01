@@ -229,7 +229,7 @@ void JsonStreamingParser::startValue(char c) {
       startObject();
     } else if (c == '"') {
       startString();
-    } else if (isdigit(c)) {
+    } else if (isDigit(c)) {
       startNumber(c);
     } else if (c == 't') {
       state = STATE_IN_TRUE;
