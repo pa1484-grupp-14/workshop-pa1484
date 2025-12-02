@@ -2,7 +2,11 @@
 #include "constants.h"
 #include "../prelude.h"
 #include "apiLogic/ApiHandling.h"
+#include "../gui/Button.h"
+#include "../FileHandling.h"
+#include "Arduino.h"
 #include <lvgl.h>
+#include <ArduinoJson.h>
 
 
 
@@ -21,7 +25,6 @@ void Settings::city_confirm_cb(lv_event_t * event) {
             return;
         }
     }
-    
     old_dropdown->available_cities.push_back(city);
 
     old_dropdown->city = city;
@@ -56,7 +59,6 @@ void Settings::city_picker_cb(lv_event_t * event) {
     APIhandler handler;
 
    std::unordered_map<std::string, StationObject> placeholder_cities_list = handler.getStationsArray(1);
-
     
     for(auto city : placeholder_cities_list) {
         if(city.first.at(0) == filtering_text[0]) {
@@ -106,10 +108,73 @@ void Settings::city_dropdown_cb(lv_event_t * event) {
     }
 }
 
-Settings::Settings() {
-  available_cities = {"Karlskrona"};
-  city = "Karlskrona";
+void Settings::set_default(lv_event_t* event) {
+    FileHandler handler; 
+    handler.listDir(LittleFS, "/", 1);
+    lv_obj_t* button = (lv_obj_t*)lv_event_get_target(event);
+    Settings* classData = (Settings*)lv_event_get_user_data(event);
+    lv_obj_t* parent = lv_obj_get_parent(button);
+
+    //WidgetContainer* parrent = (WidgetContainer*)(lv_obj_get_parent(button));
+    JsonDocument doc;
+    
+    for(string value : classData->available_cities)
+        doc["cities"].add(value);
+
+    if(!classData->city.empty())
+        doc["selectedCity"] = classData->city;
+    else 
+        doc["selectedCity"] = "Karlskrona";
+    int parameter = static_cast<int>(classData->weather_parameter);
+    if(classData->weather_parameter == WeatherParameter::Wind)
+        Serial.println("it works");
+    doc["parameter"] = parameter;
+
+    String data = "";
+    serializeJsonPretty(doc, data);
+
+    Serial.println(data);
+    handler.writeFile(LittleFS, "/defaultSettings.json", data.c_str());
+
+    String info = handler.readFile(LittleFS, "/defaultSettings.json");
+    Serial.println(info);
+  
 }
+
+Settings::Settings() {
+    FileHandler handler; 
+    const char* filename = "/defaultSettings.json";
+    LittleFS.begin();
+
+    if(!LittleFS.exists(filename)) {
+
+        weather_parameter = WeatherParameter::Humidity;
+        available_cities = {"Karlskrona"};
+        city = "Karlskrona";
+    }
+    else{
+        
+    JsonDocument doc;
+    String jsonString = handler.readFile(LittleFS, filename);
+    Serial.println(jsonString);
+    deserializeJson(doc, jsonString);
+
+    weather_parameter = static_cast<WeatherParameter>(doc["parameter"].as<int>());
+    JsonArray availableArrayJson;
+    if(!doc["city"].isNull()){
+        city = string(doc["city"]);
+        availableArrayJson = doc["cities"];
+    }
+    else {
+        available_cities = {"Karlskrona"};
+        city = "Karlskrona";
+    }
+
+    for(JsonVariant value : availableArrayJson)
+        available_cities.push_back(value.as<const char*>());
+    }
+}
+
 Settings::~Settings() {}
 
 // WARNING: Index of weather parameters must preserve order
@@ -131,28 +196,45 @@ void Settings::change_city(lv_event_t* event) {
 
 void Settings::process() {}
 
+int Settings::getCurrentCityIndex(){
+    int index = 0;
+    for(string value : available_cities)
+    {
+        if(value == city)
+            return index;
+        index++;
+    }
+    return 0;
+}
+
 void Settings::constructUI(Tile* gui) {
-  ui_tile = gui;
+    ui_tile = gui;
   //Tile& settings_tile = *gui;
+    gui->setGridLayout(columns, row)
+    .addLabel().setText("Settings").setFont(&lv_font_montserrat_48)
+    .setGridCell(0, 0, 1, 2).getTile()
+    .addLabel().setText("Parameter:").setFont(&font_regular)
+    .setGridCell(1, 0, 1, 1, LV_GRID_ALIGN_CENTER, LV_GRID_ALIGN_END).getTile()
+    .addDropdown().setOptions("Temperature\nMoisture\nWind").toggleOption(static_cast<int>(this->weather_parameter)).setListFont(&font_regular).setFont(&font_regular)
+    .addEventCallback(Settings::change_weather_parameter, lv_event_code_t::LV_EVENT_VALUE_CHANGED, this)
+    .setGridCell(1, 1).setWidth(370).getTile()
+    .addLabel("Select option 2 ").setText("Location:").setFont(&font_regular)
+    .setGridCell(2, 0, 1, 1, LV_GRID_ALIGN_CENTER, LV_GRID_ALIGN_END).getTile()
+    .addDropdown("cities")
+    .setOptions(available_cities)
+    .toggleOption(this->getCurrentCityIndex())
+    .pushOption("add location...")
+    .setListFont(&font_regular)
+    .setFont(&font_regular)
+    .addEventCallback(city_dropdown_cb, LV_EVENT_VALUE_CHANGED, this)
+    .setGridCell(2, 1).setWidth(370).getTile()
+    .addButton("Set Default")
+    .setBtnText("Set Default")
+    .setGridCell(3, 0, LV_GRID_ALIGN_CENTER, LV_GRID_ALIGN_END)
+    .addEventCallback(set_default, LV_EVENT_CLICKED, this);
+    
 
 
-              gui->setGridLayout(columns, row)
-            .addLabel().setText("Settings").setFont(&lv_font_montserrat_48)
-            .setGridCell(0, 0, 1, 2).getTile()
-            .addLabel().setText("Parameter:").setFont(&font_regular)
-            .setGridCell(1, 0, 1, 1, LV_GRID_ALIGN_CENTER, LV_GRID_ALIGN_END).getTile()
-            .addDropdown().setOptions("Temperature\nMoisture\nWind").setListFont(&font_regular).setFont(&font_regular)
-            .setGridCell(1, 1).setWidth(370).getTile()
-            .addLabel("Select option 2 ").setText("Location:").setFont(&font_regular)
-            .setGridCell(2, 0, 1, 1, LV_GRID_ALIGN_CENTER, LV_GRID_ALIGN_END).getTile()
-            .addDropdown("cities")
-            .setOptions(available_cities)
-            .pushOption("add location...")
-            .setListFont(&font_regular)
-            .setFont(&font_regular)
-            .addEventCallback(city_dropdown_cb, LV_EVENT_VALUE_CHANGED, this)
-            .setGridCell(2, 1).setWidth(370).getTile();
-  
             /*
 
   // Heading

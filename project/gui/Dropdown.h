@@ -17,10 +17,12 @@ class Dropdown : public Widget {
   ///Sets the available options inside the dropdown based
   ///on a newline-seperated string.
   Dropdown& setOptions(const std::string& text);
+  Dropdown& toggleOption(int id);
 
   ///# WARNING: has additional overhead compared to other versions of this function.
 
   Dropdown& setOptions(const std::vector<std::string>& text);
+  
 
   Dropdown& pushOption(const std::string& new_option);
 

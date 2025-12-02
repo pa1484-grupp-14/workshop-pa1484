@@ -1,6 +1,11 @@
 #include <time.h>
 #include <HAL.hpp>
 #include "prelude.h"
+#include "FS.h"
+#include <LittleFS.h>
+
+
+#define FORMAT_LITTLEFS_IF_FAILED true
 
 static hal::Display* amoled;
 
@@ -11,18 +16,22 @@ static void connect_wifi() {
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 }
 
+void init_FS(){
+  if (!LittleFS.begin(FORMAT_LITTLEFS_IF_FAILED)) {
+    Serial.println("LittleFS Mount Failed");
+  }
+}
+
 #ifndef PIO_UNIT_TESTING
 
 // Must have function: Setup is run once on startup
-
-
 void setup() {
   amoled = new hal::Display();
   hal::init(amoled);
+  init_FS();
 
   GUI& gui = getGui();
   connect_wifi();
-  //init
   gui.init();
 
   getMainScreen().constructUI(&gui.addTile());
