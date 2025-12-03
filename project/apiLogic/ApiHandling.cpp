@@ -81,10 +81,15 @@ std::vector<ForecastObject> APIhandler::getForecastNext7Days(const StationObject
     return listener.forecasts;
 }
 
-
+std::unordered_map<std::string, StationObject> APIhandler::cached_stations= std::unordered_map<std::string, StationObject>();
+int APIhandler::cached_parameter = 0;
 
 std::unordered_map<std::string, StationObject> APIhandler::getStationsArray(int parameter)    
 {
+    if(parameter == APIhandler::cached_parameter && APIhandler::cached_stations.size() > 0) {
+        std::cout << "[APIHandler]: returning cached stations instead" << std::endl;
+        return std::unordered_map<std::string, StationObject>(APIhandler::cached_stations);
+    } 
 
     WiFiClient client;
     HTTPClient http;
@@ -126,5 +131,12 @@ std::unordered_map<std::string, StationObject> APIhandler::getStationsArray(int 
 
         http.end();
     }
+
+    APIhandler::cached_stations.empty();
+    for(auto& station: listener.stations) {
+        APIhandler::cached_stations.emplace(station.first, station.second);
+    }
+    APIhandler::cached_parameter = parameter;
+    std::cout << "[APIHandler]: returning and caching " << APIhandler::cached_stations.size() << " stations." << std::endl;
     return listener.stations;
 }

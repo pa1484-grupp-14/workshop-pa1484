@@ -9,6 +9,9 @@
 
 class APIhandler
 {
+private:
+    static std::unordered_map<std::string, StationObject> cached_stations;
+    static int cached_parameter;
 public:
     std::unordered_map<std::string, StationObject> getStationsArray(int parameter);
     StationObject getStationFromArray(const std::unordered_map<std::string, StationObject>& array,const string& stationName); 
