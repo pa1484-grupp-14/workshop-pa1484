@@ -126,8 +126,6 @@ void Settings::set_default(lv_event_t* event) {
     else 
         doc["selectedCity"] = "Karlskrona";
     int parameter = static_cast<int>(classData->weather_parameter);
-    if(classData->weather_parameter == WeatherParameter::Wind)
-        Serial.println("it works");
     doc["parameter"] = parameter;
 
     String data = "";
@@ -154,28 +152,28 @@ Settings::Settings() {
     }
     else{
         
-    JsonDocument doc;
-    String jsonString = handler.readFile(LittleFS, filename);
-    Serial.println(jsonString);
-    deserializeJson(doc, jsonString);
+        JsonDocument doc;
+        String jsonString = handler.readFile(LittleFS, filename);
+        Serial.println(jsonString);
+        deserializeJson(doc, jsonString);
 
-    weather_parameter = static_cast<WeatherParameter>(doc["parameter"].as<int>());
-    JsonArray availableArrayJson;
-    if(!doc["city"].isNull()){
-        city = string(doc["city"]);
-        availableArrayJson = doc["cities"];
-    }
-    else {
-        available_cities = {"Karlskrona"};
-        city = "Karlskrona";
-    }
-
-    for(JsonVariant value : availableArrayJson)
-        available_cities.push_back(value.as<const char*>());
+        weather_parameter = static_cast<WeatherParameter>(doc["parameter"].as<int>());
+        JsonArray availableArrayJson;
+        if(!doc["selectedCity"].isNull()){
+            city = string(doc["selectedCity"].as<const char*>());
+            availableArrayJson = doc["cities"].as<JsonArray>();
+            if(!availableArrayJson.isNull())
+            for(JsonVariant value : availableArrayJson)
+                available_cities.push_back(string(value.as<const char*>()));
+        }
+        else {
+            available_cities = {"Karlskrona"};
+            city = "Karlskrona";
+        }
     }
 }
 
-Settings::~Settings() {}
+Settings::~Settings() {} 
 
 // WARNING: Index of weather parameters must preserve order
 void Settings::change_weather_parameter(lv_event_t* event) {
