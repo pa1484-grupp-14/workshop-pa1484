@@ -28,23 +28,33 @@ class GUI;
 #include "Popup.h"
 
 class GUI {
+  // The currently opened popup (if any)
   std::optional<Popup> current_popup;
+  // The pointer to the underlying tileview used by LVGL
   lv_obj_t* tileview;
+  // A vector hodling every tile in the GUI
   std::vector<Tile> tiles;
 
  public:
-  //Opens the current popup in the ui, if one doesn't exist, it will be created
+  // Opens the current popup in the ui, if one doesn't exist, it will be created
   Popup& openPopup();
-  //Close the current popup and start with another one, if one doesn't exist, it will be created
+  // Close the current popup and start with another one, if one doesn't exist, it will be created
   Popup& switchPopup();
-  //Close the currently opened popup, if one doesn't exist, this does nothing.
+  // Close the currently opened popup, if one doesn't exist, this does nothing.
   void closePopup();
 
+  // Index the GUI to get a Tile reference
   Tile& operator[](int index) { return this->getTile(index); }
+  // Explicit function to get a Tile
   Tile& getTile(int id) { return tiles.at(id); }
+  // Add a tile to the GUI
   Tile& addTile();
+  // Get the number of tiles in the GUI
   int nrOfTiles();
+  // Get the underlying pointer to the tileview
   lv_obj_t* getTileView();
+
+  //Initialize the GUI (you should only do this ONCE at the startup of your app and then)
   GUI& init() {
     tileview = lv_tileview_create(lv_scr_act());
     lv_obj_set_size(tileview, lv_disp_get_hor_res(NULL),

@@ -1,6 +1,6 @@
 #include <WiFi.h>
 #include "gui/Gui.h"
-#include "components/prelude.h"
+#include "components/Components.h"
 
 static GUI gui;
 static MainScreen mainScreen;
