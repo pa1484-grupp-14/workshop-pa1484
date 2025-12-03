@@ -4,7 +4,11 @@
 #include "apiLogic/ApiHandling.h"
 #include "../gui/Button.h"
 #include "../FileHandling.h"
-#include "Arduino.h"
+#ifdef LILYGO_BUILD
+#include <Arduino.h>
+#else
+#include <String.h>
+#endif
 #include <lvgl.h>
 #include <ArduinoJson.h>
 
@@ -136,7 +140,7 @@ void Settings::set_default(lv_event_t* event) {
     String data = "";
     serializeJsonPretty(doc, data);
 
-    Serial.println(data);
+    std::cout << data <<std::endl;
     handler.writeFile(LittleFS, "/defaultSettings.json", data.c_str());
 
     String info = handler.readFile(LittleFS, "/defaultSettings.json");
