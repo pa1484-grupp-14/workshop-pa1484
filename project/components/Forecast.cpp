@@ -1,7 +1,6 @@
 #include <iostream>
 
 #include "Forecast.h"
-#include "utilities.h"
 #include "../prelude.h"
 
 #include "gui/icons/wi_celsius.c"

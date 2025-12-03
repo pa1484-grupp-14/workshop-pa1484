@@ -1,3 +1,4 @@
+#include <WiFi.h>
 #include "gui/Gui.h"
 #include "components/prelude.h"
 
@@ -22,6 +23,13 @@ WeatherChart& getWeatherChartScreen() {
 }
 Settings& getSettingsScreen() {
     return settingsScreen;
+}
+bool is_wifi_connected() {
+    #ifdef LILYGO_BUILD
+    return WiFi.status() == WL_CONNECTED;
+    #else
+    return true;
+    #endif
 }
 
 #ifndef LILYGO_BUILD
