@@ -46,15 +46,15 @@ void setup() {
 // Must have function: Loop runs continously on device after setup
 void loop() {
   int wait = lv_timer_handler() + millis();
+  getMainScreen().process();
+  getForecastScreen().process();
+  getWeatherChartScreen().process();
+  getSettingsScreen().process();
+  
   //std::cout << "doing frame: " << wait << std::endl;
-  while (millis() < wait) {
-    
-    getMainScreen().process();
-    getForecastScreen().process();
-    getWeatherChartScreen().process();
-    getSettingsScreen().process();
-    
-  }
+  do {
+    APIhandler::process();
+  } while (millis() < wait);
 }
 
 #endif

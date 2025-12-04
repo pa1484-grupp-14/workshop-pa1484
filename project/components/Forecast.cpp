@@ -357,42 +357,58 @@ void Forecast::switchToForecastScreen(std::vector<ForecastObject>& forecasts) {
     
   }
 }
+void forecast_great_success(std::vector<ForecastObject>& forecasts) {
+  getForecastScreen().switchToForecastScreen(forecasts);
+}
+void forecast_success(std::unordered_map<std::string, StationObject>& stationArray) {
+    getForecastScreen().switchToLoadingScreenStations(stationArray);
+}
+void forecast_epic_fail() {
+    getForecastScreen().switchToFailScreen();
+}
+
+void Forecast::switchToLoadingScreenStations(std::unordered_map<std::string, StationObject>& stationsArray) {
+      APIhandler handler;
+      if(stationsArray.size() < 1) {
+        switchToFailScreen();
+      }
+      try {
+        std::string selected_city = getSettingsScreen().getSelectedCity();
+        std::cout << "[ForecastScreen]: Beginning fetch of city: " << selected_city.c_str() << std::endl;
+        StationObject station = handler.getStationFromArray(stationsArray, selected_city); 
+        handler.getForecastNext7DaysAsync(station, forecast_great_success, forecast_epic_fail);
+        ui_tile->clear();
+        
+        Widget& spinner = ui_tile->addSpinner().center();
+        spinner.setSize(60,60);
+        ui_tile->addLabel().setText("Fetching forecast...").setFont(&lv_font_montserrat_32).alignTo(spinner, LV_ALIGN_BOTTOM_MID, 0, 50);
+      } catch(int err) {
+        ui_tile->clear();
+        ui_tile->addLabel().setText("Failed fetching forecast data.").center();
+        std::cout << "[ForecastScreen]: Failed fetching forecast data." << std::endl;
+        switchToFailScreen();
+        return;
+      }
+}
+
+void Forecast::switchToFailScreen() {
+        ui_tile->clear();
+        ui_tile->addLabel().setText("Failed fetching available weather stations.").center();
+        status == ForecastStatus::FailedFetch;
+}
 void Forecast::switchToLoadingScreen() {
-    status = ForecastStatus::Fetching;
+    status = ForecastStatus::FetchingStations;
     ui_tile->clear();
-    ui_tile->addLabel().setText("Fetching Forecast...\n(Please remain patient)").setFont(&lv_font_montserrat_48).center();
+    Widget& spinner = ui_tile->addSpinner().center();
+        spinner.setSize(60,60);
+        ui_tile->addLabel().setText("Finding weather stations...").setFont(&lv_font_montserrat_32).alignTo(spinner, LV_ALIGN_BOTTOM_MID, 0, 50);
+    APIhandler handler;
+    handler.getStationsArrayAsync(1, forecast_success, forecast_epic_fail);
 }
 void Forecast::process() {
     if(status == ForecastStatus::WaitingForWifi) {
       if(is_wifi_connected()) {
         this->switchToLoadingScreen();
       }
-    } else if (status == ForecastStatus::Fetching) {
-      if(true) {
-
-      APIhandler handler;
-
-      std::unordered_map<std::string, StationObject> stationsArray = handler.getStationsArray(1);
-      
-      if(stationsArray.size() < 1) {
-        ui_tile->clear();
-        ui_tile->addLabel().setText("Failed fetching available weather stations.").center();
-        status == ForecastStatus::FailedFetch;
-      }
-      try {
-        std::string selected_city = getSettingsScreen().getSelectedCity();
-        std::cout << "[ForecastScreen]: Beginning fetch of city: " << selected_city.c_str() << std::endl;
-      StationObject station =
-      handler.getStationFromArray(stationsArray, selected_city); 
-      std::vector<ForecastObject> forecasts = handler.getForecastNext7Days(station);
-        this->switchToForecastScreen(forecasts);
-      } catch(int err) {
-        ui_tile->clear();
-        ui_tile->addLabel().setText("Failed fetching forecast data.").center();
-        status == ForecastStatus::FailedFetch;
-        std::cout << "[ForecastScreen]: Failed fetching forecast data." << std::endl;
-      }
-      }
-      
     }
 }

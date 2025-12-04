@@ -7,7 +7,8 @@
 
 enum ForecastStatus {
     WaitingForWifi = 0,
-    Fetching,
+    FetchingStations,
+    FetchingForecast,
     Fetched,
     FailedFetch,
 };
@@ -26,6 +27,8 @@ class Forecast : public Component {
     ~Forecast();
     void constructUI(Tile *gui) override;
 
+    void switchToLoadingScreenStations(std::unordered_map<std::string, StationObject>& stationArray);
+    void switchToFailScreen();
     void switchToForecastScreen(std::vector<ForecastObject>& forecasts);
     void switchToLoadingScreen();
 

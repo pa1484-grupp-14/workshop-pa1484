@@ -43,7 +43,37 @@ vector<HistoricalObject> APIhandler::getHistoricalData(const string& key, int pa
 
     return vector<HistoricalObject>();
 }
-
+void APIhandler::getForecastNext7DaysAsync(const StationObject& stationObject, void(*success_cb)(std::vector<ForecastObject>&), void(*failure_cb)()) {
+    if(forecastFetch != nullptr) {
+        forecastFetch->http.end();
+        delete forecastFetch;
+        forecastFetch == nullptr;
+    }
+    
+    ForecastRequest* fetch = new ForecastRequest{WiFiClient(), HTTPClient(), JsonStreamingParser(), ForecastListener(), success_cb, failure_cb};
+    float lon = stationObject.getLon();
+    float lat = stationObject.getLat();
+    String url = "http://opendata-download-metfcst.smhi.se/api/category/snow1g/version/1/geotype/point/lon/";
+    url += String(lon) + "/" +"lat/" + String(lat) + "/data.json";
+    
+    if (fetch->http.begin(fetch->client, url)) {
+        int code = fetch->http.GET();
+        if (code == HTTP_CODE_OK) {
+            fetch->parser.setListener(&fetch->listener);
+            std::cout << "[APIHandler]: Fetching forecast asynchronously!." << std::endl;
+            forecastFetch = fetch;
+        }
+        else
+        {
+            fetch->http.end();
+            if(failure_cb) {
+                failure_cb();
+            }   
+            delete fetch;
+            std::cout << "[APIHandler]: Failed to fetch forecast" << std::endl;
+        }
+    }
+}
 std::vector<ForecastObject> APIhandler::getForecastNext7Days(const StationObject& stationObject)
 {
     /*
@@ -105,8 +135,40 @@ std::vector<ForecastObject> APIhandler::getForecastNext7Days(const StationObject
     return listener.forecasts;
 }
 
+ StationRequest* APIhandler::stationFetch = nullptr;
+ ForecastRequest* APIhandler::forecastFetch = nullptr;
+void APIhandler::getStationsArrayAsync(int parameter, void(*success_cb)(std::unordered_map<std::string, StationObject>&), void(*failure_cb)()) {
+    if(parameter == cached_parameter && cached_stations.size() > 0) {
+        std::cout << "[APIHandler]: returning cached stations instead." << std::endl;
+        success_cb(cached_stations);
+    } else {
+        if(stationFetch != nullptr) {
+            stationFetch->success_cbs.push_back(success_cb);
+        } else {
+            StationRequest* fetch = new StationRequest{parameter, WiFiClient(), HTTPClient(), JsonStreamingParser(), StationParser(), {success_cb}, {failure_cb}};
+            String url = "http://opendata-download-metobs.smhi.se/api/version/latest/parameter/";
+            url += String(parameter) + ".json";
+            if (fetch->http.begin(fetch->client, url)) {
 
-
+                int code = fetch->http.GET();
+                if (code == HTTP_CODE_OK) {
+                    fetch->parser.setListener(&fetch->listener);
+                    std::cout << "[APIHandler]: Fetching stations asynchronously!." << std::endl;
+                    stationFetch = fetch;
+                }
+                else
+                {
+                    fetch->http.end();
+                    if(failure_cb) {
+                        failure_cb();
+                    }   
+                    delete fetch;
+                    std::cout << "Failed to fetch station keys and cities" << std::endl;
+                }
+            }
+        }
+    }
+}
 std::unordered_map<std::string, StationObject> APIhandler::getStationsArray(int parameter)    
 {
     if(parameter == cached_parameter && cached_stations.size() > 0) {
@@ -161,4 +223,53 @@ std::unordered_map<std::string, StationObject> APIhandler::getStationsArray(int 
         cached_stations.emplace(station.first, station.second);
     }
     return listener.stations;
+}
+
+void APIhandler::process() {
+
+    if(stationFetch != nullptr) {
+        WiFiClient * stream = stationFetch->http.getStreamPtr();
+        // Read response in chunks
+        const int BUFFER_SIZE = 512;
+        uint8_t buffer[BUFFER_SIZE];
+
+        if ((stream->connected() == 1 && stream->available() > 0)) {     
+            int len = stream->readBytes(buffer, BUFFER_SIZE);
+            for (int i = 0; i < len; i++) {
+                stationFetch->parser.parse((char)buffer[i]);
+            }
+            if(!(stream->connected() == 1 && stream->available() > 0)) {
+                stationFetch->http.end();
+                cached_parameter = stationFetch->parameter;
+                cached_stations.empty();
+                for(auto& station : stationFetch->listener.stations) {
+                    cached_stations.emplace(station.first, station.second);
+                }
+                for(auto& fnPtr : stationFetch->success_cbs) {
+                    fnPtr(cached_stations);
+                }
+                delete stationFetch;
+                stationFetch = nullptr;
+            }
+        }   
+    }
+    if(forecastFetch != nullptr) {
+        WiFiClient * stream = forecastFetch->http.getStreamPtr();
+        // Read response in chunks
+        const int BUFFER_SIZE = 512;
+        uint8_t buffer[BUFFER_SIZE];
+
+        if ((stream->connected() == 1 && stream->available() > 0)) {     
+            int len = stream->readBytes(buffer, BUFFER_SIZE);
+            for (int i = 0; i < len; i++) {
+                forecastFetch->parser.parse((char)buffer[i]);
+            }
+            if(!(stream->connected() == 1 && stream->available() > 0)) {
+                forecastFetch->http.end();
+                forecastFetch->success_cb(forecastFetch->listener.forecasts);
+                delete forecastFetch;
+                forecastFetch = nullptr;
+            }
+        }   
+    }
 }
