@@ -12,6 +12,7 @@ Popup& GUI::openPopup() {
   if (!current_popup.has_value()) {
     this->current_popup =
         std::optional<Popup>{Popup(*this, lv_msgbox_create(nullptr))};
+    lv_obj_set_scroll_dir((*current_popup).getWidgetPtr(), LV_DIR_NONE);
     current_popup.value().setSize(550, 400);
   }
 

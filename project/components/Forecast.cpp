@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "Forecast.h"
 #include "utilities.h"
 #include "../prelude.h"
@@ -213,9 +215,7 @@ void Forecast::constructUI(Tile* tile) {
 
 }
 void Forecast::reset() {
-  if(ui_tile == nullptr) {
-    Serial.println("FORECAST TILE IS NULL!");
-  } else {
+  if (ui_tile) {
 
     ui_tile->clear();
     Widget& spinner = ui_tile->addSpinner().center();
@@ -223,14 +223,16 @@ void Forecast::reset() {
       ui_tile->addLabel().setText("Waiting for wifi...").setFont(&lv_font_montserrat_32).alignTo(spinner, LV_ALIGN_BOTTOM_MID, 0, 50);
     status = ForecastStatus::WaitingForWifi;
     
-  } 
+  } else {
+    std::cout << "[Forecast::reset]: ui_tile is a nullptr!";
+  }
 }
 void construct_forecast_ui(Tile* tile, std::vector<ForecastObject> forecasts) {
   tile->clear();
   Container& weather_forecast = tile->addContainer().disableFrame();
   weather_forecast.setSize(600, 1000).setFlexLayout(LV_FLEX_FLOW_COLUMN,
                                                     LV_FLEX_ALIGN_SPACE_EVENLY);
-
+  std::cout << "[construct_forecast_ui]: we have " << forecasts.size() << " forecast days" << std::endl;
   for (size_t i = 0; i < 7; i++) {
     ForecastObject& day = forecasts.at(i);
     int year = std::stoi(day.time.substr(0, 4));
@@ -299,20 +301,17 @@ void Forecast::process() {
         status == ForecastStatus::FailedFetch;
       }
       try {
-        Serial.print("Beginning fetch of city: ");
         std::string selected_city = getSettingsScreen().getSelectedCity();
-        Serial.println(selected_city.c_str());
-        Serial.print("banan");
+        std::cout << "[ForecastScreen]: Beginning fetch of city: " << selected_city.c_str() << std::endl;
       StationObject station =
       handler.getStationFromArray(stationsArray, selected_city); 
-        //Serial.println("name: " + String(station.getName().c_str()) + " longitude: " + String(station.getLon()) + " latitude: " + String(station.getLat()));
       std::vector<ForecastObject> forecasts = handler.getForecastNext7Days(station);
         this->switchToForecastScreen(forecasts);
       } catch(int err) {
         ui_tile->clear();
         ui_tile->addLabel().setText("Failed fetching forecast data.").center();
         status == ForecastStatus::FailedFetch;
-        Serial.println("Failed fetching forecast data.");
+        std::cout << "[ForecastScreen]: Failed fetching forecast data." << std::endl;
       }
       }
       

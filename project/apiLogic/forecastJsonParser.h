@@ -1,7 +1,11 @@
 #pragma once
 
 #include "ForecastObject.h"
+#ifdef LILYGO_BUILD
 #include "JsonListener.h"
+#else
+#include "nativeReplacements/JsonListener.h"
+#endif
 #include <vector>
 
 
