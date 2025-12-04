@@ -14,8 +14,8 @@ Dropdown& Dropdown::setOptions(const std::string& text) {
   return *this;
 }
 
-Dropdown& Dropdown::toggleOption(int id) {
-  lv_dropdown_set_selected(this->getWidgetPtr(), static_cast<uint16_t>(id));
+Dropdown& Dropdown::setSelectedOption(int index) {
+  lv_dropdown_set_selected(this->getWidgetPtr(), static_cast<uint16_t>(index));
   return *this;
 }
 

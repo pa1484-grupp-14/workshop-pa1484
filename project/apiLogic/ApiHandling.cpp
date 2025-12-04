@@ -1,9 +1,9 @@
 #include "ApiHandling.h"
-#include "parameterJsonParser.h"
+
 #include "StationObject.h"
 #include "ForecastObject.h"
 #include "forecastJsonParser.h" 
-
+#include "parameterJsonParser.h"
 #include <iostream>
 #include <ArduinoJson.h>
 #include <fstream>
@@ -22,6 +22,12 @@
 #include "nativeReplacements/JsonStreamingParser.h"
 #include "nativeReplacements/HTTPClient.h"
 #endif
+
+
+std::unordered_map<std::string, std::vector<ForecastObject>> APIhandler::cached_forecasts = std::unordered_map<std::string, std::vector<ForecastObject>>();
+int APIhandler::cached_parameter = 0;
+std::unordered_map<std::string, StationObject> APIhandler::cached_stations = {};
+
 StationObject APIhandler::getStationFromArray(const std::unordered_map<std::string, StationObject>& array, const std::string& stationName) 
 {
     return array.at(stationName);
@@ -40,6 +46,12 @@ vector<HistoricalObject> APIhandler::getHistoricalData(const string& key, int pa
 
 std::vector<ForecastObject> APIhandler::getForecastNext7Days(const StationObject& stationObject)
 {
+    /*
+    if(cached_forecasts.count(stationObject.getName()) > 0) {
+        std::cout << "[APIHandler]: returning cached forecast instead." << std::endl;
+        return cached_forecasts.at(stationObject.getName());
+    }
+        */
     float lon = stationObject.getLon();
     float lat = stationObject.getLat();
     String url = "http://opendata-download-metfcst.smhi.se/api/category/snow1g/version/1/geotype/point/lon/";
@@ -89,7 +101,7 @@ std::vector<ForecastObject> APIhandler::getForecastNext7Days(const StationObject
 
         http.end();
     }
-    
+    //cached_forecasts.emplace(stationObject.getName(), listener.forecasts);
     return listener.forecasts;
 }
 
@@ -97,6 +109,11 @@ std::vector<ForecastObject> APIhandler::getForecastNext7Days(const StationObject
 
 std::unordered_map<std::string, StationObject> APIhandler::getStationsArray(int parameter)    
 {
+    if(parameter == cached_parameter && cached_stations.size() > 0) {
+        std::cout << "[APIHandler]: returning cached stations instead." << std::endl;
+        return cached_stations;
+    }
+    
 
     WiFiClient client;
     HTTPClient http;
@@ -137,6 +154,11 @@ std::unordered_map<std::string, StationObject> APIhandler::getStationsArray(int 
         }
 
         http.end();
+    }
+    cached_parameter = parameter;
+    cached_stations.empty();
+    for(auto& station : listener.stations) {
+        cached_stations.emplace(station.first, station.second);
     }
     return listener.stations;
 }

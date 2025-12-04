@@ -38,6 +38,9 @@ void Settings::city_confirm_cb(lv_event_t * event) {
 std::string Settings::getSelectedCity() {
     return this->city;
 }
+WeatherParameter Settings::getSelectedParameter() {
+    return this->weather_parameter;
+}
 void Settings::city_picker_cb(lv_event_t * event) {
     char filtering_text[2]; 
     Settings* old_dropdown = (Settings*)lv_event_get_user_data(event);
@@ -59,13 +62,15 @@ void Settings::city_picker_cb(lv_event_t * event) {
     APIhandler handler;
 
    std::unordered_map<std::string, StationObject> placeholder_cities_list = handler.getStationsArray(1);
-    
-    for(auto city : placeholder_cities_list) {
+    std::vector<std::string> cities = {};
+    for(auto &city : placeholder_cities_list) {
         if(city.first.at(0) == filtering_text[0]) {
-            dropdown.pushOption(city.first);
+            cities.push_back(city.first);
             option_counter++;
         }
     }
+    std::sort(cities.begin(), cities.end());
+    dropdown.setOptions(cities);
     
     if(option_counter > 0) {
         popup.addButton("Cancel", city_cancel_cb).addButton("Finish", city_confirm_cb, old_dropdown);
@@ -99,7 +104,7 @@ void Settings::city_dropdown_cb(lv_event_t * event) {
         .setText("Select the first\nletter of your location.")
         .setFont(&lv_font_montserrat_32).setTextAlign(LV_TEXT_ALIGN_CENTER);
         Dropdown& dropdown = popup.getTile().addDropdown("letters");
-        dropdown.setOptions("A\nB\nC\nD\nE\nF\nG\nH\nI\nJ\nK\nL\nM\nN\nO\nP\nQ\nR\nS\nT\nU\nV\nW\nX\nY\nZ").setListFont(&font_header).setFont(&font_header);
+        dropdown.setOptions("A\nB\nC\nD\nE\nF\nG\nH\nI\nJ\nK\nL\nM\nN\nO\nP\nQ\nR\nS\nT\nU\nV\nW\nX\nY\nZ\nÅ\nÄ\nÖ").setListFont(&font_header).setFont(&font_header);
         
         popup.addButton("Cancel", city_cancel_cb).addButton("Next", Settings::city_picker_cb, settings);
     } else {
@@ -181,6 +186,7 @@ void Settings::change_weather_parameter(lv_event_t* event) {
   uint32_t index = lv_dropdown_get_selected((lv_obj_t*)dropdown);
   auto settings = (Settings*)lv_event_get_user_data(event);
   settings->weather_parameter = static_cast<WeatherParameter>(index);
+  getForecastScreen().refreshWeatherParameter();
 }
 
 void Settings::change_city(lv_event_t* event) {
@@ -213,14 +219,14 @@ void Settings::constructUI(Tile* gui) {
     .setGridCell(0, 0, 1, 2).getTile()
     .addLabel().setText("Parameter:").setFont(&font_regular)
     .setGridCell(1, 0, 1, 1, LV_GRID_ALIGN_CENTER, LV_GRID_ALIGN_END).getTile()
-    .addDropdown().setOptions("Temperature\nMoisture\nWind").toggleOption(static_cast<int>(this->weather_parameter)).setListFont(&font_regular).setFont(&font_regular)
+    .addDropdown().setOptions("Temperature\nWind\nHumidity\nRainfall\nSnowDepth\nSunshineTime").setSelectedOption(static_cast<int>(this->weather_parameter)).setListFont(&font_regular).setFont(&font_regular)
     .addEventCallback(Settings::change_weather_parameter, lv_event_code_t::LV_EVENT_VALUE_CHANGED, this)
     .setGridCell(1, 1).setWidth(370).getTile()
     .addLabel("Select option 2 ").setText("Location:").setFont(&font_regular)
     .setGridCell(2, 0, 1, 1, LV_GRID_ALIGN_CENTER, LV_GRID_ALIGN_END).getTile()
     .addDropdown("cities")
     .setOptions(available_cities)
-    .toggleOption(this->getCurrentCityIndex())
+    .setSelectedOption(this->getCurrentCityIndex())
     .pushOption("add location...")
     .setListFont(&font_regular)
     .setFont(&font_regular)

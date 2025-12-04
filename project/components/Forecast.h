@@ -30,6 +30,7 @@ class Forecast : public Component {
     void switchToLoadingScreen();
 
     void reset();
+    void refreshWeatherParameter();
     
 
     void process() override;

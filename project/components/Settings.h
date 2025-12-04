@@ -7,11 +7,11 @@
 
 enum WeatherParameter {
   Temperature = 0,
-  Wind,
-  Humidity,
-  Rainfall,
-  SnowDepth,
-  SunshineTime,
+  Wind = 1,
+  Humidity = 2,
+  Rainfall = 3,
+  SnowDepth = 4,
+  SunshineTime = 5,
 };
 
 class Settings : public Component {
@@ -28,6 +28,7 @@ class Settings : public Component {
   int getCurrentCityIndex(); 
   
   std::string getSelectedCity();
+  WeatherParameter getSelectedParameter();
   static void change_weather_parameter(lv_event_t* event);
   static void change_city(lv_event_t* event);
   static void city_picker_cb(lv_event_t* event);

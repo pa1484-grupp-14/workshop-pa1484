@@ -6,10 +6,56 @@
 #include "ForecastObject.h"
 #include "HistoricalObject.h"
 
+#include "forecastJsonParser.h" 
+#include "parameterJsonParser.h"
+
+#ifdef LILYGO_BUILD
+#include <JsonListener.h>
+#include <JsonStreamingParser.h>
+#include <HTTPClient.h> 
+#endif
+#ifdef NATIVE_BUILD
+#include "nativeReplacements/JsonListener.h"
+#include "nativeReplacements/JsonStreamingParser.h"
+#include "nativeReplacements/HTTPClient.h"
+#endif
 
 class APIhandler
 {
-public:
+
+    private:
+    class ForecastRequest {
+        private:
+        WiFiClient client;
+        HTTPClient http;
+        JsonStreamingParser parser;
+        ForecastListener listener;
+        void(*success_cb)(std::vector<ForecastObject>&);
+        void(*failure_cb)();
+    };
+    class StationRequest {
+        private:
+        WiFiClient client;
+        HTTPClient http;
+        JsonStreamingParser parser;
+        StationParser listener;
+        std::vector<void(*)(std::unordered_map<std::string, StationObject>&)> success_cbs;
+        std::vector<void(*)()> failure_cbs;
+    };
+    //background forecasts
+    static std::optional<StationRequest> stationFetch;
+    static std::optional<ForecastRequest> forecastFetch;
+    //Forecast which has already been fetched, derived from station name
+    static std::unordered_map<std::string, std::vector<ForecastObject>> cached_forecasts;
+    //parameter of the cached stations
+    static int cached_parameter;
+    //cached stations, derived from city name
+    static std::unordered_map<std::string, StationObject> cached_stations;
+    
+    
+    
+    public:
+    static void process();
     std::unordered_map<std::string, StationObject> getStationsArray(int parameter);
     StationObject getStationFromArray(const std::unordered_map<std::string, StationObject>& array,const string& stationName); 
     std::vector<HistoricalObject> getHistoricalData(const string& key,int parameter);

@@ -17,7 +17,7 @@ class Dropdown : public Widget {
   ///Sets the available options inside the dropdown based
   ///on a newline-seperated string.
   Dropdown& setOptions(const std::string& text);
-  Dropdown& toggleOption(int id);
+  Dropdown& setSelectedOption(int id);
 
   ///# WARNING: has additional overhead compared to other versions of this function.
 
