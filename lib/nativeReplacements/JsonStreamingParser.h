@@ -24,7 +24,6 @@ See more at http://blog.squix.ch and https://github.com/squix78/json-streaming-p
 */
 
 #pragma once
-#ifdef NATIVE_BUILD
 
 //#include <Arduino.h>
 #include "JsonListener.h"
@@ -134,4 +133,3 @@ class JsonStreamingParser {
     void setListener(JsonListener* listener);
     void reset();
 };
-#endif

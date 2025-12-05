@@ -4,10 +4,8 @@
 #include <iostream>
 #include <fstream>
 #include "HTTPRequest.hpp"
-#include "nativeReplacements/String.h"
+#include "String.h"
 
-
-#ifdef NATIVE_BUILD
 #define HTTP_CODE_OK 200
 class WiFiClient {
     private:
@@ -60,7 +58,7 @@ class HTTPClient {
     bool begin(WiFiClient& client, String url) {
         this->dummy = &client;
         std::cout << "[HTTPClient::begin]: starting fetch of request." << std::endl;
-        request = std::optional<http::Request>{http::Request(url.data)};
+        request = std::optional<http::Request>{http::Request(url)};
         return true;
     }
     void end() {
@@ -80,4 +78,3 @@ class HTTPClient {
         return dummy;
     }
 };
-#endif

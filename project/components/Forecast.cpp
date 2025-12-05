@@ -1,9 +1,8 @@
-#include <iostream>
-#include <iomanip>
-#include <sstream>
 #include "Forecast.h"
-#include "utilities.h"
-#include "../prelude.h"
+#include <iomanip>
+#include <iostream>
+#include <sstream>
+#include "prelude.h"
 
 #include "gui/icons/wi_celsius.c"
 #include "gui/icons/wi_cloudy.c"
@@ -49,25 +48,26 @@
 #define SC_MODERATE_SNOW 26
 #define SC_HEAVY_SNOW 27
 
-
 void forecast_great_success(std::vector<ForecastObject>& forecasts) {
   getForecastScreen().switchToForecastScreen(forecasts);
 }
-void forecast_success(std::unordered_map<std::string, StationObject>& stationArray) {
-    getForecastScreen().switchToLoadingForecasts(stationArray);
+void forecast_success(
+    std::unordered_map<std::string, StationObject>& stationArray) {
+  getForecastScreen().switchToLoadingForecasts(stationArray);
 }
 void forecast_epic_fail() {
-    getForecastScreen().switchToFailScreen();
+  getForecastScreen().switchToFailScreen();
 }
 void forecast_refresh_pls(lv_event_t* _e) {
-    getForecastScreen().refresh();
+  getForecastScreen().refresh();
 }
 void createLoadingUi(Tile* ui_tile, std::string statusText) {
-    ui_tile->clear();
-    Widget& label = ui_tile->addLabel().setText(statusText);
-    Widget& spinner = ui_tile->addSpinner();
-    spinner.center().setSize(60,60);
-    label.setFont(&lv_font_montserrat_32).alignTo(spinner, LV_ALIGN_BOTTOM_MID, 0, 50);
+  ui_tile->clear();
+  Widget& label = ui_tile->addLabel().setText(statusText);
+  Widget& spinner = ui_tile->addSpinner();
+  spinner.center().setSize(60, 60);
+  label.setFont(&lv_font_montserrat_32)
+      .alignTo(spinner, LV_ALIGN_BOTTOM_MID, 0, 50);
 }
 // NOTICE: modified from https://www.geeksforgeeks.org/dsa/find-day-of-the-week-for-a-given-date/ (retrieved 20/11/2025)
 // Function to calculate the day of the week using the formula-based approach
@@ -93,7 +93,8 @@ int dayOfWeek(int d, int m, int y) {
 }
 
 WidgetContainer& AddForecastDay(WidgetContainer& tile, const std::string& day,
-                                const std::string& date, ForecastObject forecast) {
+                                const std::string& date,
+                                ForecastObject forecast) {
   static int cols[] = {100, 90, 90, 100, 80, LV_GRID_TEMPLATE_LAST};
   static int rows[] = {35, 32, 32, LV_GRID_TEMPLATE_LAST};
   const lv_image_dsc_t* icon_image = &wi_day_sunny;
@@ -201,61 +202,55 @@ WidgetContainer& AddForecastDay(WidgetContainer& tile, const std::string& day,
       .setGridCell(0, 4)
       .setSize(100, 40);
 
-            {
-        std::stringstream stream;
-        stream << std::fixed << std::setprecision(1) << forecast.air_temperature;
-        std::string s = stream.str();
-        container.addLabel()
-            .setText(s)
-            .setFont(&lv_font_montserrat_32)
-            .setGridCell(1, 3, 1, 1, LV_GRID_ALIGN_CENTER, LV_GRID_ALIGN_END);
-        container.addImage()
-            .setSource(&wi_celsius)
-            .setGridCell(1, 4, 1, 1, LV_GRID_ALIGN_CENTER, LV_GRID_ALIGN_START);
-        container.addLabel()
-            .setText(std::to_string(forecast.probability_of_precipitation) + "%")
-            .setFont(&lv_font_montserrat_32)
-            .setGridCell(2, 3, 1, 1, LV_GRID_ALIGN_CENTER, LV_GRID_ALIGN_END);
-        container.addImage()
-            .setSource(&wi_raindrop)
-            .setGridCell(2, 4, 1, 1, LV_GRID_ALIGN_CENTER, LV_GRID_ALIGN_START);
-          }
-          {
-                          std::stringstream stream;
-        stream << std::fixed << std::setprecision(1) << forecast.wind_speed << "m/s";
-        std::string s = stream.str();
-        container.addLabel()
-            .setText(s)
-            .setFont(&lv_font_montserrat_32)
-            .setGridCell(1, 1, 1, 2, LV_GRID_ALIGN_CENTER, LV_GRID_ALIGN_END);
-          }
-          {
-                                      std::stringstream stream;
-        stream << std::fixed << std::setprecision(1) << forecast.precipitation_amount_mean << "mm";
-        std::string s = stream.str();
-                container.addLabel()
-            .setText(s)
-            .setFont(&lv_font_montserrat_32)
-            .setGridCell(2, 1, 1, 2, LV_GRID_ALIGN_CENTER, LV_GRID_ALIGN_END);
-        }
-      
-  
-
+  {
+    std::stringstream stream;
+    stream << std::fixed << std::setprecision(1) << forecast.air_temperature;
+    std::string s = stream.str();
+    container.addLabel()
+        .setText(s)
+        .setFont(&lv_font_montserrat_32)
+        .setGridCell(1, 3, 1, 1, LV_GRID_ALIGN_CENTER, LV_GRID_ALIGN_END);
+    container.addImage()
+        .setSource(&wi_celsius)
+        .setGridCell(1, 4, 1, 1, LV_GRID_ALIGN_CENTER, LV_GRID_ALIGN_START);
+    container.addLabel()
+        .setText(std::to_string(forecast.probability_of_precipitation) + "%")
+        .setFont(&lv_font_montserrat_32)
+        .setGridCell(2, 3, 1, 1, LV_GRID_ALIGN_CENTER, LV_GRID_ALIGN_END);
+    container.addImage()
+        .setSource(&wi_raindrop)
+        .setGridCell(2, 4, 1, 1, LV_GRID_ALIGN_CENTER, LV_GRID_ALIGN_START);
+  }
+  {
+    std::stringstream stream;
+    stream << std::fixed << std::setprecision(1) << forecast.wind_speed
+           << "m/s";
+    std::string s = stream.str();
+    container.addLabel()
+        .setText(s)
+        .setFont(&lv_font_montserrat_32)
+        .setGridCell(1, 1, 1, 2, LV_GRID_ALIGN_CENTER, LV_GRID_ALIGN_END);
+  }
+  {
+    std::stringstream stream;
+    stream << std::fixed << std::setprecision(1)
+           << forecast.precipitation_amount_mean << "mm";
+    std::string s = stream.str();
+    container.addLabel()
+        .setText(s)
+        .setFont(&lv_font_montserrat_32)
+        .setGridCell(2, 1, 1, 2, LV_GRID_ALIGN_CENTER, LV_GRID_ALIGN_END);
+  }
 
   return tile;
 }
-
-
-
-
-
 
 Forecast::Forecast() {}
 Forecast::~Forecast() {}
 
 void Forecast::constructUI(Tile* tile) {
-    uiTile = tile;
-    refresh();
+  uiTile = tile;
+  refresh();
 }
 void Forecast::refresh() {
   if (uiTile) {
@@ -267,93 +262,101 @@ void Forecast::refresh() {
 }
 
 void Forecast::refreshWeatherParameter() {
-    const char* days[] = {"Monday", "Tuesday",  "Wednesday", "Thursday",
-                    "Friday", "Saturday", "Sunday"};
-    if (status == ForecastStatus::Fetched) {
-        //Create UI container
-        uiTile->clear();
-        Container& container = uiTile->addContainer().disableFrame();
-        container.setSize(600, 1300).setFlexLayout(
-        LV_FLEX_FLOW_COLUMN, LV_FLEX_ALIGN_SPACE_EVENLY);
-    
-        container.addLabel().setText(currentCity + "'s forecast:").setFont(&font_header);
-        
-        for (auto& sample : forecastData) {
-            //format day and dare strings
-            std::string date_string =
-                "(" + sample.time.substr(5, 2) + "/" + sample.time.substr(8, 2) + ")";
-            std::string day_string;
+  const char* days[] = {"Monday", "Tuesday",  "Wednesday", "Thursday",
+                        "Friday", "Saturday", "Sunday"};
+  if (status == ForecastStatus::Fetched) {
+    //Create UI container
+    uiTile->clear();
+    Container& container = uiTile->addContainer().disableFrame();
+    container.setSize(600, 1300).setFlexLayout(LV_FLEX_FLOW_COLUMN,
+                                               LV_FLEX_ALIGN_SPACE_EVENLY);
 
-            int year = std::stoi(sample.time.substr(0, 4));
-            int month = std::stoi(sample.time.substr(5, 2));
-            int day = std::stoi(sample.time.substr(8, 2));
-            int weekday = dayOfWeek(day, month, year);
+    container.addLabel()
+        .setText(currentCity + "'s forecast:")
+        .setFont(&font_header);
 
-            if (weekday < 7) {
-                day_string = days[weekday];
-            } else {
-                day_string = "null day";
-            }
+    for (auto& sample : forecastData) {
+      //format day and dare strings
+      std::string date_string =
+          "(" + sample.time.substr(5, 2) + "/" + sample.time.substr(8, 2) + ")";
+      std::string day_string;
 
-            //Add day to the UI
-            AddForecastDay(container, day_string, date_string, sample);
-        }
+      int year = std::stoi(sample.time.substr(0, 4));
+      int month = std::stoi(sample.time.substr(5, 2));
+      int day = std::stoi(sample.time.substr(8, 2));
+      int weekday = dayOfWeek(day, month, year);
+
+      if (weekday < 7) {
+        day_string = days[weekday];
+      } else {
+        day_string = "null day";
+      }
+
+      //Add day to the UI
+      AddForecastDay(container, day_string, date_string, sample);
     }
+  }
 }
 
 void Forecast::switchToForecastScreen(std::vector<ForecastObject>& forecasts) {
-    if(forecasts.size() < 7) {
-        switchToFailScreen();
-    } else {
-        std::cout << "[construct_forecast_ui]: we have " << forecasts.size() << " forecast days" << std::endl;
-        for (size_t i = 0; i < 7; i++) {
-            
-            ForecastObject& day = forecasts.at(i);
-            forecastData[i] = day;
-        }
-        status = ForecastStatus::Fetched;
-        refreshWeatherParameter();
+  if (forecasts.size() < 7) {
+    switchToFailScreen();
+  } else {
+    std::cout << "[construct_forecast_ui]: we have " << forecasts.size()
+              << " forecast days" << std::endl;
+    for (size_t i = 0; i < 7; i++) {
+
+      ForecastObject& day = forecasts.at(i);
+      forecastData[i] = day;
     }
+    status = ForecastStatus::Fetched;
+    refreshWeatherParameter();
+  }
 }
-void Forecast::switchToLoadingForecasts(std::unordered_map<std::string, StationObject>& stationsArray) {
-    if(stationsArray.size() < 1) {
-        switchToFailScreen();
-        return;
-    }
-    try {
-        APIhandler handler;
-        currentCity = getSettingsScreen().getSelectedCity();
-        std::cout << "[ForecastScreen]: Beginning fetch of city: " << currentCity.c_str() << std::endl;
-        StationObject station = handler.getStationFromArray(stationsArray, currentCity); 
-        handler.getForecastNext7DaysAsync(station, forecast_great_success, forecast_epic_fail);
-        createLoadingUi(uiTile, "Fetching Forecast...");
-        status = ForecastStatus::FetchingForecast;
-    } catch(int err) {
-        uiTile->clear();
-        uiTile->addLabel().setText("Failed fetching forecast data.").center();
-        std::cout << "[ForecastScreen]: Failed fetching forecast data." << std::endl;
-        switchToFailScreen();
-    }
+void Forecast::switchToLoadingForecasts(
+    std::unordered_map<std::string, StationObject>& stationsArray) {
+  if (stationsArray.size() < 1) {
+    switchToFailScreen();
+    return;
+  }
+  try {
+    APIhandler handler;
+    currentCity = getSettingsScreen().getSelectedCity();
+    std::cout << "[ForecastScreen]: Beginning fetch of city: "
+              << currentCity.c_str() << std::endl;
+    StationObject station =
+        handler.getStationFromArray(stationsArray, currentCity);
+    handler.getForecastNext7DaysAsync(station, forecast_great_success,
+                                      forecast_epic_fail);
+    createLoadingUi(uiTile, "Fetching Forecast...");
+    status = ForecastStatus::FetchingForecast;
+  } catch (int err) {
+    uiTile->clear();
+    uiTile->addLabel().setText("Failed fetching forecast data.").center();
+    std::cout << "[ForecastScreen]: Failed fetching forecast data."
+              << std::endl;
+    switchToFailScreen();
+  }
 }
 void Forecast::switchToFailScreen() {
-    uiTile->clear();
-    Widget& label = uiTile->addLabel().setText("An error has occured.").center();
-    uiTile->addButton("okay")
-    .setBtnText("refresh")
-    .addEventCallback(forecast_refresh_pls, LV_EVENT_CLICKED)
-    .alignTo(label, LV_ALIGN_BOTTOM_MID, 0, 100);
-    status == ForecastStatus::FailedFetch;
+  uiTile->clear();
+  Widget& label = uiTile->addLabel().setText("An error has occured.").center();
+  uiTile->addButton("okay")
+      .setBtnText("refresh")
+      .addEventCallback(forecast_refresh_pls, LV_EVENT_CLICKED)
+      .alignTo(label, LV_ALIGN_BOTTOM_MID, 0, 100);
+  status == ForecastStatus::FailedFetch;
 }
 void Forecast::switchToLoadingStations() {
-    status = ForecastStatus::FetchingStations;
-    createLoadingUi(uiTile, "Finding weather stations...");
-    APIhandler handler;
-    handler.getStationsArrayAsync(1, forecast_success, forecast_epic_fail);
+  status = ForecastStatus::FetchingStations;
+  createLoadingUi(uiTile, "Finding weather stations...");
+  APIhandler handler;
+  handler.getStationsArrayAsync(1, forecast_success, forecast_epic_fail);
 }
 void Forecast::process() {
-    if(status == ForecastStatus::WaitingForWifi) {
-      if(is_wifi_connected()) {
-        this->switchToLoadingStations();
-      }
+  if (status == ForecastStatus::WaitingForWifi) {
+    if (is_wifi_connected()) {
+      this->switchToLoadingStations();
     }
+  }
 }
