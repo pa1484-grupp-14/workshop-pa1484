@@ -1,5 +1,4 @@
 #pragma once
-#ifdef NATIVE_BUILD
 #include "String.h"
 ///this is a netive reimplemenation of squix78's streamingJsonParser Library.
 
@@ -52,4 +51,3 @@ class JsonListener {
     virtual void startObject() = 0;
  
 };
-#endif

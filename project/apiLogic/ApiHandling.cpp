@@ -2,7 +2,7 @@
 
 #include "StationObject.h"
 #include "ForecastObject.h"
-#include "forecastJsonParser.h" 
+#include "forecastJsonParser.h"
 #include "parameterJsonParser.h"
 #include <iostream>
 #include <ArduinoJson.h>
@@ -12,10 +12,9 @@
 #include <stdexcept>
 #include <cstring>
 
-#ifdef LILYGO_BUILD
 #include <JsonListener.h>
 #include <JsonStreamingParser.h>
-#include <HTTPClient.h> 
+#include <HTTPClient.h>
 #endif
 #ifdef NATIVE_BUILD
 #include "nativeReplacements/JsonListener.h"
@@ -28,19 +27,13 @@ std::unordered_map<std::string, std::vector<ForecastObject>> APIhandler::cached_
 int APIhandler::cached_parameter = 0;
 std::unordered_map<std::string, StationObject> APIhandler::cached_stations = {};
 
-StationObject APIhandler::getStationFromArray(const std::unordered_map<std::string, StationObject>& array, const std::string& stationName) 
+StationObject APIhandler::getStationFromArray(const std::unordered_map<std::string, StationObject>& array, const std::string& stationName)
 {
     return array.at(stationName);
 }
 
 vector<HistoricalObject> APIhandler::getHistoricalData(const string& key, int parameter)
 {
-   
-
-
-
-    
-
     return vector<HistoricalObject>();
 }
 void APIhandler::getForecastNext7DaysAsync(const StationObject& stationObject, void(*success_cb)(std::vector<ForecastObject>&), void(*failure_cb)()) {
@@ -49,7 +42,7 @@ void APIhandler::getForecastNext7DaysAsync(const StationObject& stationObject, v
         delete forecastFetch;
         forecastFetch == nullptr;
     }
-    
+
     ForecastRequest* fetch = new ForecastRequest{WiFiClient(), HTTPClient(), JsonStreamingParser(), ForecastListener(), success_cb, failure_cb};
     float lon = stationObject.getLon();
     float lat = stationObject.getLat();
@@ -68,7 +61,7 @@ void APIhandler::getForecastNext7DaysAsync(const StationObject& stationObject, v
             fetch->http.end();
             if(failure_cb) {
                 failure_cb();
-            }   
+            }
             delete fetch;
             std::cout << "[APIHandler]: Failed to fetch forecast" << std::endl;
         }
@@ -86,8 +79,8 @@ std::vector<ForecastObject> APIhandler::getForecastNext7Days(const StationObject
     float lat = stationObject.getLat();
     String url = "http://opendata-download-metfcst.smhi.se/api/category/snow1g/version/1/geotype/point/lon/";
     url += String(lon) + "/" +"lat/" + String(lat) + "/data.json";
-    
-    // Your Domain name with URL path or IP address with path   
+
+    // Your Domain name with URL path or IP address with path
     WiFiClient client;
     HTTPClient http;
     JsonStreamingParser parser;
@@ -110,7 +103,7 @@ std::vector<ForecastObject> APIhandler::getForecastNext7Days(const StationObject
             // Read response in chunks
             const int BUFFER_SIZE = 512;
             uint8_t buffer[BUFFER_SIZE];
-   
+
             auto before = millis();
             while ((stream->connected() || stream->available()) && listener.itemCount != 7) {
                 int len = stream->readBytes(buffer, BUFFER_SIZE);
@@ -119,22 +112,22 @@ std::vector<ForecastObject> APIhandler::getForecastNext7Days(const StationObject
                 }
             }
             auto after = millis();
-            std::cout << "[APIHandler]: took " << after-before << "ms to parse all statsions." << std::endl;
+            std::cout << "[APIHandler]: took " << after-before << "ms to parse all forecast data." << std::endl;
         }
         else
         {
-            std::cout << "Failed to fetch" << std::endl;
+            std::cout << "[APIHandler]: Failed to fetch forecast data." << std::endl;
             return vector<ForecastObject>();
         }
-           
-            
+
+
 
         http.end();
     }
     //cached_forecasts.emplace(stationObject.getName(), listener.forecasts);
     return listener.forecasts;
 }
-    
+
  StationRequest* APIhandler::stationFetch = nullptr;
  ForecastRequest* APIhandler::forecastFetch = nullptr;
 void APIhandler::getStationsArrayAsync(int parameter, void(*success_cb)(std::unordered_map<std::string, StationObject>&), void(*failure_cb)()) {
@@ -149,7 +142,7 @@ void APIhandler::getStationsArrayAsync(int parameter, void(*success_cb)(std::uno
             String url = "http://opendata-download-metobs.smhi.se/api/version/latest/parameter/";
             url += String(parameter) + ".json";
             fetch->client.setTimeout(1);
-            
+
             if (fetch->http.begin(fetch->client, url)) {
 
                 int code = fetch->http.GET();
@@ -163,7 +156,7 @@ void APIhandler::getStationsArrayAsync(int parameter, void(*success_cb)(std::uno
                     fetch->http.end();
                     if(failure_cb) {
                         failure_cb();
-                    }   
+                    }
                     delete fetch;
                     std::cout << "Failed to fetch station keys and cities" << std::endl;
                 }
@@ -171,13 +164,13 @@ void APIhandler::getStationsArrayAsync(int parameter, void(*success_cb)(std::uno
         }
     }
 }
-std::unordered_map<std::string, StationObject> APIhandler::getStationsArray(int parameter)    
+std::unordered_map<std::string, StationObject> APIhandler::getStationsArray(int parameter)
 {
     if(parameter == cached_parameter && cached_stations.size() > 0) {
         std::cout << "[APIHandler]: returning cached stations instead." << std::endl;
         return cached_stations;
     }
-    
+
 
     WiFiClient client;
     HTTPClient http;
@@ -186,7 +179,7 @@ std::unordered_map<std::string, StationObject> APIhandler::getStationsArray(int 
     String url = "http://opendata-download-metobs.smhi.se/api/version/latest/parameter/";
     url += String(parameter) + ".json";
 
-    
+
     if (http.begin(client, url)) {
 
         int code = http.GET();
@@ -201,7 +194,7 @@ std::unordered_map<std::string, StationObject> APIhandler::getStationsArray(int 
             // Read response in chunks
             const int BUFFER_SIZE = 512;
             uint8_t buffer[BUFFER_SIZE];
-   
+
             auto before = millis();
             while ((stream->connected() || stream->available())) {
                 int len = stream->readBytes(buffer, BUFFER_SIZE);
@@ -210,11 +203,11 @@ std::unordered_map<std::string, StationObject> APIhandler::getStationsArray(int 
                 }
             }
             auto after = millis();
-            std::cout << "[APIHandler]: took " << after-before << "ms to parse all forecast days." << std::endl;
+            std::cout << "[APIHandler]: took " << after-before << "ms to parse all weather stations." << std::endl;
         }
         else
         {
-            std::cout << "Failed to fetch station keys and cities" << std::endl;
+            std::cout << "[APIHandler]: Failed to fetch station keys and cities" << std::endl;
             return std::unordered_map<std::string, StationObject>();
         }
 
@@ -256,7 +249,7 @@ void APIhandler::process() {
                 fnPtr(cached_stations);
             }
             delete stationFetch;
-            stationFetch = nullptr;    
+            stationFetch = nullptr;
         }
     }
     if(forecastFetch != nullptr) {
@@ -280,6 +273,6 @@ void APIhandler::process() {
             delete forecastFetch;
             forecastFetch = nullptr;
         }
-          
+
     }
 }
