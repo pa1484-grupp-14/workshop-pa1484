@@ -14,6 +14,11 @@ Dropdown& Dropdown::setOptions(const std::string& text) {
   return *this;
 }
 
+Dropdown& Dropdown::setSelectedOption(int index) {
+  lv_dropdown_set_selected(this->getWidgetPtr(), static_cast<uint16_t>(index));
+  return *this;
+}
+
 Dropdown& Dropdown::setOptions(const std::vector<std::string>& text) {
 
   lv_dropdown_clear_options(this->getWidgetPtr());

@@ -7,7 +7,8 @@
 
 enum ForecastStatus {
     WaitingForWifi = 0,
-    Fetching,
+    FetchingStations,
+    FetchingForecast,
     Fetched,
     FailedFetch,
 };
@@ -15,11 +16,11 @@ enum ForecastStatus {
 
 class Forecast : public Component {
     private:
-        Tile* ui_tile;
-        ForecastObject forecast_data[7];
+        Tile* uiTile;
+        ForecastObject forecastData[7];
         ForecastStatus status;
 
-        std::optional<StationObject> current_station;
+        std::string currentCity;
 
     public:
     Forecast();
@@ -27,10 +28,14 @@ class Forecast : public Component {
     void constructUI(Tile *gui) override;
 
     void switchToForecastScreen(std::vector<ForecastObject>& forecasts);
-    void switchToLoadingScreen();
+    void switchToLoadingForecasts(std::unordered_map<std::string, StationObject>& stationArray);
+    void switchToLoadingStations();
+    void switchToFailScreen();
 
-    void reset();
+    //perform full refresh
+    void refresh();
+    //only refresh weather parameters
+    void refreshWeatherParameter();
     
-
     void process() override;
 };

@@ -6,6 +6,7 @@
  * @date      2025-02-27
  * @note      Adapt to lvgl 9 version
  */
+#ifdef LILYGO_BUILD
 #include "LV_Helper.h"
 #include <Arduino.h>
 
@@ -175,4 +176,5 @@ void beginLvglInputDevice(struct InputParams prams) {
   }
 }
 
+#endif
 #endif
