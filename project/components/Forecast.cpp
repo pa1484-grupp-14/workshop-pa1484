@@ -254,12 +254,12 @@ Forecast::Forecast() {}
 Forecast::~Forecast() {}
 
 void Forecast::constructUI(Tile* tile) {
-    ui_tile = tile;
+    uiTile = tile;
     refresh();
 }
 void Forecast::refresh() {
-  if (ui_tile) {
-    createLoadingUi(ui_tile, "Waiting for wifi...");
+  if (uiTile) {
+    createLoadingUi(uiTile, "Waiting for wifi...");
     status = ForecastStatus::WaitingForWifi;
   } else {
     std::cout << "[Forecast::reset]: ui_tile is a nullptr!";
@@ -271,12 +271,14 @@ void Forecast::refreshWeatherParameter() {
                     "Friday", "Saturday", "Sunday"};
     if (status == ForecastStatus::Fetched) {
         //Create UI container
-        ui_tile->clear();
-        Container& container = ui_tile->addContainer().disableFrame();
+        uiTile->clear();
+        Container& container = uiTile->addContainer().disableFrame();
         container.setSize(600, 1300).setFlexLayout(
         LV_FLEX_FLOW_COLUMN, LV_FLEX_ALIGN_SPACE_EVENLY);
     
-        for (auto& sample : forecast_data) {
+        container.addLabel().setText(currentCity + "'s forecast:").setFont(&font_header);
+        
+        for (auto& sample : forecastData) {
             //format day and dare strings
             std::string date_string =
                 "(" + sample.time.substr(5, 2) + "/" + sample.time.substr(8, 2) + ")";
@@ -307,7 +309,7 @@ void Forecast::switchToForecastScreen(std::vector<ForecastObject>& forecasts) {
         for (size_t i = 0; i < 7; i++) {
             
             ForecastObject& day = forecasts.at(i);
-            forecast_data[i] = day;
+            forecastData[i] = day;
         }
         status = ForecastStatus::Fetched;
         refreshWeatherParameter();
@@ -320,23 +322,23 @@ void Forecast::switchToLoadingForecasts(std::unordered_map<std::string, StationO
     }
     try {
         APIhandler handler;
-        std::string selected_city = getSettingsScreen().getSelectedCity();
-        std::cout << "[ForecastScreen]: Beginning fetch of city: " << selected_city.c_str() << std::endl;
-        StationObject station = handler.getStationFromArray(stationsArray, selected_city); 
+        currentCity = getSettingsScreen().getSelectedCity();
+        std::cout << "[ForecastScreen]: Beginning fetch of city: " << currentCity.c_str() << std::endl;
+        StationObject station = handler.getStationFromArray(stationsArray, currentCity); 
         handler.getForecastNext7DaysAsync(station, forecast_great_success, forecast_epic_fail);
-        createLoadingUi(ui_tile, "Fetching Forecast...");
+        createLoadingUi(uiTile, "Fetching Forecast...");
         status = ForecastStatus::FetchingForecast;
     } catch(int err) {
-        ui_tile->clear();
-        ui_tile->addLabel().setText("Failed fetching forecast data.").center();
+        uiTile->clear();
+        uiTile->addLabel().setText("Failed fetching forecast data.").center();
         std::cout << "[ForecastScreen]: Failed fetching forecast data." << std::endl;
         switchToFailScreen();
     }
 }
 void Forecast::switchToFailScreen() {
-    ui_tile->clear();
-    Widget& label = ui_tile->addLabel().setText("An error has occured.").center();
-    ui_tile->addButton("okay")
+    uiTile->clear();
+    Widget& label = uiTile->addLabel().setText("An error has occured.").center();
+    uiTile->addButton("okay")
     .setBtnText("refresh")
     .addEventCallback(forecast_refresh_pls, LV_EVENT_CLICKED)
     .alignTo(label, LV_ALIGN_BOTTOM_MID, 0, 100);
@@ -344,7 +346,7 @@ void Forecast::switchToFailScreen() {
 }
 void Forecast::switchToLoadingStations() {
     status = ForecastStatus::FetchingStations;
-    createLoadingUi(ui_tile, "Finding weather stations...");
+    createLoadingUi(uiTile, "Finding weather stations...");
     APIhandler handler;
     handler.getStationsArrayAsync(1, forecast_success, forecast_epic_fail);
 }

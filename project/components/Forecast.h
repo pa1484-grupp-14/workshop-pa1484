@@ -16,11 +16,11 @@ enum ForecastStatus {
 
 class Forecast : public Component {
     private:
-        Tile* ui_tile;
-        ForecastObject forecast_data[7];
+        Tile* uiTile;
+        ForecastObject forecastData[7];
         ForecastStatus status;
 
-        std::optional<StationObject> current_station;
+        std::string currentCity;
 
     public:
     Forecast();
