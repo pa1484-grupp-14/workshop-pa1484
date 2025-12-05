@@ -28,7 +28,7 @@ void Settings::city_confirm_cb(lv_event_t * event) {
     old_dropdown->available_cities.push_back(city);
 
     old_dropdown->city = city;
-    getForecastScreen().reset();
+    getForecastScreen().refresh();
     
     old_dropdown->ui_tile->getDropdown("cities").setOptions(old_dropdown->available_cities)
             .pushOption("add location...");
@@ -109,7 +109,7 @@ void Settings::city_dropdown_cb(lv_event_t * event) {
         popup.addButton("Cancel", city_cancel_cb).addButton("Next", Settings::city_picker_cb, settings);
     } else {
       settings->city = settings->available_cities.at(selected);
-      getForecastScreen().reset();
+      getForecastScreen().refresh();
     }
 }
 
@@ -219,7 +219,7 @@ void Settings::constructUI(Tile* gui) {
     .setGridCell(0, 0, 1, 2).getTile()
     .addLabel().setText("Parameter:").setFont(&font_regular)
     .setGridCell(1, 0, 1, 1, LV_GRID_ALIGN_CENTER, LV_GRID_ALIGN_END).getTile()
-    .addDropdown().setOptions("Temperature\nWind\nHumidity\nRainfall\nSnowDepth\nSunshineTime").setSelectedOption(static_cast<int>(this->weather_parameter)).setListFont(&font_regular).setFont(&font_regular)
+    .addDropdown().setOptions("Temperature\nWind Speed\nHumidity\nRainfall\nAir Pressure").setSelectedOption(static_cast<int>(this->weather_parameter)).setListFont(&font_regular).setFont(&font_regular)
     .addEventCallback(Settings::change_weather_parameter, lv_event_code_t::LV_EVENT_VALUE_CHANGED, this)
     .setGridCell(1, 1).setWidth(370).getTile()
     .addLabel("Select option 2 ").setText("Location:").setFont(&font_regular)

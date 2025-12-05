@@ -27,14 +27,15 @@ class Forecast : public Component {
     ~Forecast();
     void constructUI(Tile *gui) override;
 
-    void switchToLoadingScreenStations(std::unordered_map<std::string, StationObject>& stationArray);
-    void switchToFailScreen();
     void switchToForecastScreen(std::vector<ForecastObject>& forecasts);
-    void switchToLoadingScreen();
+    void switchToLoadingForecasts(std::unordered_map<std::string, StationObject>& stationArray);
+    void switchToLoadingStations();
+    void switchToFailScreen();
 
-    void reset();
+    //perform full refresh
+    void refresh();
+    //only refresh weather parameters
     void refreshWeatherParameter();
     
-
     void process() override;
 };

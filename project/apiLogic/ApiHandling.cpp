@@ -55,7 +55,7 @@ void APIhandler::getForecastNext7DaysAsync(const StationObject& stationObject, v
     float lat = stationObject.getLat();
     String url = "http://opendata-download-metfcst.smhi.se/api/category/snow1g/version/1/geotype/point/lon/";
     url += String(lon) + "/" +"lat/" + String(lat) + "/data.json";
-    
+    fetch->client.setTimeout(1);
     if (fetch->http.begin(fetch->client, url)) {
         int code = fetch->http.GET();
         if (code == HTTP_CODE_OK) {
@@ -134,7 +134,7 @@ std::vector<ForecastObject> APIhandler::getForecastNext7Days(const StationObject
     //cached_forecasts.emplace(stationObject.getName(), listener.forecasts);
     return listener.forecasts;
 }
-
+    
  StationRequest* APIhandler::stationFetch = nullptr;
  ForecastRequest* APIhandler::forecastFetch = nullptr;
 void APIhandler::getStationsArrayAsync(int parameter, void(*success_cb)(std::unordered_map<std::string, StationObject>&), void(*failure_cb)()) {
@@ -148,6 +148,8 @@ void APIhandler::getStationsArrayAsync(int parameter, void(*success_cb)(std::uno
             StationRequest* fetch = new StationRequest{parameter, WiFiClient(), HTTPClient(), JsonStreamingParser(), StationParser(), {success_cb}, {failure_cb}};
             String url = "http://opendata-download-metobs.smhi.se/api/version/latest/parameter/";
             url += String(parameter) + ".json";
+            fetch->client.setTimeout(1);
+            
             if (fetch->http.begin(fetch->client, url)) {
 
                 int code = fetch->http.GET();
@@ -184,6 +186,7 @@ std::unordered_map<std::string, StationObject> APIhandler::getStationsArray(int 
     String url = "http://opendata-download-metobs.smhi.se/api/version/latest/parameter/";
     url += String(parameter) + ".json";
 
+    
     if (http.begin(client, url)) {
 
         int code = http.GET();
@@ -226,50 +229,57 @@ std::unordered_map<std::string, StationObject> APIhandler::getStationsArray(int 
 }
 
 void APIhandler::process() {
-
+    const int BUFFER_SIZE = 1024;
     if(stationFetch != nullptr) {
+        //NOTE: return nullptr when connection is closed, so doubled up as connection status
         WiFiClient * stream = stationFetch->http.getStreamPtr();
-        // Read response in chunks
-        const int BUFFER_SIZE = 512;
-        uint8_t buffer[BUFFER_SIZE];
-
-        if ((stream->connected() == 1 && stream->available() > 0)) {     
-            int len = stream->readBytes(buffer, BUFFER_SIZE);
-            for (int i = 0; i < len; i++) {
-                stationFetch->parser.parse((char)buffer[i]);
-            }
-            if(!(stream->connected() == 1 && stream->available() > 0)) {
-                stationFetch->http.end();
-                cached_parameter = stationFetch->parameter;
-                cached_stations.empty();
-                for(auto& station : stationFetch->listener.stations) {
-                    cached_stations.emplace(station.first, station.second);
+        if(stream) {
+            //create a chunk
+            char buffer[BUFFER_SIZE];
+            //fetch and parse it
+            auto available = stream->available();
+            if(available > 0) {
+                int len = stream->readBytes(buffer, min(BUFFER_SIZE, available));
+                for (int i = 0; i < len; i++) {
+                    stationFetch->parser.parse(buffer[i]);
                 }
-                for(auto& fnPtr : stationFetch->success_cbs) {
-                    fnPtr(cached_stations);
-                }
-                delete stationFetch;
-                stationFetch = nullptr;
             }
-        }   
+        } else {
+            //assume success when the connection closes
+            stationFetch->http.end();
+            cached_parameter = stationFetch->parameter;
+            cached_stations.empty();
+            for(auto& station : stationFetch->listener.stations) {
+                cached_stations.emplace(station.first, station.second);
+            }
+            for(auto& fnPtr : stationFetch->success_cbs) {
+                fnPtr(cached_stations);
+            }
+            delete stationFetch;
+            stationFetch = nullptr;    
+        }
     }
     if(forecastFetch != nullptr) {
+        //NOTE: return nullptr when connection is closed, so doubled up as connection status
         WiFiClient * stream = forecastFetch->http.getStreamPtr();
-        // Read response in chunks
-        const int BUFFER_SIZE = 512;
-        uint8_t buffer[BUFFER_SIZE];
-
-        if ((stream->connected() == 1 && stream->available() > 0)) {     
-            int len = stream->readBytes(buffer, BUFFER_SIZE);
-            for (int i = 0; i < len; i++) {
-                forecastFetch->parser.parse((char)buffer[i]);
+        if(stream) {
+            //create a chunk
+            char buffer[BUFFER_SIZE];
+            //fetch and parse it
+            auto available = stream->available();
+            if(available > 0) {
+                int len = stream->readBytes(buffer, min(BUFFER_SIZE, available));
+                for (int i = 0; i < len; i++) {
+                    forecastFetch->parser.parse(buffer[i]);
+                }
             }
-            if(!(stream->connected() == 1 && stream->available() > 0)) {
-                forecastFetch->http.end();
-                forecastFetch->success_cb(forecastFetch->listener.forecasts);
-                delete forecastFetch;
-                forecastFetch = nullptr;
-            }
-        }   
+        } else {
+            //assume success when the connection closes
+            forecastFetch->http.end();
+            forecastFetch->success_cb(forecastFetch->listener.forecasts);
+            delete forecastFetch;
+            forecastFetch = nullptr;
+        }
+          
     }
 }

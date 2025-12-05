@@ -7,11 +7,10 @@
 
 enum WeatherParameter {
   Temperature = 0,
-  Wind = 1,
+  WindSpeed = 1,
   Humidity = 2,
   Rainfall = 3,
-  SnowDepth = 4,
-  SunshineTime = 5,
+  AirPressure = 4,
 };
 
 class Settings : public Component {
