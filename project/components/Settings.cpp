@@ -149,6 +149,47 @@ void Settings::set_default(lv_event_t* event) {
   
 }
 
+
+void Settings::reset_defaults(lv_event_t * event) {
+    FileHandler handler;
+    lv_obj_t* button = (lv_obj_t*)lv_event_get_target(event);
+    Settings* classData = (Settings*)lv_event_get_user_data(event);
+
+    const char* filename = "/defaultSettings.json";
+    LittleFS.begin();
+
+    if (!LittleFS.exists(filename)) {
+        classData->weather_parameter = WeatherParameter::Humidity;
+        classData->available_cities = {"Karlskrona"};
+        classData->city = "Karlskrona";
+    } else {
+        JsonDocument doc;
+        String jsonString = handler.readFile(LittleFS, filename);
+        if (deserializeJson(doc, jsonString)) {
+            classData->weather_parameter = WeatherParameter::Humidity;
+            classData->available_cities = {"Karlskrona"};
+            classData->city = "Karlskrona";
+        } else {
+            classData->weather_parameter = static_cast<WeatherParameter>(doc["parameter"].as<int>());
+            classData->available_cities.clear();
+            JsonArray arr = doc["cities"].as<JsonArray>();
+            if (!arr.isNull()) {
+                for (JsonVariant v : arr) {
+                    classData->available_cities.push_back(std::string(v.as<const char*>()));
+                }
+            }
+            if (!doc["selectedCity"].isNull()) {
+                classData->city = std::string(doc["selectedCity"].as<const char*>());
+            } else {
+                classData->city = "Karlskrona";
+            }
+            if (classData->available_cities.empty()) {
+                classData->available_cities = {"Karlskrona"};
+            }
+        }
+    }
+}
+
 Settings::Settings() {
     FileHandler handler; 
     const char* filename = "/defaultSettings.json";
@@ -240,8 +281,12 @@ void Settings::constructUI(Tile* gui) {
     .addButton("Set Default")
     .setBtnText("Set Default")
     .setGridCell(3, 0, LV_GRID_ALIGN_CENTER, LV_GRID_ALIGN_END)
-    .addEventCallback(set_default, LV_EVENT_CLICKED, this);
-    
+    .addEventCallback(set_default, LV_EVENT_CLICKED, this)
+    .getTile()
+    .addButton("Reset Defaults")
+    .setBtnText("Reset Defaults")
+    .setGridCell(3, 1, LV_GRID_ALIGN_CENTER, LV_GRID_ALIGN_START)
+    .addEventCallback(reset_defaults, LV_EVENT_CLICKED, this);
 
 
             /*
