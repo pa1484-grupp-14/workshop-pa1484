@@ -1,3 +1,5 @@
+#pragma once
+
 #ifdef LILYGO_BUILD
 #include "FS.h"
 #include <LittleFS.h>
@@ -9,6 +11,8 @@
 #include "nativeReplacements/LittleFS.h"
 #include "nativeReplacements/String.
 #endif
+
+#include <cstdint>
 
 struct FileHandler
 {
