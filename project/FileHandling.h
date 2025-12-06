@@ -1,5 +1,6 @@
 #include "FS.h"
 #include <LittleFS.h>
+#include <cstdint>
 
 
 struct FileHandler
