@@ -11,9 +11,11 @@
 #include "forecastJsonParser.h"
 #include "parameterJsonParser.h"
 
+#ifdef LILYGO_BUILD
 #include <HTTPClient.h>
 #include <JsonListener.h>
 #include <JsonStreamingParser.h>
+#endif
 #ifdef NATIVE_BUILD
 #include "nativeReplacements/HTTPClient.h"
 #include "nativeReplacements/JsonListener.h"

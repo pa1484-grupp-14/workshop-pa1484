@@ -1,7 +1,14 @@
+#ifdef LILYGO_BUILD
 #include "FS.h"
 #include <LittleFS.h>
 #include <cstdint>
+#endif
 
+#ifdef NATIVE_BUILD
+#include "nativeReplacements/FS.h"
+#include "nativeReplacements/LittleFS.h"
+#include "nativeReplacements/String.
+#endif
 
 struct FileHandler
 {
