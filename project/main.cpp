@@ -6,6 +6,8 @@
 #endif
 #ifdef NATIVE_BUILD
 #include "nativeReplacements/LittleFS.h"
+#endif
+#ifdef WINDOWS_BUILD
 #include <winbase.h>
 #endif
 
@@ -80,9 +82,11 @@ int main() {
     lv_tick_inc(b-a);
   }
 }
+#ifdef WINDOWS_BUILD
 int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd) {
   return main();
 }
+#endif
 int _start() {
   return main();
 }
