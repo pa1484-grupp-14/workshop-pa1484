@@ -22,25 +22,25 @@ private:
 public:
     HistoricalListener() {}
 
-    void key(string key) {
-        currentKey = key;
+    void key(String key) override {
+        currentKey = key.c_str();
     }
 
-    void value(string value) {
+    void value(String value) override {
         if (currentKey == "from") {
             isVersion2 = true;
         }
 
         if (currentKey == "date") {
-            tempTimestamp = stol(value);
+            tempTimestamp = value.toInt();
         }
 
         if (currentKey == "ref") {
-            tempRefDate = value;
+            tempRefDate = value.c_str();
         }
 
         if (currentKey == "value") {
-            tempValue = stof(value);
+            tempValue = value.toFloat();
         }
     }
 
