@@ -11,10 +11,6 @@
 #include "forecastJsonParser.h"
 #include "parameterJsonParser.h"
 
-#include <HTTPClient.h>
-#include <JsonListener.h>
-#include <JsonStreamingParser.h>
-
 std::unordered_map<std::string, std::vector<ForecastObject>>
     APIhandler::cached_forecasts =
         std::unordered_map<std::string, std::vector<ForecastObject>>();
@@ -104,7 +100,7 @@ std::vector<ForecastObject> APIhandler::getForecastNext7Days(
 
       // Read response in chunks
       const int BUFFER_SIZE = 512;
-      uint8_t buffer[BUFFER_SIZE];
+      char buffer[BUFFER_SIZE];
 
       auto before = millis();
       while ((stream->connected() || stream->available()) &&
@@ -200,7 +196,7 @@ std::unordered_map<std::string, StationObject> APIhandler::getStationsArray(
 
       // Read response in chunks
       const int BUFFER_SIZE = 512;
-      uint8_t buffer[BUFFER_SIZE];
+      char buffer[BUFFER_SIZE];
 
       auto before = millis();
       while ((stream->connected() || stream->available())) {

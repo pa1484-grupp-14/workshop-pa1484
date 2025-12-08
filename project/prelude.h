@@ -1,5 +1,10 @@
 #pragma once
+#ifdef LILYGO_BUILD
 #include <WiFi.h>
+#endif
+#ifdef NATIVE_BUILD
+#include "nativeReplacements/WiFi.h"
+#endif
 #include "components/Components.h"
 #include "gui/Gui.h"
 
@@ -8,6 +13,10 @@ bool is_wifi_connected();
 // system function: returns the number of milliseconds since the program started
 unsigned long millis();
 
+class MainScreen;
+class Settings;
+class WeatherChart;
+class Forecast;
 
 // Get the app-wide reference to the GUI class
 GUI& getGui();

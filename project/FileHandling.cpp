@@ -17,7 +17,7 @@ void FileHandler::listDir(fs::FS& fs, const char* dirname, uint8_t levels) {
   }
   std::cout << std::endl;
   File file = root.openNextFile();
-  while (file) {
+  while (!!file) {
     if (file.isDirectory()) {
       std::cout << "  DIR : " << file.name() << std::endl;
       if (levels) {

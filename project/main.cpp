@@ -1,9 +1,13 @@
 #include <time.h>
 #include <HAL.hpp>
 #include "prelude.h"
-#include "FS.h"
+#ifdef LILYGO_BUILD
 #include <LittleFS.h>
-
+#endif
+#ifdef NATIVE_BUILD
+#include "nativeReplacements/LittleFS.h"
+#include <winbase.h>
+#endif
 
 #define FORMAT_LITTLEFS_IF_FAILED true
 #include <iostream>
@@ -19,7 +23,7 @@ static void connect_wifi() {
 
 void init_FS(){
   if (!LittleFS.begin(FORMAT_LITTLEFS_IF_FAILED)) {
-    Serial.println("LittleFS Mount Failed");
+    std::cout << "[main] LittleFS Mount Failed" << std::endl;
   }
 }
 
@@ -76,7 +80,7 @@ int main() {
     lv_tick_inc(b-a);
   }
 }
-int WinMain() {
+int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd) {
   return main();
 }
 int _start() {

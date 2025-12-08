@@ -6,6 +6,8 @@
 #include "HTTPRequest.hpp"
 #include "String.h"
 
+unsigned long millis();
+
 #define HTTP_CODE_OK 200
 class WiFiClient {
     private:
@@ -17,7 +19,7 @@ class WiFiClient {
             return position < response.value().body.size();
         } else return false;
     }
-    size_t readBytes(uint8_t *buf, size_t size) {
+    size_t readBytes(char *buf, size_t size) {
         return this->read(buf, size);
     }
     int available() {
@@ -25,7 +27,7 @@ class WiFiClient {
             return position < response.value().body.size();
         } else return false;
     }
-    int read(uint8_t *buf, size_t size)
+    int read(char *buf, size_t size)
     {
         int res = -1;
         if (response.has_value()) {
@@ -36,9 +38,10 @@ class WiFiClient {
         }
         return res;
     }
+    void setTimeout(int unused) {}
     int read()
     {
-        uint8_t data = 0;
+        char data = 0;
         int res = read(&data, 1);
         if(res < 0) {
             return res;

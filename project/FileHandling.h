@@ -1,6 +1,9 @@
-
+#ifdef LILYGO_BUILD
 #include <LittleFS.h>
-
+#endif
+#ifdef NATIVE_BUILD
+#include "nativeReplacements/LittleFS.h"
+#endif
 
 struct FileHandler
 {

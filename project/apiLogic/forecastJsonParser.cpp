@@ -2,6 +2,9 @@
 #include "StationObject.h"
 #include <string>
 #include <iostream>
+#ifdef NATIVE_BUILD 
+#include <cstring>
+#endif
 
 void ForecastListener::startDocument() {   
     std::cout << "[ForecastListener]: start document" << std::endl;

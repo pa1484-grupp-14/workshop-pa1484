@@ -1,7 +1,10 @@
 #pragma once
 
-#include "ForecastObject.h"
-#include "JsonListener.h"
+#include "apiLogic/ForecastObject.h"
+#ifdef NATIVE_BUILD
+#include "nativeReplacements/JsonListener.h"
+#include "nativeReplacements/String.h"
+#endif
 #include <vector>
 
 

@@ -1,4 +1,9 @@
+#ifdef LILYGO_BUILD
 #include <WiFi.h>
+#endif
+#ifdef NATIVE_BUILD 
+#include "nativeReplacements/WiFi.h"
+#endif
 #include "gui/Gui.h"
 #include "components/Components.h"
 
