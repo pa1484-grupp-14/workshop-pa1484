@@ -1,0 +1,8 @@
+{
+  "cities": [
+    "Karlskrona",
+    "Daglsen"
+  ],
+  "selectedCity": "Daglsen",
+  "parameter": 2
+}

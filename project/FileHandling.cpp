@@ -53,7 +53,7 @@ String FileHandler::readFile(fs::FS& fs, const char* path) {
 
     File file = fs.open(path);
     if (!file || file.isDirectory()) {
-       throw("file does not exist");
+      throw("file does not exist");
     }
   
     std::cout << "- read from file:" << std::endl;
