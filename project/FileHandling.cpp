@@ -1,86 +1,83 @@
 #include "FileHandling.h"
+#include <iostream>
 
 #define FORMAT_LITTLEFS_IF_FAILED true 
 
 void FileHandler::listDir(fs::FS& fs, const char* dirname, uint8_t levels) {
-  Serial.printf("Listing directory: %s\r\n", dirname);
+  std::cout << "[FileHandler]: Listing directory: " << dirname;
 
   File root = fs.open(dirname);
   if (!root) {
-    Serial.println("- failed to open directory");
+    std::cout << "- failed to open directory" << std::endl;
     return;
   }
   if (!root.isDirectory()) {
-    Serial.println(" - not a directory");
+    std::cout << " - not a directory"  << std::endl;
     return;
   }
-
+  std::cout << std::endl;
   File file = root.openNextFile();
   while (file) {
     if (file.isDirectory()) {
-      Serial.print("  DIR : ");
-      Serial.println(file.name());
+      std::cout << "  DIR : " << file.name() << std::endl;
       if (levels) {
         listDir(fs, file.path(), levels - 1);
       }
     } else {
-      Serial.print("  FILE: ");
-      Serial.print(file.name());
-      Serial.print("\tSIZE: ");
-      Serial.println(file.size());
+      std::cout << "  FILE: " << file.name() << "\tSIZE: " << file.size() << std::endl;
     }
     file = root.openNextFile();
   }
 }
 
 void FileHandler::createDir(fs::FS& fs, const char* path) {
-    Serial.printf("Creating Dir: %s\n", path);
+    std::cout << "[FileHandler] Creating Dir: " << path << ", ";
     if (fs.mkdir(path)) {
-      Serial.println("Dir created");
+      std::cout << "Dir created" << std::endl;
     } else {
-      Serial.println("mkdir failed");
+      std::cout << "mkdir failed" << std::endl;
     }
 }
 
 void FileHandler::removeDir(fs::FS& fs, const char* path) {
-    Serial.printf("Removing Dir: %s\n", path);
+    std::cout << "[FileHandler:] Removing Dir: " << path << ", ";
     if (fs.rmdir(path)) {
-      Serial.println("Dir removed");
+      std::cout <<"Dir removed" << std::endl;
     } else {
-      Serial.println("rmdir failed");
+      std::cout <<"rmdir failed" << std::endl;
     }
 }
 
 String FileHandler::readFile(fs::FS& fs, const char* path) {
-    Serial.printf("Reading file: %s\r\n", path);
+    std::cout << "[FileHandler:] Reading file: " << path;
 
     File file = fs.open(path);
     if (!file || file.isDirectory()) {
        throw("file does not exist");
     }
   
-    Serial.println("- read from file:");
+    std::cout << "- read from file:" << std::endl;
     String data = file.readString();
     file.close();
     return data;
 }
 
 void FileHandler::writeFile(fs::FS& fs, const char* path, const char* message) {
-  Serial.printf("Writing file: %s\r\n", path);
+  std::cout << "[FileHandler] Writing file: "<<  path;
 
   File file = fs.open(path, FILE_WRITE);
   if (!file) {
-    Serial.println("- failed to open file for writing");
+    std::cout << "- failed to open file for writing" << std::endl;
     return;
   }
   if (file.print(message)) {
-    Serial.println("- file written");
+    std::cout << "- file written" << std::endl;
   } else {
-    Serial.println("- write failed");
+    std::cout << "- write failed" << std::endl;
   }
   file.close();
 }
-
+/*
 void FileHandler::appendFile(fs::FS& fs, const char* path, const char* message) {
     Serial.printf("Appending to file: %s\r\n", path);
 
@@ -114,3 +111,4 @@ void FileHandler::deleteFile(fs::FS& fs, const char* path) {
       Serial.println("- delete failed");
     }
 }
+*/

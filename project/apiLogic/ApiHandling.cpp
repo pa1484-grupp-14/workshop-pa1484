@@ -14,11 +14,6 @@
 #include <HTTPClient.h>
 #include <JsonListener.h>
 #include <JsonStreamingParser.h>
-#ifdef NATIVE_BUILD
-#include "nativeReplacements/HTTPClient.h"
-#include "nativeReplacements/JsonListener.h"
-#include "nativeReplacements/JsonStreamingParser.h"
-#endif
 
 std::unordered_map<std::string, std::vector<ForecastObject>>
     APIhandler::cached_forecasts =

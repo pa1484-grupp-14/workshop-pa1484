@@ -1,8 +1,6 @@
 #pragma once
 #include <string>
 #include <iterator>
-#include <cstddef>
-#include <cstring>
 
 class String: public std::string {
     public:

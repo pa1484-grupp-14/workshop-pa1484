@@ -1,4 +1,5 @@
 
+#pragma once
 #define WIFI_STA 0
 class Wifi {
     public:

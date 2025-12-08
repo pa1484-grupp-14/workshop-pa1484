@@ -8,16 +8,6 @@ bool is_wifi_connected();
 // system function: returns the number of milliseconds since the program started
 unsigned long millis();
 
-#ifndef LILYGO_BUILD
-
-#define WIFI_STA 0
-class Wifi {
- public:
-  void mode(int dummy) {};
-  void begin(const char* ssid, const char* pass) {};
-};
-static Wifi WiFi;
-#endif
 
 // Get the app-wide reference to the GUI class
 GUI& getGui();

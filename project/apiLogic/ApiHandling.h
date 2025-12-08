@@ -9,16 +9,9 @@
 #include "forecastJsonParser.h" 
 #include "parameterJsonParser.h"
 
-#ifdef LILYGO_BUILD
 #include <JsonListener.h>
 #include <JsonStreamingParser.h>
 #include <HTTPClient.h> 
-#endif
-#ifdef NATIVE_BUILD
-#include "nativeReplacements/JsonListener.h"
-#include "nativeReplacements/JsonStreamingParser.h"
-#include "nativeReplacements/HTTPClient.h"
-#endif
 
 class StationRequest {
     public:

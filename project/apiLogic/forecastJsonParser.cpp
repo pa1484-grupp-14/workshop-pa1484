@@ -3,7 +3,6 @@
 #include <string>
 #include <iostream>
 
-
 void ForecastListener::startDocument() {   
     std::cout << "[ForecastListener]: start document" << std::endl;
 }
