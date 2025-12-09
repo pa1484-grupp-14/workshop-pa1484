@@ -45,6 +45,7 @@ class APIhandler
     private:
 
 
+    std::vector<HistoricalObject> averageByDay(const vector<HistoricalObject>& raw);
     //background forecasts
     static StationRequest* stationFetch;
     static ForecastRequest* forecastFetch;
@@ -62,8 +63,9 @@ class APIhandler
     std::unordered_map<std::string, StationObject> getStationsArray(int parameter);
     void getStationsArrayAsync(int parameter, void(*success_cb)(std::unordered_map<std::string, StationObject>&), void(*failure_cb)());
     StationObject getStationFromArray(const std::unordered_map<std::string, StationObject>& array,const string& stationName); 
-    std::vector<HistoricalObject> getHistoricalData(const string& key,int parameter);
+    std::vector<HistoricalObject> getHistoricalData(const string& key, int parameter);
     std::vector<ForecastObject> getForecastNext7Days(const StationObject& stationObject);
 
     void getForecastNext7DaysAsync(const StationObject& stationObject, void(*success_cb)(std::vector<ForecastObject>&), void(*failure_cb)());
+    
 };

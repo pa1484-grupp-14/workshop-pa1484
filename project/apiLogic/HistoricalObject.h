@@ -9,8 +9,8 @@ private:
 	float value;
 public:
 	HistoricalObject(string date, float value);   
-	string getDate();   
-	float getValue();   
+	const string& getDate() const;
+    float getValue() const;
 	void setDate(string date);  
 	void setValue(float value);
 };

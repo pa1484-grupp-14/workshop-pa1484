@@ -10,6 +10,7 @@
 #include "StationObject.h"
 #include "forecastJsonParser.h"
 #include "parameterJsonParser.h"
+#include "HistoricalListener.h"
 
 std::unordered_map<std::string, std::vector<ForecastObject>>
     APIhandler::cached_forecasts =
@@ -23,9 +24,82 @@ StationObject APIhandler::getStationFromArray(
   return array.at(stationName);
 }
 
-vector<HistoricalObject> APIhandler::getHistoricalData(const string& key,
-                                                       int parameter) {
-  return vector<HistoricalObject>();
+
+#include <map>
+#include <HTTPClient.h> 
+#include <JsonListener.h>
+#include <JsonStreamingParser.h>
+ 
+
+std::vector<HistoricalObject> APIhandler::getHistoricalData(const string& key, int parameter)
+{
+    string url = "https://opendata-download-metobs.smhi.se/api/version/1.0/parameter/"+to_string(parameter) +"/station/"+ key +"/period/latest-months/data.json";
+
+    WiFiClient client;
+    HTTPClient http;
+
+    http.begin(client, url.c_str());
+    int httpCode = http.GET();
+
+    if (httpCode != 200) {
+        return vector<HistoricalObject>();
+    }
+
+    HistoricalListener listener;
+    JsonStreamingParser parser;
+    parser.setListener(&listener);
+
+    WiFiClient* stream = http.getStreamPtr();
+    while (stream->connected() || stream->available()) {
+        char c = stream->read();
+        parser.parse(c);
+    }
+
+    http.end();
+
+    vector<HistoricalObject> rawResults = listener.getResults();
+
+    if(listener.isVersion2Data()){
+        return rawResults;
+    }
+
+    return averageByDay(rawResults);
+}
+
+
+/*
+This is a helper function that gets the average per day
+*/
+std::vector<HistoricalObject> APIhandler::averageByDay(const vector<HistoricalObject>& raw)
+{
+    std::map<std::string, std::vector<float>> grouped;
+
+    // Group values by their date
+    for (const auto& obj : raw) {
+        grouped[obj.getDate()].push_back(obj.getValue());
+    }
+
+    // Will hold the averaged results
+    std::vector<HistoricalObject> averagedResults;
+
+    // Iterates through each date >> list of values
+    for (const auto& entry : grouped) {
+        const std::string& date = entry.first;
+        const std::vector<float>& values = entry.second;
+
+        // Computes the sum of values for the date
+        float sum = 0;
+        for (float v : values) {
+            sum += v;
+        }
+
+        // Computes the average
+        float avg = sum / values.size();
+
+        // ? Push the averaged HistoricalObject into the output vector
+        averagedResults.emplace_back(date, avg);
+    }
+    return averagedResults;
 }
 void APIhandler::getForecastNext7DaysAsync(
     const StationObject& stationObject,
