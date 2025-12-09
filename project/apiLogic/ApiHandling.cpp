@@ -65,12 +65,6 @@ void APIhandler::getForecastNext7DaysAsync(
 }
 std::vector<ForecastObject> APIhandler::getForecastNext7Days(
     const StationObject& stationObject) {
-  /*
-    if(cached_forecasts.count(stationObject.getName()) > 0) {
-        std::cout << "[APIHandler]: returning cached forecast instead." << std::endl;
-        return cached_forecasts.at(stationObject.getName());
-    }
-        */
   float lon = stationObject.getLon();
   float lat = stationObject.getLat();
   String url =
@@ -161,7 +155,8 @@ void APIhandler::getStationsArrayAsync(
             failure_cb();
           }
           delete fetch;
-          std::cout << "Failed to fetch station keys and cities" << std::endl;
+          std::cout << "[APIHandler] Failed to fetch station keys and cities"
+                    << std::endl;
         }
       }
     }
@@ -217,7 +212,7 @@ std::unordered_map<std::string, StationObject> APIhandler::getStationsArray(
     http.end();
   }
   cached_parameter = parameter;
-  cached_stations.empty();
+  cached_stations.clear();
   for (auto& station : listener.stations) {
     cached_stations.emplace(station.first, station.second);
   }
@@ -241,10 +236,11 @@ void APIhandler::process() {
         }
       }
     } else {
+
       //assume success when the connection closes
       stationFetch->http.end();
       cached_parameter = stationFetch->parameter;
-      cached_stations.empty();
+      cached_stations.clear();
       for (auto& station : stationFetch->listener.stations) {
         cached_stations.emplace(station.first, station.second);
       }
@@ -253,6 +249,7 @@ void APIhandler::process() {
       }
       delete stationFetch;
       stationFetch = nullptr;
+      std::cout << "[APIHandler]: finished async station fetch" << std::endl;
     }
   }
   if (forecastFetch != nullptr) {
@@ -270,11 +267,13 @@ void APIhandler::process() {
         }
       }
     } else {
+
       //assume success when the connection closes
       forecastFetch->http.end();
       forecastFetch->success_cb(forecastFetch->listener.forecasts);
       delete forecastFetch;
       forecastFetch = nullptr;
+      std::cout << "[APIHandler]: finished async forecast fetch" << std::endl;
     }
   }
 }

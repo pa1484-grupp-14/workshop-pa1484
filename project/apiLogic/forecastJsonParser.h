@@ -1,6 +1,9 @@
 #pragma once
 
 #include "apiLogic/ForecastObject.h"
+#ifdef LILYGO_BUILD
+#include <JsonListener.h>
+#endif
 #ifdef NATIVE_BUILD
 #include "nativeReplacements/JsonListener.h"
 #include "nativeReplacements/String.h"

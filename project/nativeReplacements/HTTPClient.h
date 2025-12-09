@@ -24,8 +24,10 @@ class WiFiClient {
     }
     int available() {
         if (response.has_value()) {
-            return position < response.value().body.size();
-        } else return false;
+            int body_len = response.value().body.size();
+            if(position < body_len ) return body_len-position;
+            else return 0;
+        } else return 0;
     }
     int read(char *buf, size_t size)
     {
@@ -78,6 +80,7 @@ class HTTPClient {
         return code;
     }
     WiFiClient* getStreamPtr() {
-        return dummy;
+        if(dummy->available() > 0) return dummy;
+        else return nullptr;
     }
 };

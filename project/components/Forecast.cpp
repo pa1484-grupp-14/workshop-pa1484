@@ -253,11 +253,12 @@ void Forecast::constructUI(Tile* tile) {
   refresh();
 }
 void Forecast::refresh() {
+  std::cout << "[Forecast::refresh] Refreshing." << std::endl;
   if (uiTile) {
     createLoadingUi(uiTile, "Waiting for wifi...");
     status = ForecastStatus::WaitingForWifi;
   } else {
-    std::cout << "[Forecast::reset]: ui_tile is a nullptr!";
+    std::cout << "[Forecast::refresh] uiTile is a nullptr!" << std::endl;
   }
 }
 
