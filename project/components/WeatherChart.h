@@ -3,9 +3,11 @@
 #include <lvgl.h>
 #include <string>
 #include "gui/Gui.h"
-
+#include <vector>
+#include "apiLogic/HistoricalObject.h"
 class WeatherChart : public Component {
  private:
+ std::vector<HistoricalObject> samples;
  public:
   WeatherChart();
   ~WeatherChart();

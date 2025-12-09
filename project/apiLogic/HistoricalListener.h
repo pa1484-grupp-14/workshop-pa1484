@@ -1,4 +1,10 @@
+
+#ifdef LILYGO_BUILD
 #include <JsonListener.h>
+#endif
+#ifdef NATIVE_BUILD
+#include "nativeReplacements/JsonListener.h"
+#endif
 #include <vector>
 #include <string>
 #include <ctime>

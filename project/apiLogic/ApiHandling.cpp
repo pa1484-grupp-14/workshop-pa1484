@@ -26,14 +26,20 @@ StationObject APIhandler::getStationFromArray(
 
 
 #include <map>
+#ifdef LILYGO_BUILD
 #include <HTTPClient.h> 
 #include <JsonListener.h>
 #include <JsonStreamingParser.h>
- 
+#endif
+#ifdef NATIVE_BUILD
+#include "nativeReplacements/HTTPClient.h"
+#include "nativeReplacements/JsonListener.h"
+#include "nativeReplacements/JsonStreamingParser.h"
+#endif
 
-std::vector<HistoricalObject> APIhandler::getHistoricalData(const string& key, int parameter)
+std::vector<HistoricalObject> APIhandler::getHistoricalData(const StationObject& station, int parameter)
 {
-    string url = "https://opendata-download-metobs.smhi.se/api/version/1.0/parameter/"+to_string(parameter) +"/station/"+ key +"/period/latest-months/data.json";
+    string url = "https://opendata-download-metobs.smhi.se/api/version/1.0/parameter/"+to_string(parameter) +"/station/"+ to_string(station.getKey()) +"/period/latest-months/data.json";
 
     WiFiClient client;
     HTTPClient http;

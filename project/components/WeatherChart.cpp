@@ -1,11 +1,13 @@
 #include "WeatherChart.h"
-
+#include "apiLogic/ApiHandling.h"
 
 WeatherChart::WeatherChart() {}
 WeatherChart::~WeatherChart() {}
 
 void WeatherChart::process() {}
 void WeatherChart::constructUI(Tile* tile) {
+    APIhandler handler;
+    //handler.getHistoricalData();   
     tile->
       setFlexLayout(LV_FLEX_FLOW_COLUMN, LV_FLEX_ALIGN_SPACE_EVENLY)
       .addLabel()
