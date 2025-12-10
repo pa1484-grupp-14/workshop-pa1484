@@ -51,18 +51,14 @@ public:
     }
 
     void endObject() override {
-        std::cout << "[HistoricalListener] Finished object: " << tempTimestamp << "," << tempValue << "," << tempRefDate << "," << isVersion2 << std::endl;
+        //std::cout << "[HistoricalListener] Finished object: " << tempTimestamp << "," << tempValue << "," << tempRefDate << "," << isVersion2 << std::endl;
         if (isVersion2 && tempRefDate != "") {
-            std::cout << "[HistoricalListener] Pushing new historical object. (Version 2)" << std::endl;
-            results.push_back(HistoricalObject(tempRefDate, tempValue));
+            std::cout << "[HistoricalListener] ignoring new historical object. (Version 2)" << std::endl;
+            //results.push_back(HistoricalObject(tempRefDate, tempValue));
         }
 
         if (!isVersion2 && tempTimestamp != 0) {
-            std::time_t seconds = tempTimestamp / 1000;
-            char buffer[20];
-            strftime(buffer, sizeof(buffer), "%Y-%m-%d", localtime(&seconds));
-            std::cout << "[HistoricalListener] Pushing new historical object. (Version 1)" << std::endl;
-            results.push_back(HistoricalObject(string(buffer), tempValue));
+            results.push_back(HistoricalObject(tempTimestamp / 1000, tempValue));
         }
 
         tempTimestamp = 0;

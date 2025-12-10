@@ -162,6 +162,7 @@ void Settings::reset_defaults(lv_event_t * event) {
     LittleFS.begin();
 
     if (!LittleFS.exists(filename)) {
+        std::cout << "[Settings] settings file did not exist!" << std::endl;
         classData->weather_parameter = WeatherParameter::Humidity;
         classData->available_cities = {"Karlskrona"};
         classData->city = "Karlskrona";
@@ -191,6 +192,7 @@ void Settings::reset_defaults(lv_event_t * event) {
             }
             
         }
+        std::cout << "[Settings] settings file loaded" << std::endl;
     }
 }
 
@@ -209,7 +211,7 @@ Settings::Settings() {
         
         JsonDocument doc;
         String jsonString = handler.readFile(LittleFS, filename);
-        std::cout << jsonString << std::endl;
+        //std::cout << jsonString << std::endl;
         deserializeJson(doc, jsonString);
 
         weather_parameter = static_cast<WeatherParameter>(doc["parameter"].as<int>());
@@ -234,9 +236,28 @@ Settings::~Settings() {}
 void Settings::change_weather_parameter(lv_event_t* event) {
   void* dropdown = lv_event_get_target(event);
   uint32_t index = lv_dropdown_get_selected((lv_obj_t*)dropdown);
+  WeatherParameter param;
+  switch(index) {
+        case 0:
+          param = WeatherParameter::Temperature;
+        break;
+        case 1:
+          param = WeatherParameter::WindSpeed;
+        break;
+        case 2:
+          param = WeatherParameter::Humidity;
+        break;
+        case 3:
+          param = WeatherParameter::Rainfall;
+        break;
+        case 4:
+          param = WeatherParameter::AirPressure;
+        break;
+    }
   auto settings = (Settings*)lv_event_get_user_data(event);
-  settings->weather_parameter = static_cast<WeatherParameter>(index);
+  settings->weather_parameter = param;
   getForecastScreen().refreshWeatherParameter();
+  getWeatherChartScreen().reset();
 }
 
 void Settings::change_city(lv_event_t* event) {

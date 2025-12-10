@@ -23,4 +23,5 @@ class WeatherChart : public Component {
   ~WeatherChart();
   void constructUI(Tile *gui) override;
   void process() override;
+  void reset();
 };

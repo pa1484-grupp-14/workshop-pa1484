@@ -5,13 +5,13 @@ using namespace std;
 class HistoricalObject
 {
 private:
-	string date;
+	long long date;
 	float value;
 public:
-	HistoricalObject(string date, float value);   
-	const string& getDate() const;
+	HistoricalObject(long long date, float value);   
+	const long long getDate() const;
     float getValue() const;
-	void setDate(string date);  
+	void setDate(long long date);  
 	void setValue(float value);
 };
 

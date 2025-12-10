@@ -77,7 +77,7 @@ namespace fs {
         bool rmdir(const char* path) {
             return std::filesystem::remove_all("." + std::string(path));
         }
-        File open(const char* path, int open = 0) {
+        File open(const char* path, int open = 0, bool default_create = 0) {
             return File(path);
         }
         int WriteFile(const char* path) { return 0;};

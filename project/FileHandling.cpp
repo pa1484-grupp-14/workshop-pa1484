@@ -49,15 +49,16 @@ void FileHandler::removeDir(fs::FS& fs, const char* path) {
 }
 
 String FileHandler::readFile(fs::FS& fs, const char* path) {
-    std::cout << "[FileHandler:] Reading file: " << path;
+    //std::cout << "[FileHandler:] Reading file: " << path;
 
     File file = fs.open(path);
     if (!file || file.isDirectory()) {
       throw("file does not exist");
     }
   
-    std::cout << "- read from file:" << std::endl;
+    //std::cout << "- read from file:" << std::endl;
     String data = file.readString();
+    //Serial.println(data);
     file.close();
     return data;
 }
@@ -65,7 +66,7 @@ String FileHandler::readFile(fs::FS& fs, const char* path) {
 void FileHandler::writeFile(fs::FS& fs, const char* path, const char* message) {
   std::cout << "[FileHandler] Writing file: "<<  path;
 
-  File file = fs.open(path, FILE_WRITE);
+  File file = fs.open(path, FILE_WRITE, true);
   if (!file) {
     std::cout << "- failed to open file for writing" << std::endl;
     return;
@@ -75,6 +76,8 @@ void FileHandler::writeFile(fs::FS& fs, const char* path, const char* message) {
   } else {
     std::cout << "- write failed" << std::endl;
   }
+
+  //Serial.println(message);
   file.close();
 }
 /*

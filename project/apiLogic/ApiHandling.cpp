@@ -78,7 +78,7 @@ This is a helper function that gets the average per day
 */
 std::vector<HistoricalObject> APIhandler::averageByDay(const vector<HistoricalObject>& raw)
 {
-    std::map<std::string, std::vector<float>> grouped;
+    std::map<long long, std::vector<float>> grouped;
 
     // Group values by their date
     for (const auto& obj : raw) {
@@ -90,7 +90,7 @@ std::vector<HistoricalObject> APIhandler::averageByDay(const vector<HistoricalOb
 
     // Iterates through each date >> list of values
     for (const auto& entry : grouped) {
-        const std::string& date = entry.first;
+        const long long& date = entry.first;
         const std::vector<float>& values = entry.second;
 
         // Computes the sum of values for the date
