@@ -7,7 +7,10 @@
 #ifdef LILYGO_BUILD
 #include <Arduino.h>
 #else
-#include <String.h>
+#ifdef NATIVE_BUILD
+#include "nativeReplacements/String.h"
+#endif
+
 #endif
 #include <lvgl.h>
 #include <ArduinoJson.h>
@@ -145,7 +148,7 @@ void Settings::set_default(lv_event_t* event) {
     handler.writeFile(LittleFS, "/defaultSettings.json", data.c_str());
 
     String info = handler.readFile(LittleFS, "/defaultSettings.json");
-    Serial.println(info);
+    std::cout << info << std::endl;
   
 }
 
@@ -206,7 +209,7 @@ Settings::Settings() {
         
         JsonDocument doc;
         String jsonString = handler.readFile(LittleFS, filename);
-        Serial.println(jsonString);
+        std::cout << jsonString << std::endl;
         deserializeJson(doc, jsonString);
 
         weather_parameter = static_cast<WeatherParameter>(doc["parameter"].as<int>());
