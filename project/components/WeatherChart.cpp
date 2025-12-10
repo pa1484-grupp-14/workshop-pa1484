@@ -17,7 +17,7 @@ static void slider_scroll_cb(lv_event_t * e)
 {
     lv_obj_t * slider = (lv_obj_t*)lv_event_get_target(e);
     int precentage = lv_slider_get_value(slider);
-    int scroll = precentage * 10;
+    int scroll = (precentage * 10) + 40;
     lv_obj_t * container = (lv_obj_t*)lv_event_get_user_data(e);
     lv_obj_scroll_to(container, scroll, 0, LV_ANIM_OFF);
 }
@@ -43,7 +43,8 @@ void WeatherChart::switchHistoricalUi(std::vector<HistoricalObject>& data_points
         max = std::max(max, value);
         data[i] = value;
     }
-    min -= min % 10 + 10;
+    min -= 9;
+    min -= min % 10;
     max += 10 - (max % 10);
     if(currentScaleNames != nullptr) {
         for (size_t i = 0; i < currentScaleNameCount; i++)
@@ -77,36 +78,61 @@ void WeatherChart::switchHistoricalUi(std::vector<HistoricalObject>& data_points
     auto& container = ui_tile->addLabel()
       .setText("Weather chart")
       .setFont(&lv_font_montserrat_48).setPos(125, 5)
-      .getTile().addContainer().disableFrame().setPos(50,40).setSize(550, 370);
+      .getTile().addContainer().disableFrame().setPos(70,40).setSize(480, 370);
     auto& chart = container
       .addChart()
       .addSeries("main series")
       .addPoints("main series", data)
-      .setSize(1500, 300);
+      .setSize(1525, 300);
 
-    
+    auto& unit_label = ui_tile->addLabel();
+    unit_label.setTextAlign(LV_TEXT_ALIGN_RIGHT).setPos(5, 20).setSize(80, 30);
+    switch(getSettingsScreen().getSelectedParameter()) {
+        case WeatherParameter::AirPressure:
+        unit_label.setText("(hPa)");  
+        break;
+        case WeatherParameter::Humidity:
+        unit_label.setText("(%)");  
+        break;
+        case WeatherParameter::Temperature:
+        unit_label.setText("(C°)");  
+        break;
+        case WeatherParameter::Rainfall:
+        unit_label.setText("(mm)");  
+        break;
+        case WeatherParameter::WindSpeed:
+        unit_label.setText("(m/s)");  
+        break;
+    }
+
     lv_obj_set_scrollbar_mode(container.getWidgetPtr(), LV_SCROLLBAR_MODE_OFF);
     lv_obj_clear_flag(container.getWidgetPtr(), LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_scroll_to(container.getWidgetPtr(), 40, 0, LV_ANIM_OFF);
     lv_obj_t* slider = lv_slider_create(ui_tile->getWidgetPtr());
     lv_obj_set_size(slider, 530, 40);
     lv_obj_set_pos(slider, 35, 395);
     lv_chart_set_axis_range(chart.getWidgetPtr(), LV_CHART_AXIS_PRIMARY_Y, min, max);
     lv_chart_set_div_line_count(chart.getWidgetPtr(), (((max-min)/10)+1),currentScaleNameCount);
+    lv_obj_set_style_pad_hor(chart.getWidgetPtr(), 70, 0);
+    lv_obj_set_style_margin_hor(chart.getWidgetPtr(), 0, 0);
+        lv_obj_set_style_pad_ver(chart.getWidgetPtr(), 0, 0);
+    lv_obj_set_style_margin_ver(chart.getWidgetPtr(), 0, 0);
     lv_obj_t* scale_bottom = lv_scale_create(container.getWidgetPtr());
     lv_obj_t* scale_side = lv_scale_create(ui_tile->getWidgetPtr());
     int offsetting = lv_chart_get_first_point_center_offset(chart.getWidgetPtr());
     lv_scale_set_mode(scale_side, LV_SCALE_MODE_VERTICAL_LEFT);
     lv_scale_set_mode(scale_bottom, LV_SCALE_MODE_HORIZONTAL_BOTTOM);
-    lv_obj_set_size(scale_bottom, 1500, 25);
+    lv_obj_set_size(scale_bottom, 1525, 25);
     lv_obj_set_size(scale_side, 25, 300);
-    lv_obj_set_pos(scale_side, 25, 59);
+    lv_obj_set_pos(scale_side, 45, 59);
     lv_scale_set_range(scale_side, min, max);
-    //lv_scale_set_total_tick_count(scale_side, ((max-min)/10)+1);
+    lv_scale_set_total_tick_count(scale_side, ((max-min)/10)+1);
+    lv_scale_set_major_tick_every(scale_side, 1);
     lv_scale_set_total_tick_count(scale_bottom, currentScaleNameCount);
     lv_scale_set_major_tick_every(scale_bottom, 1);
     lv_obj_set_style_pad_hor(scale_bottom, offsetting+1, 0);
-    lv_obj_set_style_pad_ver(scale_side, offsetting+1, 0);
-    lv_obj_set_y(scale_bottom, 300);
+    lv_obj_set_style_margin_hor(scale_bottom, 0, 0);
+    lv_obj_set_y(scale_bottom, 299);
     lv_scale_set_text_src(scale_bottom, (const char**)(currentScaleNames));
     lv_scale_set_label_show(scale_side, true);
     lv_obj_add_event_cb(slider, slider_scroll_cb, LV_EVENT_VALUE_CHANGED, (void*)container.getWidgetPtr());

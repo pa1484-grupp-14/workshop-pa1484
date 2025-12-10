@@ -22,7 +22,7 @@ void MainScreen::constructUI(Tile* tile) {
       .focusOn()
       .getTile()
       .addLabel()
-      .setText("Version 3")
+      .setText("Version 4")
       .setFont(&lv_font_montserrat_48)
       .alignTo(project_label, LV_ALIGN_CENTER, 0, 150);
 }
