@@ -1,7 +1,15 @@
 #pragma once
+#include "apiLogic/StationObject.h"
 
-#include "StationObject.h"
-#include "JsonListener.h"
+#ifdef LILYGO_BUILD
+#include <JsonListener.h>
+#include <JsonStreamingParser.h>
+#else
+#include "nativeReplacements/JsonListener.h"
+#include "nativeReplacements/JsonStreamingParser.h"
+#include "nativeReplacements/String.h"
+#endif
+
 #include <vector>
 #include <unordered_map>
 #include <string>

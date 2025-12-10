@@ -1,7 +1,13 @@
 #pragma once
 
-#include "ForecastObject.h"
-#include "JsonListener.h"
+#include "apiLogic/ForecastObject.h"
+#ifdef LILYGO_BUILD
+#include <JsonListener.h>
+#endif
+#ifdef NATIVE_BUILD
+#include "nativeReplacements/JsonListener.h"
+#include "nativeReplacements/String.h"
+#endif
 #include <vector>
 
 

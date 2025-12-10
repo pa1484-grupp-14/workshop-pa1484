@@ -1,0 +1,61 @@
+#ifdef LILYGO_BUILD
+#include <WiFi.h>
+#endif
+#ifdef NATIVE_BUILD 
+#include "nativeReplacements/WiFi.h"
+#endif
+#include "gui/Gui.h"
+#include "components/Components.h"
+
+static GUI gui;
+static MainScreen mainScreen;
+static Forecast forecastScreen;
+static WeatherChart weatherChartScreen;
+static Settings settingsScreen;
+
+void createLoadingUi(Tile* ui_tile, std::string statusText) {
+  ui_tile->clear();
+  Widget& label = ui_tile->addLabel().setText(statusText);
+  Widget& spinner = ui_tile->addSpinner();
+  spinner.center().setSize(60, 60);
+  label.setFont(&lv_font_montserrat_32)
+      .alignTo(spinner, LV_ALIGN_BOTTOM_MID, 0, 50);
+}
+
+GUI& getGui() {
+    return gui;
+}
+MainScreen& getMainScreen() {
+    return mainScreen;
+}
+Forecast& getForecastScreen() {
+    return forecastScreen;
+}
+WeatherChart& getWeatherChartScreen() {
+    return weatherChartScreen;
+}
+Settings& getSettingsScreen() {
+    return settingsScreen;
+}
+bool is_wifi_connected() {
+    #ifdef LILYGO_BUILD
+    return WiFi.status() == WL_CONNECTED;
+    #else
+    return true;
+    #endif
+}
+
+#ifndef LILYGO_BUILD
+#include <chrono>
+static std::chrono::time_point<std::chrono::system_clock> start;
+static bool started = false;
+unsigned long millis() {
+    if(!started) {
+        started = true;
+        start = std::chrono::system_clock::now();
+    }
+    auto rightNow = std::chrono::system_clock::now();
+    std::chrono::duration<double> elapsed = rightNow-start;
+    return long(elapsed.count() * 1000.0);
+}
+#endif

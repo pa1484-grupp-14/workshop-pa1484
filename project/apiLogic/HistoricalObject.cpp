@@ -3,13 +3,11 @@
 
 HistoricalObject::HistoricalObject(string date, float value) : date(date), value(value) {}
 
-string HistoricalObject::getDate()
-{
+const std::string& HistoricalObject::getDate() const {
     return this->date;
 }
 
-float HistoricalObject::getValue()
-{
+float HistoricalObject::getValue() const {
     return this->value;
 }
 

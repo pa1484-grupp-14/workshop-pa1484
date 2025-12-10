@@ -9,8 +9,6 @@
 
 
 #pragma once
-#include <Arduino.h>
-#include <freertos/queue.h>
 
 struct InputData {
     char id;        // 'm' = mouse ,'k' = keyboard
@@ -21,8 +19,16 @@ struct InputData {
     int y;
 };
 
+#ifdef LILYGO_BUILD
+#include <Arduino.h>
+
+#include <freertos/queue.h>
+
+
+
 struct InputParams {
     QueueHandle_t queue;
     const void *icon;
 };
+#endif
 

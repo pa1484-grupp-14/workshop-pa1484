@@ -10,6 +10,7 @@
 #include "Image.h"
 #include "Label.h"
 #include "Spinner.h"
+#include "Button.h"
 
 Widget& Widget::focusOn() {
   lv_group_focus_obj(this->getWidgetPtr());

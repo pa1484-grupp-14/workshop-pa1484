@@ -770,7 +770,7 @@
 #endif
 
 /*API for open, read, etc*/
-#define LV_USE_FS_POSIX 1 /* from v8 config */
+#define LV_USE_FS_POSIX 0 /* from v8 config */
 #if LV_USE_FS_POSIX
     #define LV_FS_POSIX_LETTER 'A'      /* from v8 config */
     #define LV_FS_POSIX_PATH "/fs"      /* from v8 config */
