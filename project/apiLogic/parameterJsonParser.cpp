@@ -103,6 +103,7 @@ void StationParser::endArray(){
 void StationParser::endObject() {
     if (state == StationFilter::InsideObject) {
         if(current_city_name.length() > 0) {
+            std::cout << current_city_name << " " << current_station_obj.getKey() << " " << current_station_obj.getLat() << " " << current_station_obj.getLon() << std::endl;
             stations.emplace(current_city_name, current_station_obj);
             current_city_name = "";
         }

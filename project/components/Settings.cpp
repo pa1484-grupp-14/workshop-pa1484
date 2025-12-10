@@ -164,17 +164,38 @@ void Settings::reset_defaults(lv_event_t * event) {
     if (!LittleFS.exists(filename)) {
         std::cout << "[Settings] settings file did not exist!" << std::endl;
         classData->weather_parameter = WeatherParameter::Humidity;
-        classData->available_cities = {"Karlskrona"};
+        classData->available_cities = {"Karlskrona", "Malmö", "Kiruna", "Göteborg", "Stockholm"};
         classData->city = "Karlskrona";
     } else {
         JsonDocument doc;
         String jsonString = handler.readFile(LittleFS, filename);
         if (deserializeJson(doc, jsonString) != DeserializationError::Ok) {
             classData->weather_parameter = WeatherParameter::Humidity;
-            classData->available_cities = {"Karlskrona"};
+            classData->available_cities = {"Karlskrona", "Malmö", "Kiruna", "Göteborg", "Stockholm"};
             classData->city = "Karlskrona";
         } else {
             classData->weather_parameter = static_cast<WeatherParameter>(doc["parameter"].as<int>());
+
+            int selected_option;
+            switch(classData->weather_parameter) {
+                case WeatherParameter::AirPressure:
+                    selected_option = 4;
+                    break;
+                case WeatherParameter::Humidity:
+                    selected_option = 2;
+                    break;
+                case WeatherParameter::Temperature:
+                    selected_option = 0;
+                    break;
+                case WeatherParameter::Rainfall:
+                    selected_option = 3;
+                    break;
+                case WeatherParameter::WindSpeed:
+                    selected_option = 1;
+                    break;
+            }
+            classData->ui_tile->getDropdown("parameters").setSelectedOption(selected_option);
+
             classData->available_cities.clear();
             const JsonArray& arr = doc["cities"];
 
@@ -182,7 +203,7 @@ void Settings::reset_defaults(lv_event_t * event) {
                 classData->available_cities.push_back(v);
             }
             if (classData->available_cities.empty()) {
-                classData->available_cities = {"Karlskrona"};
+                classData->available_cities = {"Karlskrona", "Malmö", "Kiruna", "Göteborg", "Stockholm"};
             }
 
             if (!doc["selectedCity"].isNull()) {
@@ -197,37 +218,7 @@ void Settings::reset_defaults(lv_event_t * event) {
 }
 
 Settings::Settings() {
-    FileHandler handler; 
-    const char* filename = "/defaultSettings.json";
-    LittleFS.begin();
-
-    if(!LittleFS.exists(filename)) {
-
-        weather_parameter = WeatherParameter::Humidity;
-        available_cities = {"Karlskrona"};
-        city = "Karlskrona";
-    }
-    else{
-        
-        JsonDocument doc;
-        String jsonString = handler.readFile(LittleFS, filename);
-        //std::cout << jsonString << std::endl;
-        deserializeJson(doc, jsonString);
-
-        weather_parameter = static_cast<WeatherParameter>(doc["parameter"].as<int>());
-        JsonArray availableArrayJson;
-        if(!doc["selectedCity"].isNull()){
-            city = string(doc["selectedCity"].as<const char*>());
-            availableArrayJson = doc["cities"].as<JsonArray>();
-            if(!availableArrayJson.isNull())
-            for(JsonVariant value : availableArrayJson)
-                available_cities.push_back(string(value.as<const char*>()));
-        }
-        else {
-            available_cities = {"Karlskrona"};
-            city = "Karlskrona";
-        }
-    }
+    
 }
 
 Settings::~Settings() {} 
@@ -286,14 +277,64 @@ void Settings::constructUI(Tile* gui) {
     static int32_t columns[] = {200, 400, LV_GRID_TEMPLATE_LAST};
     static int32_t row[] = {110, 80, 80, 80, LV_GRID_TEMPLATE_LAST};
 
+    FileHandler handler; 
+    const char* filename = "/defaultSettings.json";
+    LittleFS.begin();
+
+    if(!LittleFS.exists(filename)) {
+
+        weather_parameter = WeatherParameter::Humidity;
+        available_cities = {"Karlskrona", "Malmö", "Kiruna", "Göteborg", "Stockholm"};
+        city = "Karlskrona";
+    }
+    else{
+        
+        JsonDocument doc;
+        String jsonString = handler.readFile(LittleFS, filename);
+        std::cout << jsonString << std::endl;
+        deserializeJson(doc, jsonString);
+
+        weather_parameter = static_cast<WeatherParameter>(doc["parameter"].as<int>());
+        JsonArray availableArrayJson;
+        if(!doc["selectedCity"].isNull()){
+            city = string(doc["selectedCity"].as<const char*>());
+            availableArrayJson = doc["cities"].as<JsonArray>();
+            if(!availableArrayJson.isNull())
+            for(JsonVariant value : availableArrayJson)
+                available_cities.push_back(string(value.as<const char*>()));
+        }
+        else {
+            available_cities = {"Karlskrona"};
+            city = "Karlskrona";
+        }
+    }
+
     ui_tile = gui;
+    int selected_option;
+    switch(weather_parameter) {
+        case WeatherParameter::AirPressure:
+            selected_option = 4;
+            break;
+        case WeatherParameter::Humidity:
+            selected_option = 2;
+            break;
+        case WeatherParameter::Temperature:
+            selected_option = 0;
+            break;
+        case WeatherParameter::Rainfall:
+            selected_option = 3;
+            break;
+        case WeatherParameter::WindSpeed:
+            selected_option = 1;
+            break;
+    }
   //Tile& settings_tile = *gui;
     gui->setGridLayout(columns, row)
     .addLabel().setText("Settings").setFont(&lv_font_montserrat_48)
     .setGridCell(0, 0, 1, 2).getTile()
     .addLabel().setText("Parameter:").setFont(&font_regular)
     .setGridCell(1, 0, 1, 1, LV_GRID_ALIGN_CENTER, LV_GRID_ALIGN_END).getTile()
-    .addDropdown().setOptions("Temperature\nWind Speed\nHumidity\nRainfall\nAir Pressure").setSelectedOption(static_cast<int>(this->weather_parameter)).setListFont(&font_regular).setFont(&font_regular)
+    .addDropdown("parameters").setOptions("Temperature\nWind Speed\nHumidity\nRainfall\nAir Pressure").setSelectedOption(selected_option).setListFont(&font_regular).setFont(&font_regular)
     .addEventCallback(Settings::change_weather_parameter, lv_event_code_t::LV_EVENT_VALUE_CHANGED, this)
     .setGridCell(1, 1).setWidth(370).getTile()
     .addLabel("Select option 2 ").setText("Location:").setFont(&font_regular)

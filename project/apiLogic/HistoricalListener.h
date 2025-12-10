@@ -1,4 +1,4 @@
-
+#pragma once
 #ifdef LILYGO_BUILD
 #include <JsonListener.h>
 #endif
@@ -77,7 +77,7 @@ public:
     void endArray() override {}
     void whitespace(char c) override {}
 
-    vector<HistoricalObject> getResults() {
+    vector<HistoricalObject>& getResults() {
         return results;
     }
 

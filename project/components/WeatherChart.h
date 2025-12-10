@@ -24,4 +24,6 @@ class WeatherChart : public Component {
   void constructUI(Tile *gui) override;
   void process() override;
   void reset();
+  void switchFetchingUi();
+  void switchHistoricalUi(std::vector<HistoricalObject>& data_points);
 };

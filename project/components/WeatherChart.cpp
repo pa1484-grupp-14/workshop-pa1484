@@ -23,13 +23,16 @@ static void slider_scroll_cb(lv_event_t * e)
 }
 void createChartUi(Tile* tile) {
     WeatherParameter parameter = getSettingsScreen().getSelectedParameter();
-    std::cout << "[WeatherChart] trying to fetch historical data..." << std::endl;
+    
     APIhandler handler;
     auto stations = handler.getStationsArray(1);
     std::string city = getSettingsScreen().getSelectedCity();
     auto station = handler.getStationFromArray(stations, city);
     auto data_points = handler.getHistoricalData(station, parameter);   
-    std::cout << "[WeatherChart] fetched " << data_points.size() << " data points." << std::endl;
+    
+}
+void WeatherChart::switchHistoricalUi(std::vector<HistoricalObject>& data_points) {
+
     std::vector<int32_t> data = std::vector<int32_t>(data_points.size());
     int min = 100000;
     int max = -100000;
@@ -69,9 +72,9 @@ void createChartUi(Tile* tile) {
     }
       
     
-    tile->
+    ui_tile->
       clear();
-    auto& container = tile->addLabel()
+    auto& container = ui_tile->addLabel()
       .setText("Weather chart")
       .setFont(&lv_font_montserrat_48).setPos(125, 5)
       .getTile().addContainer().disableFrame().setPos(50,40).setSize(550, 370);
@@ -84,13 +87,13 @@ void createChartUi(Tile* tile) {
     
     lv_obj_set_scrollbar_mode(container.getWidgetPtr(), LV_SCROLLBAR_MODE_OFF);
     lv_obj_clear_flag(container.getWidgetPtr(), LV_OBJ_FLAG_SCROLLABLE);
-    lv_obj_t* slider = lv_slider_create(tile->getWidgetPtr());
+    lv_obj_t* slider = lv_slider_create(ui_tile->getWidgetPtr());
     lv_obj_set_size(slider, 550, 30);
     lv_obj_set_pos(slider, 25, 410);
     lv_chart_set_axis_range(chart.getWidgetPtr(), LV_CHART_AXIS_PRIMARY_Y, min, max);
     lv_chart_set_div_line_count(chart.getWidgetPtr(), (((max-min)/10)+1),currentScaleNameCount);
     lv_obj_t* scale_bottom = lv_scale_create(container.getWidgetPtr());
-    lv_obj_t* scale_side = lv_scale_create(tile->getWidgetPtr());
+    lv_obj_t* scale_side = lv_scale_create(ui_tile->getWidgetPtr());
     int offsetting = lv_chart_get_first_point_center_offset(chart.getWidgetPtr());
     lv_scale_set_mode(scale_side, LV_SCALE_MODE_VERTICAL_LEFT);
     lv_scale_set_mode(scale_bottom, LV_SCALE_MODE_HORIZONTAL_BOTTOM);
@@ -108,10 +111,22 @@ void createChartUi(Tile* tile) {
     lv_scale_set_label_show(scale_side, true);
     lv_obj_add_event_cb(slider, slider_scroll_cb, LV_EVENT_VALUE_CHANGED, (void*)container.getWidgetPtr());
 }
+void finishedUi(std::vector<HistoricalObject>& data_points) {
+  std::cout << "[WeatherChart] fetched " << data_points.size() << " data points." << std::endl;
+  getWeatherChartScreen().switchHistoricalUi(data_points);
+}
+void failedUi() {
+
+}
 void WeatherChart::process() {
     if(status == WeatherChartStatus::WaitingForWiFi) {
       if(is_wifi_connected()) {
         status = WeatherChartStatus::FetchingHistoricalData;
+        APIhandler handler;
+        std::cout << "[WeatherChart] trying to fetch historical data..." << std::endl;
+        auto stations = handler.getStationsArray(1);
+        auto station = handler.getStationFromArray(stations, getSettingsScreen().getSelectedCity());
+        handler.getHistoricalDataAsync(station, getSettingsScreen().getSelectedParameter(), finishedUi, failedUi);
         createLoadingUi(ui_tile, "Fetching historical data...");
       }
     } else if (status == WeatherChartStatus::FetchingHistoricalData) {
@@ -119,6 +134,7 @@ void WeatherChart::process() {
       status = WeatherChartStatus::FetchedHistory;
     }
 }
+
 void WeatherChart::constructUI(Tile* tile) {
   ui_tile = tile;
   createLoadingUi(tile, "Waiting for wifi...");

@@ -16,7 +16,13 @@ std::unordered_map<std::string, std::vector<ForecastObject>>
     APIhandler::cached_forecasts =
         std::unordered_map<std::string, std::vector<ForecastObject>>();
 int APIhandler::cached_parameter = 0;
-std::unordered_map<std::string, StationObject> APIhandler::cached_stations = {};
+std::unordered_map<std::string, StationObject> APIhandler::cached_stations = {
+  {"Karlskrona",  StationObject{65090,"Karlskrona", 15.589 , 56.15    }},
+  {"Malmö",       StationObject{53300,"Malmö", 13.3787, 55.5231        }},
+  {"Stockholm",   StationObject{97400,"Stockholm", 17.9545,  59.6269   }},
+  {"Göteborg",    StationObject{72420,"Göteborg", 12.2919, 57.6764     }},
+  {"Kiruna",      StationObject{180940,"Kiruna", 20.3387,  67.827      }}
+};
 
 StationObject APIhandler::getStationFromArray(
     const std::unordered_map<std::string, StationObject>& array,
@@ -200,11 +206,12 @@ std::vector<ForecastObject> APIhandler::getForecastNext7Days(
 
 StationRequest* APIhandler::stationFetch = nullptr;
 ForecastRequest* APIhandler::forecastFetch = nullptr;
+HistoricRequest* APIhandler::historyFetch = nullptr;
 void APIhandler::getStationsArrayAsync(
     int parameter,
     void (*success_cb)(std::unordered_map<std::string, StationObject>&),
     void (*failure_cb)()) {
-  if (parameter == cached_parameter && cached_stations.size() > 0) {
+  if ( cached_stations.size() > 0) {
     std::cout << "[APIHandler]: returning cached stations instead."
               << std::endl;
     success_cb(cached_stations);
@@ -242,9 +249,39 @@ void APIhandler::getStationsArrayAsync(
     }
   }
 }
+void APIhandler::getHistoricalDataAsync(const StationObject& station, int parameter, void(*success_cb)(std::vector<HistoricalObject>&), void(*failure_cb)()) {
+  if (historyFetch != nullptr) {
+    historyFetch->http.end();
+    delete historyFetch;
+    historyFetch == nullptr;
+  }
+
+  HistoricRequest* fetch = new HistoricRequest{
+      WiFiClient(),       HTTPClient(), JsonStreamingParser(),
+      HistoricalListener(), success_cb,   failure_cb};
+  int key = station.getKey();
+  string url = "http://opendata-download-metobs.smhi.se/api/version/1.0/parameter/"+to_string(parameter) +"/station/"+ to_string(station.getKey()) +"/period/latest-months/data.json";
+  fetch->client.setTimeout(1);
+  if (fetch->http.begin(fetch->client, String(url.c_str()))) {
+    int code = fetch->http.GET();
+    if (code == HTTP_CODE_OK) {
+      fetch->parser.setListener(&fetch->listener);
+      std::cout << "[APIHandler]: Fetching historical data asynchronously!."
+                << std::endl;
+      historyFetch = fetch;
+    } else {
+      fetch->http.end();
+      if (failure_cb) {
+        failure_cb();
+      }
+      delete fetch;
+      std::cout << "[APIHandler]: Failed to fetch forecast" << std::endl;
+    }
+  }
+}
 std::unordered_map<std::string, StationObject> APIhandler::getStationsArray(
     int parameter) {
-  if (parameter == cached_parameter && cached_stations.size() > 0) {
+  if (cached_stations.size() > 0) {
     std::cout << "[APIHandler]: returning cached stations instead."
               << std::endl;
     return cached_stations;
@@ -354,6 +391,30 @@ void APIhandler::process() {
       delete forecastFetch;
       forecastFetch = nullptr;
       std::cout << "[APIHandler]: finished async forecast fetch" << std::endl;
+    }
+  }
+  if (historyFetch != nullptr) {
+    //NOTE: return nullptr when connection is closed, so doubled up as connection status
+    WiFiClient* stream = historyFetch->http.getStreamPtr();
+    if (stream) {
+      //create a chunk
+      char buffer[BUFFER_SIZE];
+      //fetch and parse it
+      auto available = stream->available();
+      if (available > 0) {
+        int len = stream->readBytes(buffer, min(BUFFER_SIZE, available));
+        for (int i = 0; i < len; i++) {
+          historyFetch->parser.parse(buffer[i]);
+        }
+      }
+    } else {
+
+      //assume success when the connection closes
+      historyFetch->http.end();
+      historyFetch->success_cb(historyFetch->listener.getResults());
+      delete historyFetch;
+      historyFetch = nullptr;
+      std::cout << "[APIHandler]: finished async historic fetch" << std::endl;
     }
   }
 }

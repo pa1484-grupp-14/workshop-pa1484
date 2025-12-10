@@ -81,7 +81,7 @@ namespace fs {
             return File(path);
         }
         int WriteFile(const char* path) { return 0;};
-        bool exists(const char* path) { return std::filesystem::exists(path);}
+        bool exists(const char* path) { return std::filesystem::exists("." + std::string(path));}
         bool begin(bool = false) {return true;}
     };
 
