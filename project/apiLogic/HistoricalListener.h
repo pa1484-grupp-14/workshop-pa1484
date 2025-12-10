@@ -21,7 +21,7 @@ private:
     vector<HistoricalObject> results;
     bool isVersion2 = false;
     string currentKey = "";
-    long tempTimestamp = 0;
+    long long tempTimestamp = 0;
     float tempValue = 0.0f;
     string tempRefDate = "";
     
@@ -34,11 +34,11 @@ public:
 
     void value(String value) override {
         if (currentKey == "from") {
-            isVersion2 = true;
+            //isVersion2 = true;
         }
 
         if (currentKey == "date") {
-            tempTimestamp = value.toInt();
+            tempTimestamp = std::stoll(value.c_str());
         }
 
         if (currentKey == "ref") {
@@ -51,7 +51,9 @@ public:
     }
 
     void endObject() override {
+        std::cout << "[HistoricalListener] Finished object: " << tempTimestamp << "," << tempValue << "," << tempRefDate << "," << isVersion2 << std::endl;
         if (isVersion2 && tempRefDate != "") {
+            std::cout << "[HistoricalListener] Pushing new historical object. (Version 2)" << std::endl;
             results.push_back(HistoricalObject(tempRefDate, tempValue));
         }
 
@@ -59,7 +61,7 @@ public:
             std::time_t seconds = tempTimestamp / 1000;
             char buffer[20];
             strftime(buffer, sizeof(buffer), "%Y-%m-%d", localtime(&seconds));
-
+            std::cout << "[HistoricalListener] Pushing new historical object. (Version 1)" << std::endl;
             results.push_back(HistoricalObject(string(buffer), tempValue));
         }
 
@@ -68,8 +70,12 @@ public:
         tempRefDate = "";
     }
 
-    void startDocument() override {}
-    void endDocument() override {}
+    void startDocument() override {
+        std::cout << "[HistoricalListener] Finishing parse of historical data points." << std::endl;
+    }
+    void endDocument() override {
+        std::cout << "[HistoricalListener] Starting parse of historical data points." << std::endl;
+    }
     void startObject() override {}
     void startArray() override {}
     void endArray() override {}

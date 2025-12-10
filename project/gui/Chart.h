@@ -38,7 +38,15 @@ class Chart: public Widget {
     /// EXCEPTIONS: if the specified series doesn't exist in the chart, an out of bound exception will be thrown.
     template<unsigned int N>
     Chart& addPoints(const std::string& series_name, int32_t const (&my_array)[N]) {
+        lv_chart_set_point_count(this->getWidgetPtr(), N);
         for (int32_t point : my_array) {
+            this->addPoint(series_name, point);
+        }
+        return this->refresh();
+    }
+    Chart& addPoints(const std::string& series_name, const std::vector<int32_t>& series) {
+        lv_chart_set_point_count(this->getWidgetPtr(), series.size());
+        for (int32_t point : series) {
             this->addPoint(series_name, point);
         }
         return this->refresh();

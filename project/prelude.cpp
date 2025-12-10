@@ -13,6 +13,14 @@ static Forecast forecastScreen;
 static WeatherChart weatherChartScreen;
 static Settings settingsScreen;
 
+void createLoadingUi(Tile* ui_tile, std::string statusText) {
+  ui_tile->clear();
+  Widget& label = ui_tile->addLabel().setText(statusText);
+  Widget& spinner = ui_tile->addSpinner();
+  spinner.center().setSize(60, 60);
+  label.setFont(&lv_font_montserrat_32)
+      .alignTo(spinner, LV_ALIGN_BOTTOM_MID, 0, 50);
+}
 
 GUI& getGui() {
     return gui;

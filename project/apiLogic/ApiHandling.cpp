@@ -39,7 +39,7 @@ StationObject APIhandler::getStationFromArray(
 
 std::vector<HistoricalObject> APIhandler::getHistoricalData(const StationObject& station, int parameter)
 {
-    string url = "https://opendata-download-metobs.smhi.se/api/version/1.0/parameter/"+to_string(parameter) +"/station/"+ to_string(station.getKey()) +"/period/latest-months/data.json";
+    string url = "http://opendata-download-metobs.smhi.se/api/version/1.0/parameter/"+to_string(parameter) +"/station/"+ to_string(station.getKey()) +"/period/latest-months/data.json";
 
     WiFiClient client;
     HTTPClient http;
@@ -68,7 +68,7 @@ std::vector<HistoricalObject> APIhandler::getHistoricalData(const StationObject&
     if(listener.isVersion2Data()){
         return rawResults;
     }
-
+    return rawResults;
     return averageByDay(rawResults);
 }
 

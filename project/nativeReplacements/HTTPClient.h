@@ -62,7 +62,7 @@ class HTTPClient {
     public:
     bool begin(WiFiClient& client, String url) {
         this->dummy = &client;
-        std::cout << "[HTTPClient::begin]: starting fetch of request." << std::endl;
+        std::cout << "[HTTPClient::begin]: starting fetch of request:" << std::endl << "[HTTPClient::begin] " << url << std::endl;
         request = std::optional<http::Request>{http::Request(url)};
         return true;
     }

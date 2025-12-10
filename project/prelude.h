@@ -7,11 +7,14 @@
 #endif
 #include "components/Components.h"
 #include "gui/Gui.h"
+#include <string>
 
 // utility function: returns true if the device is currently connected to wifi
 bool is_wifi_connected();
 // system function: returns the number of milliseconds since the program started
 unsigned long millis();
+
+void createLoadingUi(Tile* ui_tile, std::string statusText);
 
 class MainScreen;
 class Settings;

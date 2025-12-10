@@ -61,14 +61,7 @@ void forecast_epic_fail() {
 void forecast_refresh_pls(lv_event_t* _e) {
   getForecastScreen().refresh();
 }
-void createLoadingUi(Tile* ui_tile, std::string statusText) {
-  ui_tile->clear();
-  Widget& label = ui_tile->addLabel().setText(statusText);
-  Widget& spinner = ui_tile->addSpinner();
-  spinner.center().setSize(60, 60);
-  label.setFont(&lv_font_montserrat_32)
-      .alignTo(spinner, LV_ALIGN_BOTTOM_MID, 0, 50);
-}
+
 // NOTICE: modified from https://www.geeksforgeeks.org/dsa/find-day-of-the-week-for-a-given-date/ (retrieved 20/11/2025)
 // Function to calculate the day of the week using the formula-based approach
 int dayOfWeek(int d, int m, int y) {

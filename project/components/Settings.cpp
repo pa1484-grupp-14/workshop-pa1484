@@ -4,7 +4,7 @@
 #include "apiLogic/ApiHandling.h"
 #include "../gui/Button.h"
 #include "../FileHandling.h"
-
+#include <iostream>
 #ifdef LILYGO_BUILD
 #include "Arduino.h"
 #endif
