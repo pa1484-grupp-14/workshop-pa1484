@@ -4,12 +4,17 @@
 #include "apiLogic/ApiHandling.h"
 #include "../gui/Button.h"
 #include "../FileHandling.h"
-#include <iostream>
 #ifdef LILYGO_BUILD
-#include "Arduino.h"
+#include <Arduino.h>
+#else
+#ifdef NATIVE_BUILD
+#include "nativeReplacements/String.h"
+#endif
+
 #endif
 #include <lvgl.h>
 #include <ArduinoJson.h>
+#include <iostream>
 
 
 
@@ -139,12 +144,54 @@ void Settings::set_default(lv_event_t* event) {
     String data = "";
     serializeJsonPretty(doc, data);
 
-    std::cout << data << std::endl;
+    std::cout << data <<std::endl;
     handler.writeFile(LittleFS, "/defaultSettings.json", data.c_str());
 
     String info = handler.readFile(LittleFS, "/defaultSettings.json");
     std::cout << info << std::endl;
   
+}
+
+
+void Settings::reset_defaults(lv_event_t * event) {
+    FileHandler handler;
+    lv_obj_t* button = (lv_obj_t*)lv_event_get_target(event);
+    Settings* classData = (Settings*)lv_event_get_user_data(event);
+
+    const char* filename = "/defaultSettings.json";
+    LittleFS.begin();
+
+    if (!LittleFS.exists(filename)) {
+        classData->weather_parameter = WeatherParameter::Humidity;
+        classData->available_cities = {"Karlskrona"};
+        classData->city = "Karlskrona";
+    } else {
+        JsonDocument doc;
+        String jsonString = handler.readFile(LittleFS, filename);
+        if (deserializeJson(doc, jsonString) != DeserializationError::Ok) {
+            classData->weather_parameter = WeatherParameter::Humidity;
+            classData->available_cities = {"Karlskrona"};
+            classData->city = "Karlskrona";
+        } else {
+            classData->weather_parameter = static_cast<WeatherParameter>(doc["parameter"].as<int>());
+            classData->available_cities.clear();
+            const JsonArray& arr = doc["cities"];
+
+            for (const JsonVariant& v : arr) {
+                classData->available_cities.push_back(v);
+            }
+            if (classData->available_cities.empty()) {
+                classData->available_cities = {"Karlskrona"};
+            }
+
+            if (!doc["selectedCity"].isNull()) {
+                classData->city = std::string(doc["selectedCity"]);
+            } else {
+                classData->city = "Karlskrona";
+            }
+            
+        }
+    }
 }
 
 Settings::Settings() {
@@ -162,7 +209,7 @@ Settings::Settings() {
         
         JsonDocument doc;
         String jsonString = handler.readFile(LittleFS, filename);
-        std::cout << jsonString.c_str() << std::endl;
+        std::cout << jsonString << std::endl;
         deserializeJson(doc, jsonString);
 
         weather_parameter = static_cast<WeatherParameter>(doc["parameter"].as<int>());
@@ -215,6 +262,9 @@ int Settings::getCurrentCityIndex(){
 }
 
 void Settings::constructUI(Tile* gui) {
+    static int32_t columns[] = {200, 400, LV_GRID_TEMPLATE_LAST};
+    static int32_t row[] = {110, 80, 80, 80, LV_GRID_TEMPLATE_LAST};
+
     ui_tile = gui;
   //Tile& settings_tile = *gui;
     gui->setGridLayout(columns, row)
@@ -238,8 +288,12 @@ void Settings::constructUI(Tile* gui) {
     .addButton("Set Default")
     .setBtnText("Set Default")
     .setGridCell(3, 0, LV_GRID_ALIGN_CENTER, LV_GRID_ALIGN_END)
-    .addEventCallback(set_default, LV_EVENT_CLICKED, this);
-    
+    .addEventCallback(set_default, LV_EVENT_CLICKED, this)
+    .getTile()
+    .addButton("Reset Defaults")
+    .setBtnText("Reset Defaults")
+    .setGridCell(3, 1, LV_GRID_ALIGN_CENTER, LV_GRID_ALIGN_START)
+    .addEventCallback(reset_defaults, LV_EVENT_CLICKED, this);
 
 
             /*
