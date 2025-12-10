@@ -9,6 +9,7 @@
 #include <string>
 #include <ctime>
 #include "HistoricalObject.h"
+#include <iostream>
 
 using namespace std;
 
