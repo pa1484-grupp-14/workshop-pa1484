@@ -34,6 +34,6 @@ class Settings : public Component {
   static void city_confirm_cb(lv_event_t * event);
   static void city_dropdown_cb(lv_event_t * event);
   static void set_default(lv_event_t * event);
-
+  static void reset_defaults(lv_event_t * event);
   
 };
