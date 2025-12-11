@@ -276,7 +276,7 @@ void APIhandler::getHistoricalDataAsync(
 void APIhandler::process() {
     const int BUFFER_SIZE = 1024;
     if (forecastFetch != nullptr) {
-        //NOTE: return nullptr when connection is closed, so doubled up as connection status
+        //NOTE: returns nullptr when connection is closed, so doubles up as connection status
         WiFiClient* stream = forecastFetch->http.getStreamPtr();
         if (stream) {
             //create a chunk
@@ -297,7 +297,7 @@ void APIhandler::process() {
         }
     }
     if (historyFetch != nullptr) {
-        //NOTE: return nullptr when connection is closed, so doubled up as connection status
+        //NOTE: returns nullptr when connection is closed, so doubles up as connection status
         WiFiClient* stream = historyFetch->http.getStreamPtr();
         if (stream) {
             //create a chunk
