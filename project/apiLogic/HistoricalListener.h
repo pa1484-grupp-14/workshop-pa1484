@@ -51,13 +51,9 @@ public:
         }
     }
 
-    void endObject() override {
-        //std::cout << "[HistoricalListener] Finished object: " << tempTimestamp << "," << tempValue << "," << tempRefDate << "," << isVersion2 << std::endl;
-        if (isVersion2 && tempRefDate != "") {
-            std::cout << "[HistoricalListener] ignoring new historical object. (Version 2)" << std::endl;
-            //results.push_back(HistoricalObject(tempRefDate, tempValue));
-        }
 
+    void endObject() override {
+        
         if (!isVersion2 && tempTimestamp != 0) {
             results.push_back(HistoricalObject(tempTimestamp / 1000, tempValue));
         }
@@ -70,9 +66,11 @@ public:
     void startDocument() override {
         std::cout << "[HistoricalListener] Finishing parse of historical data points." << std::endl;
     }
+
     void endDocument() override {
         std::cout << "[HistoricalListener] Starting parse of historical data points." << std::endl;
     }
+
     void startObject() override {}
     void startArray() override {}
     void endArray() override {}
@@ -81,7 +79,7 @@ public:
     vector<HistoricalObject>& getResults() {
         return results;
     }
-
+    
     bool isVersion2Data() const {
         return isVersion2;
     }

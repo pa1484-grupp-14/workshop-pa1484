@@ -3,6 +3,7 @@
 
 #define FORMAT_LITTLEFS_IF_FAILED true 
 
+// List all of the files inside a given folder
 void FileHandler::listDir(fs::FS& fs, const char* dirname, uint8_t levels) {
   std::cout << "[FileHandler]: Listing directory: " << dirname;
 
@@ -30,6 +31,7 @@ void FileHandler::listDir(fs::FS& fs, const char* dirname, uint8_t levels) {
   }
 }
 
+// Create a new folder on the Device
 void FileHandler::createDir(fs::FS& fs, const char* path) {
     std::cout << "[FileHandler] Creating Dir: " << path << ", ";
     if (fs.mkdir(path)) {
@@ -39,6 +41,7 @@ void FileHandler::createDir(fs::FS& fs, const char* path) {
     }
 }
 
+//Remove a given folder
 void FileHandler::removeDir(fs::FS& fs, const char* path) {
     std::cout << "[FileHandler:] Removing Dir: " << path << ", ";
     if (fs.rmdir(path)) {
@@ -48,21 +51,20 @@ void FileHandler::removeDir(fs::FS& fs, const char* path) {
     }
 }
 
+// Read a given file to string
 String FileHandler::readFile(fs::FS& fs, const char* path) {
-    //std::cout << "[FileHandler:] Reading file: " << path;
 
     File file = fs.open(path);
     if (!file || file.isDirectory()) {
       throw("file does not exist");
     }
   
-    //std::cout << "- read from file:" << std::endl;
     String data = file.readString();
-    //Serial.println(data);
     file.close();
     return data;
 }
 
+// Write a given string to a file and close it
 void FileHandler::writeFile(fs::FS& fs, const char* path, const char* message) {
   std::cout << "[FileHandler] Writing file: "<<  path;
 
@@ -76,6 +78,5 @@ void FileHandler::writeFile(fs::FS& fs, const char* path, const char* message) {
   } else {
     std::cout << "- write failed" << std::endl;
   }
-  //Serial.println(message);
   file.close();
 }

@@ -14,8 +14,7 @@
 #include <unordered_map>
 #include <string>
 
-
-enum StationFilter {
+enum StationParserStatus {
   OutsideStations,
   EnteringStation,
   InsideStation,
@@ -29,10 +28,12 @@ enum StationFilter {
   GettingIrrelevantObject,
 };
 
+// This class used to be used to fetch weather stations, 
+// However since they are now fixed
 class StationParser: public JsonListener {
     private:
     char filter;
-    StationFilter state;
+    StationParserStatus state;
     std::string current_city_name;
     StationObject current_station_obj;
 
@@ -57,38 +58,4 @@ class StationParser: public JsonListener {
     void startArray() override;
 
     void startObject() override;
-};
-
-
-class ExampleListener: public JsonListener {  
-  private: 
-    bool isKey = false;
-    bool isName = false; 
-    bool isLon = false;
-    bool isLat = false;
-    bool stationArrayEntered = false;
-    bool stationObjectEntered = false; 
-    StationObject stationToAdd{1, "", 1, 1};
-
-  public:  
-    int itemCount = 0;
-    vector<StationObject> stations;   
-    
-    virtual void whitespace(char c);
-  
-    virtual void startDocument();
-
-    virtual void key(String key);
-
-    virtual void value(String value);
-
-    virtual void endArray();
-
-    virtual void endObject();
-
-    virtual void endDocument();
-
-    virtual void startArray();
-
-    virtual void startObject();
 };

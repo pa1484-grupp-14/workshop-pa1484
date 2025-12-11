@@ -50,11 +50,11 @@ class HistoricRequest {
     void(*failure_cb)();
     int read_bytes;
 };
+
 class APIhandler
 {
 
     private:
-
 
     std::vector<HistoricalObject> averageByDay(const vector<HistoricalObject>& raw);
     //background forecasts
@@ -69,14 +69,20 @@ class APIhandler
     static std::unordered_map<std::string, StationObject> cached_stations;
     
     public:
+    
+    // Process any ongoing asynchronous requests
+    // Needs to be called periodically so the requests respond in a reasonable time
     static void process();
     
+    //get the list of available stations (is now fixed)
     StationObject getStationFromArray(const std::unordered_map<std::string, StationObject>& array,const string& stationName); 
     
+    //do various requests while blocking
     std::unordered_map<std::string, StationObject> getStationsArray(int parameter);
     std::vector<HistoricalObject> getHistoricalData(const StationObject& station, int parameter);
     std::vector<ForecastObject> getForecastNext7Days(const StationObject& stationObject);
 
+    //do various requests asynchronously
     void getStationsArrayAsync(int parameter, void(*success_cb)(std::unordered_map<std::string, StationObject>&), void(*failure_cb)());
     void getForecastNext7DaysAsync(const StationObject& stationObject, void(*success_cb)(std::vector<ForecastObject>&), void(*failure_cb)());
     void getHistoricalDataAsync(const StationObject& station, int parameter, void(*success_cb)(std::vector<HistoricalObject>&), void(*failure_cb)());

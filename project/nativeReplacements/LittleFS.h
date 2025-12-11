@@ -6,10 +6,13 @@
 #include <sstream>
 #include <iostream>
 #define FILE_WRITE 1
+
 class File {
+
     private:
     std::string filepath;
     std::fstream** file_stream;
+    
     public:
     ~File() {}
     File(): file_stream(nullptr) {}

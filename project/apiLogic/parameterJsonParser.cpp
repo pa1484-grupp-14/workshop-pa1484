@@ -4,57 +4,55 @@
 #include <string>
 #include <iostream>
 
+StationParser::StationParser(): state(StationParserStatus::OutsideStations), current_city_name(""), current_station_obj({0,"",0,0}) {}
 
-
-void StationParser::whitespace(char c) {
-
-}
+void StationParser::whitespace(char c) {}
 
 void StationParser::startDocument() {
-    std::cout << "[StationParser]: Searching stations..." << std::endl;
-    state = StationFilter::OutsideStations;
+    std::cout << "[StationParser] Searching stations..." << std::endl;
+    state = StationParserStatus::OutsideStations;
 }
 
 void StationParser::key(String key) {
     switch(state) {
-        case StationFilter::OutsideStations:
+        case StationParserStatus::OutsideStations:
             
             if(key == "station") {
-                state = StationFilter::EnteringStation;
+                state = StationParserStatus::EnteringStation;
             }
             break;
-        case StationFilter::InsideStation:
+        case StationParserStatus::InsideStation:
             break;
-        case StationFilter::InsideObject:
+        case StationParserStatus::InsideObject:
             if(key == "key")
-                state = StationFilter::GettingKey;
+                state = StationParserStatus::GettingKey;
             else if(key == "name")
-                state = StationFilter::GettingName;
+                state = StationParserStatus::GettingName;
             else if(key == "latitude")
-                state = StationFilter::GettingLatitude;
+                state = StationParserStatus::GettingLatitude;
             else if(key == "longitude")
-                state = StationFilter::GettingLongitude;
+                state = StationParserStatus::GettingLongitude;
             else
-                state = StationFilter::GettingIrrelevant;
+                state = StationParserStatus::GettingIrrelevant;
                 break;
         default:
 
             break;
     }
 }
-StationParser::StationParser(): state(StationFilter::OutsideStations), current_city_name(""), current_station_obj({0,"",0,0}) {}
+
 void StationParser::value(String value) {
     switch(state) {
-        case StationFilter::GettingKey:
+        case StationParserStatus::GettingKey:
             current_station_obj.setKey(value.toInt());
             break;
-        case StationFilter::GettingLatitude:
+        case StationParserStatus::GettingLatitude:
             current_station_obj.setLat(value.toFloat());
             break;
-        case StationFilter::GettingLongitude:
+        case StationParserStatus::GettingLongitude:
             current_station_obj.setLon(value.toFloat());
             break;
-        case StationFilter::GettingName:
+        case StationParserStatus::GettingName:
             {
                 std::string converted_string = std::string(value.c_str());
                 current_station_obj.setName(converted_string);
@@ -71,119 +69,52 @@ void StationParser::value(String value) {
                 }
             }
             break;
-        case StationFilter::GettingIrrelevant:
+        case StationParserStatus::GettingIrrelevant:
             break;
         default:
             return;
     }
-    state = StationFilter::InsideObject;
+    state = StationParserStatus::InsideObject;
 }
+
 void StationParser::startArray() {
-    if(state == StationFilter::EnteringStation){
-        state = StationFilter::InsideStation;
-    } else if (state == StationFilter::GettingIrrelevant) {
-        state = StationFilter::GettingIrrelevantArray;
+    if(state == StationParserStatus::EnteringStation){
+        state = StationParserStatus::InsideStation;
+    } else if (state == StationParserStatus::GettingIrrelevant) {
+        state = StationParserStatus::GettingIrrelevantArray;
     }
 }
+
 void StationParser::startObject() {
-    if(state == StationFilter::InsideStation) {
-        state = StationFilter::InsideObject;
-    } else if (state == StationFilter::GettingIrrelevant) {
-        state = StationFilter::GettingIrrelevantObject;
+    if(state == StationParserStatus::InsideStation) {
+        state = StationParserStatus::InsideObject;
+    } else if (state == StationParserStatus::GettingIrrelevant) {
+        state = StationParserStatus::GettingIrrelevantObject;
     }
         
 }
+
 void StationParser::endArray(){
-    if(state == StationFilter::InsideStation) {
-        state = StationFilter::OutsideStations;
-    } else if (state == StationFilter::GettingIrrelevantArray) {
-        state = StationFilter::InsideObject;
+    if(state == StationParserStatus::InsideStation) {
+        state = StationParserStatus::OutsideStations;
+    } else if (state == StationParserStatus::GettingIrrelevantArray) {
+        state = StationParserStatus::InsideObject;
     }
 }
+
 void StationParser::endObject() {
-    if (state == StationFilter::InsideObject) {
+    if (state == StationParserStatus::InsideObject) {
         if(current_city_name.length() > 0) {
             std::cout << current_city_name << " " << current_station_obj.getKey() << " " << current_station_obj.getLat() << " " << current_station_obj.getLon() << std::endl;
             stations.emplace(current_city_name, current_station_obj);
             current_city_name = "";
         }
-        state = StationFilter::InsideStation;
-    } else if (state == StationFilter::GettingIrrelevantObject) {
-        state = StationFilter::InsideObject;
+        state = StationParserStatus::InsideStation;
+    } else if (state == StationParserStatus::GettingIrrelevantObject) {
+        state = StationParserStatus::InsideObject;
     }
 }
+
 void StationParser::endDocument() {
-    std::cout << "[StationParser]: Station Search Completed." << std::endl;
+    std::cout << "[StationParser] Station Search Completed." << std::endl;
 }
-
-
-void ExampleListener::whitespace(char c) {
-    std::cout << "[ExampleListener]: whitespace" << std::endl;
-}
-
-void ExampleListener::startDocument() {
-    std::cout << "[ExampleListener]: start document" << std::endl;
-}
-
-void ExampleListener::key(String key) {
-    
-    std::cout << "[ExampleListener]: key: " << key.c_str() << std::endl;
-    if(key == "key" && this->stationArrayEntered)
-        this->isKey = true;
-    else if (key == "name" && this->stationArrayEntered)
-        this->isName = true;
-    else if (key == "latitude")
-        this->isLat = true;
-    else if (key == "longitude")
-        this->isLon = true;
-    else if (key == "station")
-        this->stationArrayEntered = true;
-
-}
-
-void ExampleListener::value(String value) {
-    std::cout << "[ExampleListener]: value: " << value.c_str() << std::endl;
-    if (isKey) {
-        this->isKey = false;
-        this->stationToAdd.setKey(value.toInt());
-    } else if (isName) {
-        this->stationToAdd.setName(value.c_str());
-        this->isName = false;
-    } else if (isLat) {
-        this->stationToAdd.setLat(value.toFloat());
-        this->isLat = false;
-    } else if (isLon) {
-        this->stationToAdd.setLon(value.toFloat());
-        this->isLon = false;
-    }
-
-}
-
-void ExampleListener::endArray() {
-    std::cout << "[ExampleListener]: end array" << std::endl;
-}
-
-void ExampleListener::endObject() {
-    std::cout << "[ExampleListener]: end object" << std::endl;
-    if(this->stationArrayEntered)
-    {
-        this->stations.push_back(this->stationToAdd);
-        this->itemCount++;
-        this->stationObjectEntered = false;
-    }
-}
-
-void ExampleListener::endDocument() {
-    std::cout << "[ExampleListener]: end document" << std::endl;
-}
-
-void ExampleListener::startArray() {
-    std::cout << "[ExampleListener]: start array" << std::endl;
-}
-
-void ExampleListener::startObject() {
-    std::cout << "[ExampleListener]: start object" << std::endl;
-    if(this->stationArrayEntered)
-        this->stationObjectEntered = true;
-}
-        
