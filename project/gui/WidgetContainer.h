@@ -9,6 +9,7 @@ class Dropdown;
 class Container;
 class Spinner;
 class Button;
+class Scale;
 
 static size_t id_generator;
 static size_t nextId() {
@@ -65,6 +66,7 @@ class WidgetContainer {
   virtual Chart& addChart(std::string name = nextIdString()) = 0;
 
   virtual Spinner& addSpinner(std::string name = nextIdString()) = 0;
+  virtual Scale& addScale(std::string name = nextIdString()) = 0;
   virtual Button& addButton(std::string name = nextIdString()) = 0;
 
   //Get a reference to the parent tile container

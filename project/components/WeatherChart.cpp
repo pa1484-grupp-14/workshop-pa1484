@@ -41,7 +41,7 @@ void WeatherChart::switchHistoricalUi(std::vector<HistoricalObject>& data_points
     const int PRECISION_LEVEL = 100; 
     status = WeatherChartStatus::FetchedHistory;
     std::vector<int32_t> data = std::vector<int32_t>(data_points.size());
-    int min = 10000000;
+    int min = 1000000000;
     int max = -10000000;
     if(data_points.size() < 10) {
       switchFailedUi();
@@ -54,7 +54,7 @@ void WeatherChart::switchHistoricalUi(std::vector<HistoricalObject>& data_points
         max = std::max(max, value);
         data[i] = value;
     }
-    if(min >= 10000000 || max <= -10000000) {
+    if(min >= 1000000000 || max <= -10000000) {
       switchFailedUi();
       return;
     }

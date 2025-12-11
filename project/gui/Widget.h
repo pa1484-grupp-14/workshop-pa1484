@@ -31,21 +31,19 @@ class Widget : public WidgetContainer {
   // # Get Parent tile of this Widget
   Tile& getTile() override;
 
-  // # Add label as child of this widget
-  Label& addLabel(std::string name = nextIdString()) override;
-  // # Add label as child of this widget
-  Chart& addChart(std::string name = nextIdString()) override;
-  // # Add label as child of this widget
-  Image& addImage(std::string name = nextIdString()) override;
-  // # Add label as child of this widget
+  Container& addContainer(std::string name = nextIdString()) override;
   Dropdown& addDropdown(std::string name = nextIdString()) override;
-
   Spinner& addSpinner(std::string name = nextIdString()) override;
+  Button& addButton(std::string name = nextIdString()) override;
+  Scale& addScale(std::string name = nextIdString()) override;
+  Label& addLabel(std::string name = nextIdString()) override;
+  Chart& addChart(std::string name = nextIdString()) override;
+  Image& addImage(std::string name = nextIdString()) override;
+
 
   Dropdown& getDropdown(const std::string& name) override;
 
-  Container& addContainer(std::string name = nextIdString()) override;
-  Button& addButton(std::string name = nextIdString()) override;
+
   // # Get parent of this widget
   WidgetContainer& getParent() override;
 

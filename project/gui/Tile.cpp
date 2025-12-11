@@ -7,6 +7,7 @@
 #include "Label.h"
 #include "Spinner.h"
 #include "Button.h"
+#include "Scale.h"
 Tile::~Tile() {}
 
 Label& Tile::createLabel(WidgetContainer& parent, std::string name) {
@@ -35,6 +36,7 @@ void Tile::clear() {
   containers.clear();
   spinners.clear();
   buttons.clear();
+  scales.clear();
   lv_obj_clean(this->getWidgetPtr());
 }
 
@@ -76,6 +78,14 @@ Image& Tile::createImage(WidgetContainer& parent, std::string name) {
 }
 Image& Tile::addImage(std::string name) {
   return this->createImage(*this, name);
+}
+Scale& Tile::createScale(WidgetContainer& parent, std::string name) {
+  Scale* label = new Scale(parent, counter++);
+  images.emplace(name, label);
+  return *scales.at(name);
+}
+Scale& Tile::addScale(std::string name) {
+  return this->createScale(*this, name);
 }
 Dropdown& Tile::createDropdown(WidgetContainer& parent, std::string name) {
   Dropdown* label = new Dropdown(parent, counter++);

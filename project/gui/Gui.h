@@ -25,6 +25,7 @@ class GUI;
 #include "Label.h"
 #include "Spinner.h"
 #include "Button.h"
+#include "Scale.h"
 
 #include "Popup.h"
 
