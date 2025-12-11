@@ -81,7 +81,7 @@ Image& Tile::addImage(std::string name) {
 }
 Scale& Tile::createScale(WidgetContainer& parent, std::string name) {
   Scale* label = new Scale(parent, counter++);
-  images.emplace(name, label);
+  scales.emplace(name, label);
   return *scales.at(name);
 }
 Scale& Tile::addScale(std::string name) {

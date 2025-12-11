@@ -40,7 +40,6 @@ class Widget : public WidgetContainer {
   Chart& addChart(std::string name = nextIdString()) override;
   Image& addImage(std::string name = nextIdString()) override;
 
-
   Dropdown& getDropdown(const std::string& name) override;
 
 

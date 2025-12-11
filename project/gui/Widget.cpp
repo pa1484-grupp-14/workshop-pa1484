@@ -62,6 +62,10 @@ Spinner& Widget::addSpinner(std::string name) {
 
   return this->getTile().createSpinner(*this, name);
 }
+Scale& Widget::addScale(std::string name) {
+
+  return this->getTile().createScale(*this, name);
+}
 
 Widget& Widget::addFlag(lv_obj_flag_t flag) {
   lv_obj_add_flag(this->getWidgetPtr(), flag);

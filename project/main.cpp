@@ -17,13 +17,13 @@
 static hal::Display* amoled;
 
 // Function: Connects to WIFI
-static void connect_wifi() {
+static void init_wifi() {
   std::cout << "Connecting to WiFi SSID: " << WIFI_SSID << std::endl;
   WiFi.mode(WIFI_STA);
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 }
 
-void init_FS(){
+void init_FS() {
   if (!LittleFS.begin(FORMAT_LITTLEFS_IF_FAILED)) {
     std::cout << "[main] LittleFS Mount Failed" << std::endl;
   }
@@ -34,42 +34,61 @@ void init_FS(){
 // Must have function: Setup is run once on startup
 void setup() {
   amoled = new hal::Display();
+  //Initialize Hardware
   hal::init(amoled);
-  init_FS();
+  init_FS();  
+  init_wifi();
 
+  //Initialize GUI
   GUI& gui = getGui();
-  connect_wifi();
   gui.init();
 
+  //construct all of the tiles in the GUI
   getMainScreen().constructUI(&gui.addTile());
   getForecastScreen().constructUI(&gui.addTile());
   getWeatherChartScreen().constructUI(&gui.addTile());
   getSettingsScreen().constructUI(&gui.addTile());
 
+  //scroll to the main tile
   gui.scrollToTile(0);
 }
 
 // Must have function: Loop runs continously on device after setup
 void loop() {
+  // find out at what millis value next loop should occur to satisfy LVGL
   int wait = lv_timer_handler() + millis();
-  int a = millis();
+
+  //process main screen
+  int time_a = millis();
   getMainScreen().process();
-  int b = millis();
+
+  //=||= forecast screen
+  int time_b = millis();
   getForecastScreen().process();
-  int c = millis();
+
+  //=||= weather chart screen
+  int time_c = millis();
   getWeatherChartScreen().process();
-  int d = millis();
+
+  //=||= settings screen
+  int time_d = millis();
   getSettingsScreen().process();
-  int e = millis();
-  //std::cout << "doing frame: " << wait << std::endl;
+
+  //=||= background API calls
+  int time_e = millis();
   do {
     APIhandler::process();
   } while (millis() < wait);
-  int f = millis();
+  int time_f = millis();
 
-  if (f-a > 100) {
-    std::cout << "[WARNING] frame took unreasonably long, heres the timings:" << std::endl;
-    std::cout << "[WARNING]" << b-a << " " << c-b << " " << d-c << " " << e-d << " " << f-e << std::endl;
+  //if this all took more than 200ms, profile it so we see what took so long
+  if (time_f - time_a > 200) {
+    std::cout << "[WARNING] profiling for long frame:" << std::endl;
+    std::cout << "[WARNING] main: " << time_b - time_a << std::endl;
+    std::cout << "[WARNING] forecast: " << time_c - time_b << std::endl;
+    std::cout << "[WARNING] weather chart: " << time_d - time_c << std::endl;
+    std::cout << "[WARNING] settings: " << time_e - time_d << std::endl;
+    std::cout << "[WARNING] API processing:" << time_f - time_e << std::endl;
   }
 }
 
@@ -79,21 +98,23 @@ unsigned int tick_cb() {
   return millis();
 }
 int main() {
-  #include <SDL2/SDL.h>
-  
+#include <SDL2/SDL.h>
+
   setup();
   lv_tick_set_cb(tick_cb);
-  while(true) {
+  while (true) {
     auto a = millis();
-    if(amoled->handle_events()) return 0;
+    if (amoled->handle_events())
+      return 0;
     loop();
     lv_task_handler();
     auto b = millis();
-    lv_tick_inc(b-a);
+    lv_tick_inc(b - a);
   }
 }
 #ifdef WINDOWS_BUILD
-int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd) {
+int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine,
+            int nShowCmd) {
   return main();
 }
 #endif

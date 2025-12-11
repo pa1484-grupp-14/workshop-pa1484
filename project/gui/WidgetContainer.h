@@ -48,26 +48,19 @@ class WidgetContainer {
   virtual lv_obj_t* getWidgetPtr() const { return widget_ptr; }
 
   //Add a new label widget as the child of this widget container
-  virtual Container& addContainer(std::string name = nextIdString()) = 0;
 
-  //Add a new label widget as the child of this widget container
-  virtual Label& addLabel(std::string name = nextIdString()) = 0;
 
-  //Add a new label widget as the child of this widget container
-  virtual Image& addImage(std::string name = nextIdString()) = 0;
 
-  //Add a new label widget as the child of this widget container
-  virtual Dropdown& addDropdown(std::string name = nextIdString()) = 0;
-
-  //Add a new label widget as the child of this widget container
   virtual Dropdown& getDropdown(const std::string& name) = 0;
 
-  //Add a new label widget as the child of this widget container
-  virtual Chart& addChart(std::string name = nextIdString()) = 0;
-
+  virtual Container& addContainer(std::string name = nextIdString()) = 0;
+  virtual Dropdown& addDropdown(std::string name = nextIdString()) = 0;
   virtual Spinner& addSpinner(std::string name = nextIdString()) = 0;
-  virtual Scale& addScale(std::string name = nextIdString()) = 0;
   virtual Button& addButton(std::string name = nextIdString()) = 0;
+  virtual Scale& addScale(std::string name = nextIdString()) = 0;
+  virtual Label& addLabel(std::string name = nextIdString()) = 0;
+  virtual Image& addImage(std::string name = nextIdString()) = 0;
+  virtual Chart& addChart(std::string name = nextIdString()) = 0;
 
   //Get a reference to the parent tile container
   virtual Tile& getTile() = 0;

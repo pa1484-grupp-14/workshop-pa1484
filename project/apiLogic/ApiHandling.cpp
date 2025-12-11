@@ -270,12 +270,13 @@ void APIhandler::getHistoricalDataAsync(const StationObject& station, int parame
                 << std::endl;
       historyFetch = fetch;
     } else {
-      fetch->http.end();
-      if (failure_cb) {
-        failure_cb();
+      if (failure_cb != nullptr) {
+        (*failure_cb)();
       }
+      fetch->http.end();
+      
       delete fetch;
-      std::cout << "[APIHandler]: Failed to fetch forecast" << std::endl;
+      std::cout << "[APIHandler]: Failed to fetch historical data" << std::endl;
     }
   }
 }

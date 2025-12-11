@@ -31,12 +31,18 @@ void createChartUi(Tile* tile) {
     auto data_points = handler.getHistoricalData(station, parameter);   
     
 }
+void refreshChart(lv_event_t* _event) {
+  getWeatherChartScreen().reset();
+    getGui().scrollToTile(2);
+}
 void WeatherChart::switchFailedUi() {
     status = WeatherChartStatus::FetchFail;
     ui_tile->clear();
-    ui_tile->addLabel().setText("Failed gathering historical data, please refresh.");
-    ui_tile->addButton().setBtnText("Refresh");
-}
+
+    auto& label = ui_tile->addLabel().setText("Failed gathering historical data,\nplease check your settings\nand refresh.").setTextAlign(LV_TEXT_ALIGN_CENTER).setFont(&lv_font_montserrat_32).center();
+    ui_tile->addButton().setBtnText("Refresh").addEventCallback(refreshChart, LV_EVENT_CLICKED).alignTo(label, LV_ALIGN_CENTER, 0, 100);
+        ui_tile->addLabel().setText("Error").setTextAlign(LV_TEXT_ALIGN_CENTER).setFont(&lv_font_montserrat_48).alignTo(label, LV_ALIGN_CENTER, 0, -100);
+  }
 void WeatherChart::switchHistoricalUi(std::vector<HistoricalObject>& data_points) {
     const int PRECISION_LEVEL = 100; 
     status = WeatherChartStatus::FetchedHistory;
@@ -54,16 +60,21 @@ void WeatherChart::switchHistoricalUi(std::vector<HistoricalObject>& data_points
         max = std::max(max, value);
         data[i] = value;
     }
-    if(min >= 1000000000 || max <= -10000000) {
-      switchFailedUi();
-      return;
-    }
+
+
+
     min /= PRECISION_LEVEL;
     max /= PRECISION_LEVEL;
     min -= 9;
     min -= min % 10;
     max += 9;
     max -= max % 10;
+
+    if(max-min >= 10000) {
+      switchFailedUi();
+      return;
+    }
+
     if(currentScaleNames != nullptr) {
         for (size_t i = 0; i < currentScaleNameCount; i++)
         {
@@ -95,8 +106,8 @@ void WeatherChart::switchHistoricalUi(std::vector<HistoricalObject>& data_points
       clear();
     auto& container = ui_tile->addLabel()
       .setText("Weather chart")
-      .setFont(&lv_font_montserrat_48).setPos(125, 5)
-      .getTile().addContainer().disableFrame().setPos(70,40).setSize(480, 370);
+      .setFont(&lv_font_montserrat_32).setPos(175, 5)
+      .getTile().addContainer().disableFrame().setPos(70,30).setSize(480, 370);
     auto& chart = container
       .addChart()
       .addSeries("main series")
@@ -104,7 +115,7 @@ void WeatherChart::switchHistoricalUi(std::vector<HistoricalObject>& data_points
       .setSize(1525, 300);
 
     auto& unit_label = ui_tile->addLabel();
-    unit_label.setTextAlign(LV_TEXT_ALIGN_RIGHT).setPos(5, 20).setSize(80, 30);
+    unit_label.setTextAlign(LV_TEXT_ALIGN_RIGHT).setPos(5, 11).setSize(80, 30);
     switch(getSettingsScreen().getSelectedParameter()) {
         case WeatherParameter::AirPressure:
         unit_label.setText("(hPa)");  
@@ -142,7 +153,7 @@ void WeatherChart::switchHistoricalUi(std::vector<HistoricalObject>& data_points
     lv_scale_set_mode(scale_bottom, LV_SCALE_MODE_HORIZONTAL_BOTTOM);
     lv_obj_set_size(scale_bottom, 1525, 25);
     lv_obj_set_size(scale_side, 25, 300);
-    lv_obj_set_pos(scale_side, 45, 59);
+    lv_obj_set_pos(scale_side, 45, 49);
     lv_scale_set_range(scale_side, min, max);
     lv_scale_set_total_tick_count(scale_side, ((max-min)/10)+1);
     if(max-min < 200) {
@@ -171,16 +182,13 @@ void WeatherChart::process() {
     if(status == WeatherChartStatus::WaitingForWiFi) {
       if(is_wifi_connected()) {
         status = WeatherChartStatus::FetchingHistoricalData;
-        APIhandler handler;
         std::cout << "[WeatherChart] trying to fetch historical data..." << std::endl;
+        createLoadingUi(ui_tile, "Fetching historical data...");
+        
+        APIhandler handler;
         auto stations = handler.getStationsArray(1);
         auto station = handler.getStationFromArray(stations, getSettingsScreen().getSelectedCity());
-        auto before = millis();
         handler.getHistoricalDataAsync(station, getSettingsScreen().getSelectedParameter(), finishedUi, failedUi);
-        auto after = millis();
-        std::cout << "[WeatherChart] took " << after-before << "ms to send request?" << std::endl;
-        createLoadingUi(ui_tile, "Fetching historical data...");
-        status = WeatherChartStatus::FetchingHistoricalData;
       }
     }
 }
@@ -193,4 +201,5 @@ void WeatherChart::reset() {
   status = WeatherChartStatus::WaitingForWiFi;
   ui_tile->clear();
   createLoadingUi(ui_tile, "Waiting for wifi...");
+
 }
