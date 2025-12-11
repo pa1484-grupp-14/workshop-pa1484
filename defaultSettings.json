@@ -1,13 +1,14 @@
-{
-  "cities": [
-    "Karlskrona",
-    "Malmö",
-    "Kiruna",
-    "Göteborg",
-    "Stockholm"
-  ],
-  "selectedCity": "Göteborg",
-  "parameter": 6
+{
+  "cities": [
+    "Karlskrona",
+    "Malmö",
+    "Kiruna",
+    "Göteborg",
+    "Stockholm"
+  ],
+  "selectedCity": "Stockholm",
+  "parameter": 9
+}er": 6
 }r": 6
 
 }

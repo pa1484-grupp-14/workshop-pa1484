@@ -1,3 +1,9 @@
+/**************************************************
+*
+*   Prelude.h - Application-wide helper functions
+*
+**************************************************/
+
 #pragma once
 #ifdef LILYGO_BUILD
 #include <WiFi.h>
@@ -11,11 +17,14 @@
 
 // utility function: returns true if the device is currently connected to wifi
 bool is_wifi_connected();
+
 // system function: returns the number of milliseconds since the program started
 unsigned long millis();
 
+// GUI helper function: creates a ui with a spinner and description
 void createLoadingUi(Tile* ui_tile, std::string statusText);
 
+// Forward declaration 
 class MainScreen;
 class Settings;
 class WeatherChart;
