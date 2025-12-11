@@ -31,21 +31,39 @@ void createChartUi(Tile* tile) {
     auto data_points = handler.getHistoricalData(station, parameter);   
     
 }
+void WeatherChart::switchFailedUi() {
+    status = WeatherChartStatus::FetchFail;
+    ui_tile->clear();
+    ui_tile->addLabel().setText("Failed gathering historical data, please refresh.");
+    ui_tile->addButton().setBtnText("Refresh");
+}
 void WeatherChart::switchHistoricalUi(std::vector<HistoricalObject>& data_points) {
+    const int PRECISION_LEVEL = 100; 
     status = WeatherChartStatus::FetchedHistory;
     std::vector<int32_t> data = std::vector<int32_t>(data_points.size());
-    int min = 100000;
-    int max = -100000;
+    int min = 10000000;
+    int max = -10000000;
+    if(data_points.size() < 10) {
+      switchFailedUi();
+      return;
+    }
     for (size_t i = 0; i < data_points.size(); i++)
     {
-        int value = (int32_t)data_points[i].getValue();
+        int value = (int32_t)(data_points[i].getValue() * PRECISION_LEVEL);
         min = std::min(min, value);
         max = std::max(max, value);
         data[i] = value;
     }
+    if(min >= 10000000 || max <= -10000000) {
+      switchFailedUi();
+      return;
+    }
+    min /= PRECISION_LEVEL;
+    max /= PRECISION_LEVEL;
     min -= 9;
     min -= min % 10;
-    max += 10 - (max % 10);
+    max += 9;
+    max -= max % 10;
     if(currentScaleNames != nullptr) {
         for (size_t i = 0; i < currentScaleNameCount; i++)
         {
@@ -111,7 +129,7 @@ void WeatherChart::switchHistoricalUi(std::vector<HistoricalObject>& data_points
     lv_obj_t* slider = lv_slider_create(ui_tile->getWidgetPtr());
     lv_obj_set_size(slider, 530, 40);
     lv_obj_set_pos(slider, 35, 395);
-    lv_chart_set_axis_range(chart.getWidgetPtr(), LV_CHART_AXIS_PRIMARY_Y, min, max);
+    lv_chart_set_axis_range(chart.getWidgetPtr(), LV_CHART_AXIS_PRIMARY_Y, min*PRECISION_LEVEL, max*PRECISION_LEVEL);
     lv_chart_set_div_line_count(chart.getWidgetPtr(), (((max-min)/10)+1),currentScaleNameCount);
     lv_obj_set_style_pad_hor(chart.getWidgetPtr(), 70, 0);
     lv_obj_set_style_margin_hor(chart.getWidgetPtr(), 0, 0);
@@ -127,7 +145,12 @@ void WeatherChart::switchHistoricalUi(std::vector<HistoricalObject>& data_points
     lv_obj_set_pos(scale_side, 45, 59);
     lv_scale_set_range(scale_side, min, max);
     lv_scale_set_total_tick_count(scale_side, ((max-min)/10)+1);
-    lv_scale_set_major_tick_every(scale_side, 1);
+    if(max-min < 200) {
+      lv_scale_set_major_tick_every(scale_side, 1);
+    } else {
+      lv_scale_set_major_tick_every(scale_side, 20);
+    }
+    
     lv_scale_set_total_tick_count(scale_bottom, currentScaleNameCount);
     lv_scale_set_major_tick_every(scale_bottom, 1);
     lv_obj_set_style_pad_hor(scale_bottom, offsetting+1, 0);
@@ -142,7 +165,7 @@ void finishedUi(std::vector<HistoricalObject>& data_points) {
   getWeatherChartScreen().switchHistoricalUi(data_points);
 }
 void failedUi() {
-
+  getWeatherChartScreen().switchFailedUi();
 }
 void WeatherChart::process() {
     if(status == WeatherChartStatus::WaitingForWiFi) {

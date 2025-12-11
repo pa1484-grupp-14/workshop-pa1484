@@ -100,25 +100,9 @@ void Settings::city_dropdown_cb(lv_event_t * event) {
     Settings* settings = (Settings*)lv_event_get_user_data(event);
     int selected = lv_dropdown_get_selected(dropdown);
     int len = lv_dropdown_get_option_count(dropdown);
-    if(selected == len-1) {
-        Popup& popup = getGui().openPopup();
-        popup.getTile().setSize(550, 200)
-        .setFlexLayout(LV_FLEX_FLOW_COLUMN, LV_FLEX_ALIGN_SPACE_AROUND)
-        .addLabel()
-        .setText("Add new location...")
-        .setFont(&font_header)
-        .getTile()
-        .addLabel()
-        .setText("Select the first\nletter of your location.")
-        .setFont(&lv_font_montserrat_32).setTextAlign(LV_TEXT_ALIGN_CENTER);
-        Dropdown& dropdown = popup.getTile().addDropdown("letters");
-        dropdown.setOptions("A\nB\nC\nD\nE\nF\nG\nH\nI\nJ\nK\nL\nM\nN\nO\nP\nQ\nR\nS\nT\nU\nV\nW\nX\nY\nZ\nÅ\nÄ\nÖ").setListFont(&font_header).setFont(&font_header);
-        
-        popup.addButton("Cancel", city_cancel_cb).addButton("Next", Settings::city_picker_cb, settings);
-    } else {
-      settings->city = settings->available_cities.at(selected);
-      getForecastScreen().refresh();
-    }
+    settings->city = settings->available_cities.at(selected);
+    getForecastScreen().refresh();
+    getWeatherChartScreen().reset();
 }
 
 void Settings::set_default(lv_event_t* event) {
@@ -155,7 +139,6 @@ void Settings::set_default(lv_event_t* event) {
 
 void Settings::reset_defaults(lv_event_t * event) {
     FileHandler handler;
-    lv_obj_t* button = (lv_obj_t*)lv_event_get_target(event);
     Settings* classData = (Settings*)lv_event_get_user_data(event);
 
     const char* filename = "/defaultSettings.json";
@@ -195,6 +178,7 @@ void Settings::reset_defaults(lv_event_t * event) {
                     break;
             }
             classData->ui_tile->getDropdown("parameters").setSelectedOption(selected_option);
+            
 
             classData->available_cities.clear();
             const JsonArray& arr = doc["cities"];
@@ -211,9 +195,18 @@ void Settings::reset_defaults(lv_event_t * event) {
             } else {
                 classData->city = "Karlskrona";
             }
-            
+            int selected_city;
+            if(classData->city == "Karlskrona") selected_city = 0;
+            else if(classData->city == "Malmö") selected_city = 1;
+            else if(classData->city == "Kiruna") selected_city = 2;
+            else if(classData->city == "Göteborg") selected_city = 3;
+            else if(classData->city == "Stockholm") selected_city = 4;
+            classData->ui_tile->getDropdown("cities").setSelectedOption(selected_city);
+        
         }
         std::cout << "[Settings] settings file loaded" << std::endl;
+        getForecastScreen().refresh();
+        getWeatherChartScreen().reset();
     }
 }
 
@@ -275,7 +268,7 @@ int Settings::getCurrentCityIndex(){
 
 void Settings::constructUI(Tile* gui) {
     static int32_t columns[] = {200, 400, LV_GRID_TEMPLATE_LAST};
-    static int32_t row[] = {110, 80, 80, 80, LV_GRID_TEMPLATE_LAST};
+    static int32_t row[] = {110, 80, 80, 80, 80, LV_GRID_TEMPLATE_LAST};
 
     FileHandler handler; 
     const char* filename = "/defaultSettings.json";
@@ -304,7 +297,7 @@ void Settings::constructUI(Tile* gui) {
                 available_cities.push_back(string(value.as<const char*>()));
         }
         else {
-            available_cities = {"Karlskrona"};
+            available_cities = {"Karlskrona", "Malmö", "Kiruna", "Göteborg", "Stockholm"};
             city = "Karlskrona";
         }
     }
@@ -329,32 +322,37 @@ void Settings::constructUI(Tile* gui) {
             break;
     }
   //Tile& settings_tile = *gui;
-    gui->setGridLayout(columns, row)
-    .addLabel().setText("Settings").setFont(&lv_font_montserrat_48)
-    .setGridCell(0, 0, 1, 2).getTile()
-    .addLabel().setText("Parameter:").setFont(&font_regular)
-    .setGridCell(1, 0, 1, 1, LV_GRID_ALIGN_CENTER, LV_GRID_ALIGN_END).getTile()
-    .addDropdown("parameters").setOptions("Temperature\nWind Speed\nHumidity\nRainfall\nAir Pressure").setSelectedOption(selected_option).setListFont(&font_regular).setFont(&font_regular)
+    gui->setGridLayout(columns, row);
+    
+    gui->addLabel().setText("Settings").setFont(&lv_font_montserrat_48)
+    .setGridCell(0, 0, 1, 2);
+
+    gui->addLabel().setText("Parameter:").setFont(&font_regular)
+    .setGridCell(1, 0, 1, 1, LV_GRID_ALIGN_CENTER, LV_GRID_ALIGN_END);
+    
+    gui->addDropdown("parameters").setOptions("Temperature\nWind Speed\nHumidity\nRainfall\nAir Pressure").setSelectedOption(selected_option).setListFont(&font_regular).setFont(&font_regular)
     .addEventCallback(Settings::change_weather_parameter, lv_event_code_t::LV_EVENT_VALUE_CHANGED, this)
-    .setGridCell(1, 1).setWidth(370).getTile()
-    .addLabel("Select option 2 ").setText("Location:").setFont(&font_regular)
-    .setGridCell(2, 0, 1, 1, LV_GRID_ALIGN_CENTER, LV_GRID_ALIGN_END).getTile()
-    .addDropdown("cities")
+    .setGridCell(1, 1).setWidth(370);
+    
+    gui->addLabel("Select option 2 ").setText("Location:").setFont(&font_regular)
+    .setGridCell(2, 0, 1, 1, LV_GRID_ALIGN_CENTER, LV_GRID_ALIGN_END);
+    
+    gui->addDropdown("cities")
     .setOptions(available_cities)
     .setSelectedOption(this->getCurrentCityIndex())
-    .pushOption("add location...")
     .setListFont(&font_regular)
     .setFont(&font_regular)
     .addEventCallback(city_dropdown_cb, LV_EVENT_VALUE_CHANGED, this)
-    .setGridCell(2, 1).setWidth(370).getTile()
-    .addButton("Set Default")
-    .setBtnText("Set Default")
-    .setGridCell(3, 0, LV_GRID_ALIGN_CENTER, LV_GRID_ALIGN_END)
-    .addEventCallback(set_default, LV_EVENT_CLICKED, this)
-    .getTile()
-    .addButton("Reset Defaults")
+    .setGridCell(2, 1).setWidth(370);
+
+    gui->addButton()
+    .setBtnText("  Set Defaults  ")
+    .setGridCell(3, 1, 1, 1, LV_GRID_ALIGN_END, LV_GRID_ALIGN_START)
+    .addEventCallback(set_default, LV_EVENT_CLICKED, this);
+    
+    gui->addButton()
     .setBtnText("Reset Defaults")
-    .setGridCell(3, 1, LV_GRID_ALIGN_CENTER, LV_GRID_ALIGN_START)
+    .setGridCell(4, 1, 1, 1, LV_GRID_ALIGN_END, LV_GRID_ALIGN_START).setPos(20, 0)
     .addEventCallback(reset_defaults, LV_EVENT_CLICKED, this);
 
 

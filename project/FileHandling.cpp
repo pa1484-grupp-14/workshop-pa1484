@@ -76,7 +76,6 @@ void FileHandler::writeFile(fs::FS& fs, const char* path, const char* message) {
   } else {
     std::cout << "- write failed" << std::endl;
   }
-
   //Serial.println(message);
   file.close();
 }

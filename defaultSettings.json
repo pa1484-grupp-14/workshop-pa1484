@@ -1,0 +1,13 @@
+{
+  "cities": [
+    "Karlskrona",
+    "Malmö",
+    "Kiruna",
+    "Göteborg",
+    "Stockholm"
+  ],
+  "selectedCity": "Göteborg",
+  "parameter": 6
+}r": 6
+
+}
