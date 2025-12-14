@@ -1,5 +1,6 @@
 //
 //  HTTPRequest
+//  Credits to https://github.com/elnormous/HTTPRequest for the source code contained within this file
 //
 #ifndef HTTPREQUEST_HPP
 #define HTTPREQUEST_HPP
@@ -1282,7 +1283,7 @@ namespace http
                                 if (removeCrlfAfterChunk)
                                 {
                                     if (responseData.size() < 2) break;
-                                    
+
                                     if (!std::equal(crlf.begin(), crlf.end(), responseData.begin()))
                                         throw ResponseError{"Invalid chunk"};
 

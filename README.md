@@ -1,5 +1,9 @@
 # Laboration PA1484
 
+## Archived
+
+This project is completed and will no longer recieve any updates.
+
 ## Prerequisites
 
 ### General
