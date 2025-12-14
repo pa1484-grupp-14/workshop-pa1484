@@ -4,14 +4,22 @@
 using namespace std;
 class HistoricalObject
 {
-private:
-	string date;
-	float value;
-public:
-	HistoricalObject(string date, float value);   
-	const string& getDate() const;
+	private:
+	//Timestamp
+	long long date;	
+	//Sample
+	float value;	
+
+	public:
+	//Constructor
+	HistoricalObject(long long date, float value);   
+	
+	//Getters
+	const long long getDate() const;
     float getValue() const;
-	void setDate(string date);  
+	
+	//Setters
+	void setDate(long long date);  
 	void setValue(float value);
 };
 

@@ -1,9 +1,14 @@
 {
   "cities": [
     "Karlskrona",
-    "Daglsen"
+    "Malmö",
+    "Kiruna",
+    "Göteborg",
+    "Stockholm"
   ],
-  "selectedCity": "Daglsen",
-  "parameter": 2
-}: 2
+  "selectedCity": "Stockholm",
+  "parameter": 9
+}er": 6
+}r": 6
+
 }

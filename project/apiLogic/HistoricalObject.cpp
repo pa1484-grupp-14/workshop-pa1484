@@ -1,9 +1,9 @@
 #include "HistoricalObject.h"
 
 
-HistoricalObject::HistoricalObject(string date, float value) : date(date), value(value) {}
+HistoricalObject::HistoricalObject(long long date, float value) : date(date), value(value) {}
 
-const std::string& HistoricalObject::getDate() const {
+const long long HistoricalObject::getDate() const {
     return this->date;
 }
 
@@ -11,7 +11,7 @@ float HistoricalObject::getValue() const {
     return this->value;
 }
 
-void HistoricalObject::setDate(string date)
+void HistoricalObject::setDate(long long date)
 {
     this->date = date;
 }

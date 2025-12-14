@@ -6,11 +6,11 @@
 #include "gui/Gui.h"
 
 enum WeatherParameter {
-  Temperature = 0,
-  WindSpeed = 1,
-  Humidity = 2,
-  Rainfall = 3,
-  AirPressure = 4,
+  Temperature = 1,
+  WindSpeed = 4,
+  Humidity = 6,
+  Rainfall = 7,
+  AirPressure = 9,
 };
 
 class Settings : public Component {

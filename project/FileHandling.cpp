@@ -3,6 +3,7 @@
 
 #define FORMAT_LITTLEFS_IF_FAILED true 
 
+// List all of the files inside a given folder
 void FileHandler::listDir(fs::FS& fs, const char* dirname, uint8_t levels) {
   std::cout << "[FileHandler]: Listing directory: " << dirname;
 
@@ -30,6 +31,7 @@ void FileHandler::listDir(fs::FS& fs, const char* dirname, uint8_t levels) {
   }
 }
 
+// Create a new folder on the Device
 void FileHandler::createDir(fs::FS& fs, const char* path) {
     std::cout << "[FileHandler] Creating Dir: " << path << ", ";
     if (fs.mkdir(path)) {
@@ -39,6 +41,7 @@ void FileHandler::createDir(fs::FS& fs, const char* path) {
     }
 }
 
+//Remove a given folder
 void FileHandler::removeDir(fs::FS& fs, const char* path) {
     std::cout << "[FileHandler:] Removing Dir: " << path << ", ";
     if (fs.rmdir(path)) {
@@ -48,24 +51,24 @@ void FileHandler::removeDir(fs::FS& fs, const char* path) {
     }
 }
 
+// Read a given file to string
 String FileHandler::readFile(fs::FS& fs, const char* path) {
-    std::cout << "[FileHandler:] Reading file: " << path;
 
     File file = fs.open(path);
     if (!file || file.isDirectory()) {
       throw("file does not exist");
     }
   
-    std::cout << "- read from file:" << std::endl;
     String data = file.readString();
     file.close();
     return data;
 }
 
+// Write a given string to a file and close it
 void FileHandler::writeFile(fs::FS& fs, const char* path, const char* message) {
   std::cout << "[FileHandler] Writing file: "<<  path;
 
-  File file = fs.open(path, FILE_WRITE);
+  File file = fs.open(path, FILE_WRITE, true);
   if (!file) {
     std::cout << "- failed to open file for writing" << std::endl;
     return;
@@ -77,38 +80,3 @@ void FileHandler::writeFile(fs::FS& fs, const char* path, const char* message) {
   }
   file.close();
 }
-/*
-void FileHandler::appendFile(fs::FS& fs, const char* path, const char* message) {
-    Serial.printf("Appending to file: %s\r\n", path);
-
-    File file = fs.open(path, FILE_APPEND);
-    if (!file) {
-      Serial.println("- failed to open file for appending");
-      return;
-    }
-    if (file.print(message)) {
-      Serial.println("- message appended");
-    } else {
-      Serial.println("- append failed");
-    }
-    file.close();
-}
-
-void FileHandler::renameFile(fs::FS& fs, const char* path1, const char* path2) {
-    Serial.printf("Renaming file %s to %s\r\n", path1, path2);
-    if (fs.rename(path1, path2)) {
-      Serial.println("- file renamed");
-    } else {
-      Serial.println("- rename failed");
-    }
-}
-
-void FileHandler::deleteFile(fs::FS& fs, const char* path) {
-    Serial.printf("Deleting file: %s\r\n", path);
-    if (fs.remove(path)) {
-      Serial.println("- file deleted");
-    } else {
-      Serial.println("- delete failed");
-    }
-}
-*/

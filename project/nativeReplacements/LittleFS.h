@@ -6,10 +6,13 @@
 #include <sstream>
 #include <iostream>
 #define FILE_WRITE 1
+
 class File {
+
     private:
     std::string filepath;
     std::fstream** file_stream;
+    
     public:
     ~File() {}
     File(): file_stream(nullptr) {}
@@ -77,11 +80,11 @@ namespace fs {
         bool rmdir(const char* path) {
             return std::filesystem::remove_all("." + std::string(path));
         }
-        File open(const char* path, int open = 0) {
+        File open(const char* path, int open = 0, bool default_create = 0) {
             return File(path);
         }
         int WriteFile(const char* path) { return 0;};
-        bool exists(const char* path) { return std::filesystem::exists(path);}
+        bool exists(const char* path) { return std::filesystem::exists("." + std::string(path));}
         bool begin(bool = false) {return true;}
     };
 

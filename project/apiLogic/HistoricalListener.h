@@ -1,4 +1,4 @@
-
+#pragma once
 #ifdef LILYGO_BUILD
 #include <JsonListener.h>
 #endif
@@ -9,6 +9,7 @@
 #include <string>
 #include <ctime>
 #include "HistoricalObject.h"
+#include <iostream>
 
 using namespace std;
 
@@ -50,19 +51,11 @@ public:
         }
     }
 
-    void endObject() override {
-        std::cout << "[HistoricalListener] Finished object: " << tempTimestamp << "," << tempValue << "," << tempRefDate << "," << isVersion2 << std::endl;
-        if (isVersion2 && tempRefDate != "") {
-            std::cout << "[HistoricalListener] Pushing new historical object. (Version 2)" << std::endl;
-            results.push_back(HistoricalObject(tempRefDate, tempValue));
-        }
 
+    void endObject() override {
+        
         if (!isVersion2 && tempTimestamp != 0) {
-            std::time_t seconds = tempTimestamp / 1000;
-            char buffer[20];
-            strftime(buffer, sizeof(buffer), "%Y-%m-%d", localtime(&seconds));
-            std::cout << "[HistoricalListener] Pushing new historical object. (Version 1)" << std::endl;
-            results.push_back(HistoricalObject(string(buffer), tempValue));
+            results.push_back(HistoricalObject(tempTimestamp / 1000, tempValue));
         }
 
         tempTimestamp = 0;
@@ -73,18 +66,20 @@ public:
     void startDocument() override {
         std::cout << "[HistoricalListener] Finishing parse of historical data points." << std::endl;
     }
+
     void endDocument() override {
         std::cout << "[HistoricalListener] Starting parse of historical data points." << std::endl;
     }
+
     void startObject() override {}
     void startArray() override {}
     void endArray() override {}
     void whitespace(char c) override {}
 
-    vector<HistoricalObject> getResults() {
+    vector<HistoricalObject>& getResults() {
         return results;
     }
-
+    
     bool isVersion2Data() const {
         return isVersion2;
     }

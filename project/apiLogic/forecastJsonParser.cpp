@@ -15,21 +15,15 @@ void ForecastListener::endDocument() {
 void ForecastListener::startArray() {}
 void ForecastListener::endArray() {}
 void ForecastListener::startObject() {
-    
     if(state == ListeningState::InTimeSeries)
         state = ListeningState::FilteringObject;
 }
 void ForecastListener::endObject() {
-    
-    if(state == ListeningState::ProcessingItem){
-        
+    if(state == ListeningState::ProcessingItem){ 
         forecasts.push_back(forecastObjectToAdd);
         itemCount++;
         state = ListeningState::InTimeSeries;
-    } else {
-        
-    }
-        
+    }  
 }
 void ForecastListener::whitespace(char c) {}
 void ForecastListener::key(String key) {
@@ -38,7 +32,6 @@ void ForecastListener::key(String key) {
         state = ListeningState::FilteringObject;
     else if(key == "timeSeries")
         state = ListeningState::InTimeSeries;
-    
 }
 
 void ForecastListener::value(String value) {
@@ -48,10 +41,8 @@ void ForecastListener::value(String value) {
         if(strstr(timeValue, "12:00:00Z")) {
             state = ListeningState::ProcessingItem;
             this->forecastObjectToAdd.time = value.c_str();
-        } else {
-            state = ListeningState::InTimeSeries;
-        }
-            
+        } else 
+            state = ListeningState::InTimeSeries; 
     }
     else if(state == ListeningState::ProcessingItem)
     {

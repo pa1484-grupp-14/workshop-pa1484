@@ -22,6 +22,11 @@ Label& Popup::addLabel(std::string name) {
 }
 
 //Add a new label widget as the child of this widget container
+Scale& Popup::addScale(std::string name) {
+  return content.addScale(name);
+}
+
+//Add a new label widget as the child of this widget container
 Image& Popup::addImage(std::string name) {
   return content.addImage(name);
 }
